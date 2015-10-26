@@ -32,10 +32,10 @@ namespace ProcRoom
 
             
             var refRoom = _instance.roomHistory[_instance.roomHistory.Count - 1];
-            var pos = Room.GetCorrespondingPosition(refRoom, TileType.StairsUp, roomWidth, roomHeight, true);
-            var coord = Room.PositionToCoordinate(pos, roomWidth);
+            var pos = RoomMath.GetCorrespondingPosition(refRoom, TileType.StairsUp, roomWidth, roomHeight, true);
+            var coord = Coordinate.FromPosition(pos, roomWidth);
             
-            if (Room.CoordinateOnCorner(coord, roomWidth, roomHeight))
+            if (RoomMath.CoordinateOnCorner(coord, roomWidth, roomHeight))
             {
                 if (coord.x == 0)
                     coord.x = 1;
@@ -44,7 +44,7 @@ namespace ProcRoom
                 else
                     coord.x -= 1;
             }
-            return Room.CoordinateToPosition(coord, roomWidth, roomHeight);
+            return coord.ToPosition(roomWidth, roomHeight);
         }
 
         void OnEnable() {

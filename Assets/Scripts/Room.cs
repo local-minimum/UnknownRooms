@@ -7,39 +7,6 @@ namespace ProcRoom
     public delegate void RoomEvent(Room room, RoomData data);
 
     [System.Serializable]
-    public struct Range
-    {
-        public int min;
-        public int max;
-
-        public Range(int min, int max)
-        {
-            this.min = min;
-            this.max = max;
-        }
-    }
-
-    [System.Serializable]
-    public struct Coordinate
-    {
-        public int x;
-        public int y;
-
-        public Coordinate(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-
-        }
-
-        public Coordinate(float x, float y)
-        {
-            this.x = Mathf.RoundToInt(x);
-            this.y = Mathf.RoundToInt(y);
-        }
-    }
-
-    [System.Serializable]
     public struct RoomData
     {
         public int width;
@@ -49,9 +16,12 @@ namespace ProcRoom
         public Range wallGrowthIterations;
         public float biasTowardsGrowingIslands;
         public int minDistanceBetweenStairs;
+        public int spikeTrapClusters;
+        public int spikeTrapClusterSize;
 
     }
 
+    [RequireComponent(typeof(Trapper))]
     public class Room : MonoBehaviour
     {
         
@@ -90,6 +60,12 @@ namespace ProcRoom
         [SerializeField]
         int minDistanceBetweenStairs = 6;
 
+        [SerializeField]
+        int spikeTrapClusters = 2;
+
+        [SerializeField]
+        int spikeTrapClusterSize = 3;
+
         void Awake()
         {
             for (int i=0; i<transform.childCount; i++)
@@ -118,6 +94,8 @@ namespace ProcRoom
             GrowWalls(growthIterations - islandGrowthIterations);
             JoinWalkableAreas();
             AddStairs();
+            RigTraps();
+
             if (OnRoomGeneration != null)
                 OnRoomGeneration(this, GetData());
         }
@@ -132,7 +110,8 @@ namespace ProcRoom
             data.wallGrowthIterations = new Range(minWallGrowthIterations, maxWallGrowthIterations);
             data.minDistanceBetweenStairs = minDistanceBetweenStairs;
             data.tileTypeMap = tileTypeMap;
-            
+            data.spikeTrapClusters = spikeTrapClusters;
+            data.spikeTrapClusterSize = spikeTrapClusterSize;
             return data;
         }
 
@@ -157,7 +136,7 @@ namespace ProcRoom
 
         int[] GenerateWallIsands()
         {
-            var undecidedTiles = GetTileIndicesWithType(TileType.None);
+            var undecidedTiles = RoomSearch.GetTileIndicesWithType(TileType.None, tileTypeMap);
             var islandsToCreate = Random.Range(minWallIslands, maxWallIslands);
             var islands = new int[Mathf.Max(islandsToCreate, 0)];
 
@@ -191,17 +170,17 @@ namespace ProcRoom
 
         void GrowWalls(int iterations)
         {
-            var walls = GetTileIndicesWithType(TileType.Wall);
+            var walls = RoomSearch.GetTileIndicesWithType(TileType.Wall, tileTypeMap);
             GrowWallIslands(walls.ToArray(), iterations);
         }
 
         void JoinWalkableAreas()
         {
-            var undecided = GetTileIndicesWithType(TileType.None);
+            var undecided = RoomSearch.GetTileIndicesWithType(TileType.None, tileTypeMap);
             bool firstIteration = true;
             int iterations = 0;
 
-            while (HasAnyOfType(TileType.None))
+            while (RoomSearch.HasAnyOfType(TileType.None, tileTypeMap))
             {
                 if (firstIteration)
                 {
@@ -210,7 +189,7 @@ namespace ProcRoom
                     firstIteration = false;
                 }
 
-                if (!HasAnyOfType(TileType.None))
+                if (!RoomSearch.HasAnyOfType(TileType.None, tileTypeMap))
                     break;
 
                 //Mapping the through wall distance
@@ -229,7 +208,7 @@ namespace ProcRoom
             if (downStairs >= 0)
             {
                 SetTileType(downStairs, TileType.StairsDown);
-                if (GetNeighbourIndices(downStairs, TileType.Walkable).Count == 0)
+                if (GetNeighbourIndices(downStairs, TileType.Walkable, tileTypeMap, width).Count == 0)
                     EatWallFromFirstFound(new List<int>(new int[] { downStairs }), TileType.Walkable);
                 upPositions = GetPositionsAtDistance(downStairs, minDistanceBetweenStairs, TileType.Wall, true);
 
@@ -244,10 +223,11 @@ namespace ProcRoom
 
             var upStairs = upPositions[Random.Range(0, upPositions.Count)];
             SetTileType(upStairs, TileType.StairsUp);
-            if (GetNeighbourIndices(upStairs, TileType.Walkable).Count == 0)
+            if (GetNeighbourIndices(upStairs, TileType.Walkable, tileTypeMap, width).Count == 0)
                 EatWallFromFirstFound(new List<int>(new int[] { upStairs }), TileType.Walkable);
 
         }
+
 
         void EatWallFromFirstFound(List<int> edge, TileType searchType)
         {            
@@ -302,7 +282,7 @@ namespace ProcRoom
             while (fillingIndex < filling.Count)
             {
                 SetTileType(filling[fillingIndex], TileType.Walkable);
-                var neighbourUndecided = GetNeighbourIndices(filling[fillingIndex], TileType.None);
+                var neighbourUndecided = RoomSearch.GetNeighbourIndices(filling[fillingIndex], TileType.None, tileTypeMap, width);
                 SetTileType(neighbourUndecided, TileType.Walkable);
                 filling.AddRange(neighbourUndecided);
                 fillingIndex++;
@@ -316,28 +296,23 @@ namespace ProcRoom
             return GO.GetComponent<Tile>();
         }
 
-        void SetTileType(int index, TileType type)
+        void RigTraps()
+        {
+            for (int i = 0; i < spikeTrapClusters; i++)
+                Trapper.LaySpikeTraps(this, this.GetData(), spikeTrapClusterSize);
+        }
+
+        public void SetTileType(int index, TileType type)
         {
             tileTypeMap[index] = (int)type;
             tiles[index].tileType = type;
         }
 
-        void SetTileType(List<int> indices, TileType type)
+        public void SetTileType(List<int> indices, TileType type)
         {
             for (int i = 0, l = indices.Count; i < l; i++)
                 SetTileType(indices[i], type);
         }
-
-        int CoordinateToIndex(Coordinate coord)
-        {
-            return coord.y * width + coord.x;
-        }
-
-        int CoordinateToIndex(int x, int y)
-        {
-            return y * width + x;
-        }
-
 
         List<int> GetNonCornerPerimiterPositions()
         {
@@ -345,26 +320,11 @@ namespace ProcRoom
 
             for (int i=0; i< tileTypeMap.Length; i++)
             {
-                if (CoordinateOnNonCornerPerimeter(PositionToCoordinate(i, width), width, height))
+                if (RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
                     perimeter.Add(i);
             }
 
             return perimeter;
-        }
-
-        static public bool CoordinateOnNonCornerPerimeter(Coordinate coord, int width, int height)
-        {
-            return CoordinateOnPerimeter(coord, width, height) && !CoordinateOnCorner(coord, width, height);
-        }
-
-        static public bool CoordinateOnCorner(Coordinate coord, int width, int height)
-        {
-            return coord.x == 0 && (coord.y == 0 || coord.y == height - 1) || coord.x == width - 1 && (coord.y == 0 || coord.y == height -1);
-        }
-
-        static public bool CoordinateOnPerimeter(Coordinate coord, int width, int height)
-        {
-            return coord.x == 0 || coord.y == 0 || coord.x == width - 1 || coord.y == height - 1;
         }
 
         bool IndexOnPerimeter(int index)
@@ -383,54 +343,18 @@ namespace ProcRoom
             var matchingPositions = new List<int>();
             for (int i=0; i<tileTypeMap.Length; i++)
             {
-                if (tileTypeMap[i] == (int)typeOfTile && (!requireStairsPosition || CoordinateOnNonCornerPerimeter(PositionToCoordinate(i, width), width, height))
-                        && GetManhattanDistance(origin, i) >= distance)
+                if (tileTypeMap[i] == (int)typeOfTile && (!requireStairsPosition || RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
+                        && RoomMath.GetManhattanDistance(origin, i, width) >= distance)
 
                     matchingPositions.Add(i);
             }
             return matchingPositions;
         }
 
-        List<int> GetNeighbourIndices(int index, TileType neighbourType)
-        {
-            var neighbours = new List<int>();
-            
-            var x = index % width;
-            var y = index / width;
-            var typeInt = (int)neighbourType;
-
-            if (x > 0) {
-                var neighbourIndex = CoordinateToIndex(x - 1, y);
-                if (tileTypeMap[neighbourIndex] == typeInt)
-                    neighbours.Add(neighbourIndex);
-            }
-            if (x < width - 1) {
-                var neighbourIndex = CoordinateToIndex(x + 1, y);
-                if (tileTypeMap[neighbourIndex] == typeInt)
-                    neighbours.Add(neighbourIndex);
-            }
-            if (y > 0)
-            {
-                var neighbourIndex = CoordinateToIndex(x, y - 1);
-                if (tileTypeMap[neighbourIndex] == typeInt)
-                    neighbours.Add(neighbourIndex);
-
-            }
-            if (y < height - 1)
-            {
-                var neighbourIndex = CoordinateToIndex(x, y + 1);
-                if (tileTypeMap[neighbourIndex] == typeInt)
-                    neighbours.Add(neighbourIndex);
-
-            }
-
-            return neighbours;
-        }
-
         List<int> GetNeighbourIndices(int index, TileType neighbourType, int[] selector, int selectionValue)
         {
             var neighbours = new List<int>();
-            var tileNeighbours = GetNeighbourIndices(index, neighbourType);
+            var tileNeighbours = RoomSearch.GetNeighbourIndices(index, neighbourType, tileTypeMap, width);
             for (int i = 0, l = tileNeighbours.Count; i < l; i++)
             {
                 if (selector[tileNeighbours[i]] == selectionValue)
@@ -445,7 +369,7 @@ namespace ProcRoom
             var neighbours = new HashSet<int>();
             for (int i=0, j=indices.Count; i<j; i++)
             {
-                var tileNeighbours = GetNeighbourIndices(indices[i], neighbourType);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(indices[i], neighbourType, tileTypeMap, width);
                 for (int k=0, l=tileNeighbours.Count; k<l; k++)
                     neighbours.Add(tileNeighbours[k]);
                     
@@ -459,7 +383,7 @@ namespace ProcRoom
             var neighbours = new HashSet<int>();
             for (int i = 0, j = indices.Count; i < j; i++)
             {
-                var tileNeighbours = GetNeighbourIndices(indices[i], neighbourType);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(indices[i], neighbourType, tileTypeMap, width);
                 for (int k = 0, l = tileNeighbours.Count; k < l; k++)
                 {
                     if (selector[tileNeighbours[k]] == selectionValue && !IndexOnPerimeter(tileNeighbours[k]))
@@ -471,34 +395,12 @@ namespace ProcRoom
             return new List<int>(neighbours);
         }
 
-        List<int> GetTileIndicesWithType(TileType type)
-        {
-            var matchingIndices = new List<int>();
-
-            for (int i=0; i<tileTypeMap.Length; i++)
-            {
-                if (tileTypeMap[i] == (int)type)
-                    matchingIndices.Add(i);
-            }
-
-            return matchingIndices;
-        }
-
-        bool HasAnyOfType(TileType type)
-        {
-            for (int i = 0; i < tileTypeMap.Length; i++) {
-                if (tileTypeMap[i] == (int)type)
-                    return true;
-            }
-            return false;
-        }
-
         List<int> GetNonPerimeterTilesThatBorderToType(List<int> candidates, TileType borderType)
         {
             var borderingTiles = new List<int>();
             for (int i = 0, l = candidates.Count; i < l; i++)
             {
-                if (GetNeighbourIndices(candidates[i], borderType).Count > 0 && !IndexOnPerimeter(candidates[i]))
+                if (RoomSearch.GetNeighbourIndices(candidates[i], borderType, tileTypeMap, width).Count > 0 && !IndexOnPerimeter(candidates[i]))
                     borderingTiles.Add(candidates[i]);
             }
             return borderingTiles;
@@ -506,11 +408,11 @@ namespace ProcRoom
 
         List<int> GetTilesBorderingWalls()
         {
-            var matchingByType = GetTileIndicesWithType(TileType.Walkable);
+            var matchingByType = RoomSearch.GetTileIndicesWithType(TileType.Walkable, tileTypeMap);
             var edge = new List<int>();
             for (int i=0,l=matchingByType.Count; i< l; i++)
             {
-                var tileNeighbours = GetNeighbourIndices(matchingByType[i], TileType.Wall);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(matchingByType[i], TileType.Wall, tileTypeMap, width);
                 if (tileNeighbours.Count > 0)
                     edge.Add(matchingByType[i]);
             }
@@ -519,77 +421,8 @@ namespace ProcRoom
 
         Vector2 GetTileLocalPosition(int index)
         {
-           var coord = GetTilePositionCentered(index, width, height);
+           var coord = RoomMath.GetTilePositionCentered(index, width, height);
            return new Vector2( coord.x * tileSpacing.x, coord.y * tileSpacing.y);
-        }
-
-        public int GetManhattanDistance(int A, int B)
-        {
-            return Mathf.Abs(A % width - B % width) + Mathf.Abs(A / width - B / width);
-        }
-
-        public static Vector2 GetTilePositionCentered(int index, int width, int height)
-        {
-            return new Vector2((index % width) - width / 2.0f, (index / width) - height / 2.0f);
-        }
-        
-        public static Coordinate PositionToCoordinate(int index, int width)
-        {
-            return new Coordinate(index % width, index / width);
-        }
-
-        public static int CoordinateToPosition(Coordinate coord, int width, int height)
-        {
-            return coord.x + coord.y * width;
-        }
-
-
-        public static int GetFirstOccurance(int[] map, TileType type)
-        {
-            for (int i=0; i< map.Length; i++)
-            {
-                if (map[i] == (int)type)
-                    return i;
-            }
-            return -1;
-        }
-
-        public static int GetCorrespondingPosition(RoomData data, TileType tileType, int roomWidth, int roomHeight, bool stayOnEdge)
-        {
-            var pos = GetFirstOccurance(data.tileTypeMap, tileType);
-            if (pos < 0)
-                return pos;
-
-            return GetCorrespondingPosition(data, pos, roomWidth, roomHeight, stayOnEdge);
-        }
-
-        public static int GetCorrespondingPosition(RoomData data, int position, int roomWidth, int roomHeight, bool stayOnEdge)
-        {
-            var coord = PositionToCoordinate(position, data.width);
-            var midRef = new Coordinate(data.width / 2f, data.height / 2f);
-            var midNew = new Coordinate(roomWidth / 2f, roomHeight / 2f);
-
-            if (stayOnEdge && (coord.x == 0 | coord.x == data.width - 1))
-                coord.x = coord.x == 0 ? 0 : coord.x = roomWidth;
-            else
-                coord.x = coord.x - midRef.x + midNew.x;
-
-            if (stayOnEdge && (coord.y == 0 | coord.y == data.height - 1))
-                coord.y = coord.y == 0 ? 0 : coord.y = roomHeight;
-            else
-                coord.y = coord.y - midRef.y + midNew.y;
-
-            if (stayOnEdge)
-            {
-                //Todo: bad logic
-                coord.x = Mathf.Clamp(coord.x, 0, roomWidth - 1);
-                coord.y = Mathf.Clamp(coord.y, 0, roomHeight - 1);
-            }
-
-            if (coord.x < 0 || coord.y < 0 || coord.x >= roomWidth || coord.y >= roomHeight)
-                return -1;
-
-            return CoordinateToPosition(coord, roomWidth, roomHeight);
         }
 
 #if UNITY_EDITOR

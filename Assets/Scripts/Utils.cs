@@ -1,0 +1,202 @@
+﻿using UnityEngine;
+using System.Collections.Generic;
+
+
+namespace ProcRoom
+{
+    [System.Serializable]
+    public struct Range
+    {
+        public int min;
+        public int max;
+
+        public Range(int min, int max)
+        {
+            this.min = min;
+            this.max = max;
+        }
+    }
+
+    [System.Serializable]
+    public struct Coordinate
+    {
+        public int x;
+        public int y;
+
+        public Coordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+
+        }
+
+        public Coordinate(float x, float y)
+        {
+            this.x = Mathf.RoundToInt(x);
+            this.y = Mathf.RoundToInt(y);
+        }
+
+
+        public static Coordinate FromPosition(int index, int width)
+        {
+            return new Coordinate(index % width, index / width);
+        }
+
+        public static int CalculateIndexValue(int x, int y, int with)
+        {
+            return x + y * with;
+        }
+
+    }
+
+    public static class CoordinateExtensions
+    {
+        public static int ToPosition(this Coordinate coord, int width, int height)
+        {
+            return coord.x + coord.y * width;
+        }
+    }
+
+    public static class RoomMath {
+
+        static public bool CoordinateOnNonCornerPerimeter(Coordinate coord, int width, int height)
+        {
+            return CoordinateOnPerimeter(coord, width, height) && !CoordinateOnCorner(coord, width, height);
+        }
+
+        static public bool CoordinateOnCorner(Coordinate coord, int width, int height)
+        {
+            return coord.x == 0 && (coord.y == 0 || coord.y == height - 1) || coord.x == width - 1 && (coord.y == 0 || coord.y == height - 1);
+        }
+
+        static public bool CoordinateOnPerimeter(Coordinate coord, int width, int height)
+        {
+            return coord.x == 0 || coord.y == 0 || coord.x == width - 1 || coord.y == height - 1;
+        }
+
+        public static Vector2 GetTilePositionCentered(int index, int width, int height)
+        {
+            return new Vector2((index % width) - width / 2.0f, (index / width) - height / 2.0f);
+        }
+
+        public static int GetCorrespondingPosition(RoomData data, TileType tileType, int roomWidth, int roomHeight, bool stayOnEdge)
+        {
+            var pos = RoomSearch.GetFirstOccurance(data.tileTypeMap, tileType);
+            if (pos < 0)
+                return pos;
+
+            return GetCorrespondingPosition(data, pos, roomWidth, roomHeight, stayOnEdge);
+        }
+
+        public static int GetManhattanDistance(int A, int B, int width)
+        {
+            return Mathf.Abs(A % width - B % width) + Mathf.Abs(A / width - B / width);
+        }
+
+        public static int GetCorrespondingPosition(RoomData data, int position, int roomWidth, int roomHeight, bool stayOnEdge)
+        {
+            var coord = Coordinate.FromPosition(position, data.width);
+            var midRef = new Coordinate(data.width / 2f, data.height / 2f);
+            var midNew = new Coordinate(roomWidth / 2f, roomHeight / 2f);
+
+            if (stayOnEdge && (coord.x == 0 | coord.x == data.width - 1))
+                coord.x = coord.x == 0 ? 0 : coord.x = roomWidth;
+            else
+                coord.x = coord.x - midRef.x + midNew.x;
+
+            if (stayOnEdge && (coord.y == 0 | coord.y == data.height - 1))
+                coord.y = coord.y == 0 ? 0 : coord.y = roomHeight;
+            else
+                coord.y = coord.y - midRef.y + midNew.y;
+
+            if (stayOnEdge)
+            {
+                //Todo: bad logic
+                coord.x = Mathf.Clamp(coord.x, 0, roomWidth - 1);
+                coord.y = Mathf.Clamp(coord.y, 0, roomHeight - 1);
+            }
+
+            if (coord.x < 0 || coord.y < 0 || coord.x >= roomWidth || coord.y >= roomHeight)
+                return -1;
+
+            return coord.ToPosition(roomWidth, roomHeight);
+        }
+
+    }
+
+    public static class RoomSearch {
+
+        public static int GetFirstOccurance(int[] map, TileType type)
+        {
+            for (int i = 0; i < map.Length; i++)
+            {
+                if (map[i] == (int)type)
+                    return i;
+            }
+            return -1;
+        }
+
+        public static bool HasAnyOfType(TileType type, int[] tileTypeMap)
+        {
+            for (int i = 0; i < tileTypeMap.Length; i++)
+            {
+                if (tileTypeMap[i] == (int)type)
+                    return true;
+            }
+            return false;
+        }
+
+        public static List<int> GetTileIndicesWithType(TileType type, int[] tileTypeMap)
+        {
+            var matchingIndices = new List<int>();
+
+            for (int i = 0; i < tileTypeMap.Length; i++)
+            {
+                if (tileTypeMap[i] == (int)type)
+                    matchingIndices.Add(i);
+            }
+
+            return matchingIndices;
+        }
+
+
+        public static List<int> GetNeighbourIndices(int index, TileType neighbourType, int[] tileTypeMap, int width)
+        {
+            var neighbours = new List<int>();
+
+            var x = index % width;
+            var y = index / width;
+            var height = tileTypeMap.Length / width;
+            var typeInt = (int)neighbourType;
+
+            if (x > 0)
+            {
+                var neighbourIndex = Coordinate.CalculateIndexValue(x - 1, y, width);
+                if (tileTypeMap[neighbourIndex] == typeInt)
+                    neighbours.Add(neighbourIndex);
+            }
+            if (x < width - 1)
+            {
+                var neighbourIndex = Coordinate.CalculateIndexValue(x + 1, y, width);
+                if (tileTypeMap[neighbourIndex] == typeInt)
+                    neighbours.Add(neighbourIndex);
+            }
+            if (y > 0)
+            {
+                var neighbourIndex = Coordinate.CalculateIndexValue(x, y - 1, width);
+                if (tileTypeMap[neighbourIndex] == typeInt)
+                    neighbours.Add(neighbourIndex);
+
+            }
+            if (y < height - 1)
+            {
+                var neighbourIndex = Coordinate.CalculateIndexValue(x, y + 1, width);
+                if (tileTypeMap[neighbourIndex] == typeInt)
+                    neighbours.Add(neighbourIndex);
+
+            }
+
+            return neighbours;
+        }
+    }
+}
