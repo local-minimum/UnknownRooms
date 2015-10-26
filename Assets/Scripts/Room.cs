@@ -125,7 +125,7 @@ namespace ProcRoom
                 else
                     tiles[i].gameObject.SetActive(true);
 
-                var typeOfTile = IndexOnPerimeter(i) ? TileType.Wall : TileType.None;
+                var typeOfTile = RoomMath.IndexOnPerimeter(i, width, height) ? TileType.Wall : TileType.None;
                 tiles[i].transform.localPosition = GetTileLocalPosition(i);
                 SetTileType(i, typeOfTile);
             }
@@ -210,11 +210,11 @@ namespace ProcRoom
                 SetTileType(downStairs, TileType.StairsDown);
                 if (GetNeighbourIndices(downStairs, TileType.Walkable, tileTypeMap, width).Count == 0)
                     EatWallFromFirstFound(new List<int>(new int[] { downStairs }), TileType.Walkable);
-                upPositions = GetPositionsAtDistance(downStairs, minDistanceBetweenStairs, TileType.Wall, true);
+                upPositions = RoomSearch.GetPositionsAtDistance(tileTypeMap, downStairs, new Range(minDistanceBetweenStairs), TileType.Wall, true, width);
 
             }
             else
-                upPositions = GetNonCornerPerimiterPositions();
+                upPositions = RoomSearch.GetNonCornerPerimiterPositions(width, height);
 
             if (upPositions.Count == 0)
             {
@@ -227,7 +227,6 @@ namespace ProcRoom
                 EatWallFromFirstFound(new List<int>(new int[] { upStairs }), TileType.Walkable);
 
         }
-
 
         void EatWallFromFirstFound(List<int> edge, TileType searchType)
         {            
@@ -245,7 +244,7 @@ namespace ProcRoom
                     distanceToEdge[edge[i]] = distance;
                 }
 
-                var bordersToUndecieded = GetNonPerimeterTilesThatBorderToType(edge, searchType);
+                var bordersToUndecieded = RoomSearch.GetNonPerimeterTilesThatBorderToType(tileTypeMap, edge, searchType, width);
                 if (bordersToUndecieded.Count > 0)
                 {
                     wall = bordersToUndecieded[Random.Range(0, bordersToUndecieded.Count)];
@@ -314,43 +313,6 @@ namespace ProcRoom
                 SetTileType(indices[i], type);
         }
 
-        List<int> GetNonCornerPerimiterPositions()
-        {
-            var perimeter = new List<int>();
-
-            for (int i=0; i< tileTypeMap.Length; i++)
-            {
-                if (RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
-                    perimeter.Add(i);
-            }
-
-            return perimeter;
-        }
-
-        bool IndexOnPerimeter(int index)
-        {
-            var y = index / width;
-            if (y == 0 || y == height - 1)
-                return true;
-
-    
-            var x = index % width;
-            return x == 0 || x == width - 1;
-        }
-
-        List<int> GetPositionsAtDistance(int origin, int distance, TileType typeOfTile, bool requireStairsPosition)
-        {
-            var matchingPositions = new List<int>();
-            for (int i=0; i<tileTypeMap.Length; i++)
-            {
-                if (tileTypeMap[i] == (int)typeOfTile && (!requireStairsPosition || RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
-                        && RoomMath.GetManhattanDistance(origin, i, width) >= distance)
-
-                    matchingPositions.Add(i);
-            }
-            return matchingPositions;
-        }
-
         List<int> GetNeighbourIndices(int index, TileType neighbourType, int[] selector, int selectionValue)
         {
             var neighbours = new List<int>();
@@ -386,24 +348,13 @@ namespace ProcRoom
                 var tileNeighbours = RoomSearch.GetNeighbourIndices(indices[i], neighbourType, tileTypeMap, width);
                 for (int k = 0, l = tileNeighbours.Count; k < l; k++)
                 {
-                    if (selector[tileNeighbours[k]] == selectionValue && !IndexOnPerimeter(tileNeighbours[k]))
+                    if (selector[tileNeighbours[k]] == selectionValue && !RoomMath.IndexOnPerimeter(tileNeighbours[k], width, height))
                         neighbours.Add(tileNeighbours[k]);
                 }
 
             }
 
             return new List<int>(neighbours);
-        }
-
-        List<int> GetNonPerimeterTilesThatBorderToType(List<int> candidates, TileType borderType)
-        {
-            var borderingTiles = new List<int>();
-            for (int i = 0, l = candidates.Count; i < l; i++)
-            {
-                if (RoomSearch.GetNeighbourIndices(candidates[i], borderType, tileTypeMap, width).Count > 0 && !IndexOnPerimeter(candidates[i]))
-                    borderingTiles.Add(candidates[i]);
-            }
-            return borderingTiles;
         }
 
         List<int> GetTilesBorderingWalls()

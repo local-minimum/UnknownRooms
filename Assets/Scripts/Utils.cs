@@ -9,11 +9,20 @@ namespace ProcRoom
     {
         public int min;
         public int max;
+        public bool noUpperBound;
 
         public Range(int min, int max)
         {
             this.min = min;
             this.max = max;
+            noUpperBound = false;
+        }
+
+        public Range(int min)
+        {
+            this.min = min;
+            this.max = min;
+            noUpperBound = true;
         }
     }
 
@@ -47,13 +56,38 @@ namespace ProcRoom
             return x + y * with;
         }
 
+        public static Coordinate operator -(Coordinate A, Coordinate B)
+        {
+            return new Coordinate(A.x - B.x, A.y - B.y);
+        }
+
+        public static Coordinate operator +(Coordinate A, Coordinate B)
+        {
+            return new Coordinate(A.x + B.x, A.y + B.y);
+        }
+
     }
 
-    public static class CoordinateExtensions
+    public static class UtilExtensions
     {
         public static int ToPosition(this Coordinate coord, int width, int height)
         {
             return coord.x + coord.y * width;
+        }
+
+        public static Coordinate Rotate90CCW(this Coordinate coord)
+        {
+            return new Coordinate(-coord.y, coord.x);
+        }
+
+        public static Coordinate  Rotate90CW(this Coordinate coord)
+        {
+            return new Coordinate(coord.y, -coord.x);
+        }
+
+        public static bool Inside(this Range range, int value)
+        {
+            return range.min <= value && (range.noUpperBound || value <= range.max);
         }
     }
 
@@ -72,6 +106,17 @@ namespace ProcRoom
         static public bool CoordinateOnPerimeter(Coordinate coord, int width, int height)
         {
             return coord.x == 0 || coord.y == 0 || coord.x == width - 1 || coord.y == height - 1;
+        }
+
+        public static bool IndexOnPerimeter(int index, int width, int height)
+        {
+            var y = index / width;
+            if (y == 0 || y == height - 1)
+                return true;
+
+
+            var x = index % width;
+            return x == 0 || x == width - 1;
         }
 
         public static Vector2 GetTilePositionCentered(int index, int width, int height)
@@ -197,6 +242,46 @@ namespace ProcRoom
             }
 
             return neighbours;
+        }
+
+        public static List<int> GetNonCornerPerimiterPositions(int width, int height)
+        {
+            var perimeter = new List<int>();
+
+            for (int i = 0, l = width * height; i < l; i++)
+            {
+                if (RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
+                    perimeter.Add(i);
+            }
+
+            return perimeter;
+        }
+
+        public static List<int> GetPositionsAtDistance(int[] tileTypeMap, int origin, Range permissableDistance, TileType typeOfTile, bool requireStairsPosition, int width)
+        {
+            var matchingPositions = new List<int>();
+            int height = tileTypeMap.Length / width;
+            for (int i = 0; i < tileTypeMap.Length; i++)
+            {
+                if (tileTypeMap[i] == (int)typeOfTile && (!requireStairsPosition || RoomMath.CoordinateOnNonCornerPerimeter(Coordinate.FromPosition(i, width), width, height))
+                        && permissableDistance.Inside(RoomMath.GetManhattanDistance(origin, i, width)))
+
+                    matchingPositions.Add(i);
+            }
+            return matchingPositions;
+        }
+
+
+        public static List<int> GetNonPerimeterTilesThatBorderToType(int[] tileTypeMap, List<int> candidates, TileType borderType, int width)
+        {
+            var borderingTiles = new List<int>();
+            int height = tileTypeMap.Length / width;
+            for (int i = 0, l = candidates.Count; i < l; i++)
+            {
+                if (GetNeighbourIndices(candidates[i], borderType, tileTypeMap, width).Count > 0 && !RoomMath.IndexOnPerimeter(candidates[i], width, height))
+                    borderingTiles.Add(candidates[i]);
+            }
+            return borderingTiles;
         }
     }
 }
