@@ -18,7 +18,7 @@ namespace ProcRoom
 
         Animator anim;
 
-        int previousCycle = -1;
+        int cycleStep = -1;
 
         void Awake() {
             anim = GetComponent<Animator>();
@@ -27,16 +27,32 @@ namespace ProcRoom
         void OnEnable()
         {
             Room.OnRoomGeneration += HandleNewRoom;
+            Player.OnPlayerEnterNewPosition += HandlePlayerMove;
         }
 
         void OnDisable()
         {
             Room.OnRoomGeneration -= HandleNewRoom;
+            Player.OnPlayerEnterNewPosition -= HandlePlayerMove;
+        }
+
+
+        private void HandlePlayerMove(Player player, Coordinate position, TileType tileType)
+        {
+            if (typeOfTile == TileType.SpikeTrap && position.Equals(_position))
+            {
+                if (cycleStep == 2)
+                {
+                    Maim();
+                    player.Hurt();
+                }
+            }
+
         }
 
         private void HandleNewRoom(Room room, RoomData data)
         {
-            previousCycle = -1;
+            cycleStep = -1;
 
         }
 
@@ -44,7 +60,7 @@ namespace ProcRoom
         {
             set
             {
-                previousCycle = -1;
+                cycleStep = -1;
                 typeOfTile = value;
             }
         }
@@ -61,14 +77,14 @@ namespace ProcRoom
         {
             if (typeOfTile == TileType.SpikeTrap)
             {
-                if (previousCycle < 0)
+                if (this.cycleStep < 0)
                     anim.SetTrigger("SpikesRetrackted");
 
 
-                if (previousCycle < 0 && cycleStep == 0)
-                    previousCycle = 0;
+                if (this.cycleStep < 0 && cycleStep == 0)
+                    this.cycleStep = 0;
                
-                if (previousCycle >= 0)
+                if (this.cycleStep >= 0)
                     StepSpikesCycle();
             } else if (typeOfTile == TileType.StairsDown)
                 anim.SetTrigger("StairsDown");
@@ -84,9 +100,9 @@ namespace ProcRoom
 
         void StepSpikesCycle()
         {
-            previousCycle += 1;
-            previousCycle %= 3;
-            switch (previousCycle)
+            cycleStep += 1;
+            cycleStep %= 3;
+            switch (cycleStep)
             {
                 case 0:
                     anim.ResetTrigger("SpikesPrepare");
@@ -110,7 +126,7 @@ namespace ProcRoom
 
                     break;
                 default:
-                    Debug.Log("Uncaught cycle " + previousCycle);
+                    Debug.Log("Uncaught cycle " + cycleStep);
                     break;
             }
         }

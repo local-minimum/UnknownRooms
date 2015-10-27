@@ -20,6 +20,7 @@ namespace ProcRoom
             {
                 _instance = this;
                 player = FindObjectOfType<Player>();
+                player.SetFullHealth();
                 
             } else if (_instance != this)
             {
@@ -80,6 +81,13 @@ namespace ProcRoom
 
         public static void PlayerDone() {
             _instance.animateRoom();
+        }
+
+        public static void Reset()
+        {
+            _instance.roomHistory.Clear();
+            _instance.room.Generate();
+            _instance.player.SetFullHealth();
         }
 
         public void animateRoom()

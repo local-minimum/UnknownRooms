@@ -66,6 +66,17 @@ namespace ProcRoom
             return new Coordinate(A.x + B.x, A.y + B.y);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Coordinate))
+                return false;
+
+            Coordinate other = (Coordinate) obj;
+
+            return this.x == other.x && this.y == other.y;
+
+        }
+
     }
 
     public static class UtilExtensions

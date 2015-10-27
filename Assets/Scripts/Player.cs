@@ -11,10 +11,13 @@ namespace ProcRoom
 
         public static event PlayerEnterPosition OnPlayerEnterNewPosition;
 
-        bool playerTurn = false;
-        int actionPoints = 3;
+        int actionPoints = -1;
         Coordinate position;
+        [SerializeField]
+        int startHealth = 7;
 
+        int health;
+        int ammo = 11;
         int roomWidth;
         int roomHeight;
 
@@ -23,14 +26,32 @@ namespace ProcRoom
 
         Room room;
 
+        bool playerTurn {
+            get
+            {
+                return actionPoints > 0;
+            }
+        }
+
         void OnEnable()
         {
             Room.OnRoomGeneration += HandleNewRoom;
+            Tile.OnTileAction += HandleTileAction;
         }
 
         void OnDisable()
         {
             Room.OnRoomGeneration -= HandleNewRoom;
+            Tile.OnTileAction -= HandleTileAction;
+        }
+
+        private void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
+        {
+            if (position.Equals(this.position) && typeOfTile == TileType.SpikeTrap)
+            {
+                tile.Maim();
+                Hurt();
+            }
         }
 
         private void HandleNewRoom(Room room, RoomData data)
@@ -72,7 +93,8 @@ namespace ProcRoom
                 AttemptMoveTo(position.UpSide());
             else if (Input.GetButtonDown("down"))
                 AttemptMoveTo(position.DownSide());
-
+            else if (Input.GetButton("endTurn"))
+                EndTurn();
 
         }
 
@@ -81,6 +103,7 @@ namespace ProcRoom
             var tileType = room.GetTileAt(newPosition);
 
             if (tileType == TileType.Walkable || tileType == TileType.SpikeTrap || tileType == TileType.StairsUp) { 
+                
                 UpdatePlayerPosition(newPosition);
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
@@ -100,13 +123,30 @@ namespace ProcRoom
         public void Enact()
         {
             actionPoints = 3;
-            playerTurn = true;
+
         }
 
         public void EndTurn()
         {
-            playerTurn = false;
+            actionPoints = 0;
             Tower.PlayerDone();
+        }
+
+        public void Hurt()
+        {
+            health--;
+            Debug.Log(health);
+
+            if (health < 1)
+            {
+                actionPoints = -1;
+                Tower.Reset();
+            }
+        }
+
+        public void SetFullHealth()
+        {
+            health = startHealth;
         }
     }
 }
