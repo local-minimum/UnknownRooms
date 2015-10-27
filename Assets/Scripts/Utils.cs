@@ -85,6 +85,26 @@ namespace ProcRoom
             return new Coordinate(coord.y, -coord.x);
         }
 
+        public static Coordinate LeftSide(this Coordinate coord)
+        {
+            return new Coordinate(coord.x - 1, coord.y);
+        }
+
+        public static Coordinate RightSide(this Coordinate coord)
+        {
+            return new Coordinate(coord.x + 1, coord.y);
+        }
+
+        public static Coordinate UpSide(this Coordinate coord)
+        {
+            return new Coordinate(coord.x, coord.y + 1);
+        }
+
+        public static Coordinate DownSide(this Coordinate coord)
+        {
+            return new Coordinate(coord.x, coord.y - 1);
+        }
+
         public static bool Inside(this Range range, int value)
         {
             return range.min <= value && (range.noUpperBound || value <= range.max);
@@ -92,6 +112,11 @@ namespace ProcRoom
     }
 
     public static class RoomMath {
+
+        static public bool CoordinateOnMap(Coordinate coord, int width, int height)
+        {
+            return coord.x >= 0 && coord.x < width && coord.y >= 0 && coord.y < height;
+        }
 
         static public bool CoordinateOnNonCornerPerimeter(Coordinate coord, int width, int height)
         {

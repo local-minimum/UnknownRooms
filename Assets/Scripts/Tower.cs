@@ -13,11 +13,13 @@ namespace ProcRoom
         int activeLevel = 0;
 
         Room room;
-
+        Player player;
+        
         void Awake() {
             if (_instance == null)
             {
                 _instance = this;
+                player = FindObjectOfType<Player>();
                 
             } else if (_instance != this)
             {
@@ -49,11 +51,13 @@ namespace ProcRoom
 
         void OnEnable() {
             Room.OnRoomGeneration += HandleRoomGenerated;
+            Player.OnPlayerEnterNewPosition += HandleNewPlayerPosition;
         }
 
         void OnDisable()
         {
             Room.OnRoomGeneration -= HandleRoomGenerated;
+            Player.OnPlayerEnterNewPosition -= HandleNewPlayerPosition;
         }
 
         private void HandleRoomGenerated(Room room, RoomData data)
@@ -62,5 +66,26 @@ namespace ProcRoom
             roomHistory.Add(data);
 
         }
+
+        private void HandleNewPlayerPosition(Player player, Coordinate position, TileType tileType)
+        {
+            if (tileType == TileType.StairsUp)
+                room.Generate();
+        }
+
+        public static void RoomDone()
+        {
+            _instance.player.Enact();
+        }
+
+        public static void PlayerDone() {
+            _instance.animateRoom();
+        }
+
+        public void animateRoom()
+        {
+            StartCoroutine(_instance.room.Enact());
+        }
+
     }
 }

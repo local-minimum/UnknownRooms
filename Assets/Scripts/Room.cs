@@ -34,6 +34,11 @@ namespace ProcRoom
         int height;
 
         int[] tileTypeMap;
+        int[] distanceMap;
+        int highestDistance = -1;
+        int wavePeak = 0;
+        int waveLength = 3;
+        TileType waveSource = TileType.StairsUp;
 
         [SerializeField]
         Vector2 tileSpacing = new Vector2(1, 1);
@@ -84,7 +89,7 @@ namespace ProcRoom
             Generate();
         }
 
-        void Generate()
+        public void Generate()
         {
             GenerateBlank();
             var islands = GenerateWallIsands();
@@ -95,7 +100,7 @@ namespace ProcRoom
             JoinWalkableAreas();
             AddStairs();
             RigTraps();
-
+            StartCoroutine(Enact());
             if (OnRoomGeneration != null)
                 OnRoomGeneration(this, GetData());
         }
@@ -127,7 +132,9 @@ namespace ProcRoom
 
                 var typeOfTile = RoomMath.IndexOnPerimeter(i, width, height) ? TileType.Wall : TileType.None;
                 tiles[i].transform.localPosition = GetTileLocalPosition(i);
+                tiles[i].position = Coordinate.FromPosition(i, width);
                 SetTileType(i, typeOfTile);
+
             }
 
             for (int i = tileTypeMap.Length, l = tiles.Count; i < l; i++)
@@ -374,6 +381,55 @@ namespace ProcRoom
         {
            var coord = RoomMath.GetTilePositionCentered(index, width, height);
            return new Vector2( coord.x * tileSpacing.x, coord.y * tileSpacing.y);
+        }
+
+        public Vector3 GetTileCentre(int position)
+        {
+            return transform.TransformPoint(GetTileLocalPosition(position));
+        }
+
+        public TileType GetTileAt(Coordinate position)
+        {
+            if (RoomMath.CoordinateOnMap(position, width, height))
+                return (TileType) tileTypeMap[position.ToPosition(width, height)];
+            return TileType.None;
+        }
+
+        void SetDistanceMap(int source)
+        {
+            distanceMap = new int[tileTypeMap.Length];
+            highestDistance = -1;
+            for (int i=0; i<distanceMap.Length; i++)
+            {
+                distanceMap[i] = RoomMath.GetManhattanDistance(i, source, width);
+                highestDistance = Mathf.Max(highestDistance, distanceMap[i]);
+            }
+            
+        }
+
+        public IEnumerator<WaitForSeconds> Enact()
+        {
+            if (wavePeak > highestDistance)
+            {
+                waveSource = waveSource == TileType.StairsUp ? (RoomSearch.HasAnyOfType(TileType.StairsDown, tileTypeMap) ? TileType.StairsDown : TileType.StairsUp) : TileType.StairsUp;                
+                SetDistanceMap(RoomSearch.GetFirstOccurance(tileTypeMap, waveSource));
+                wavePeak = 0;
+            }
+
+            for (int i=0; i<=highestDistance; i++)
+            {
+                var cycleStep = Mathf.Abs(wavePeak - i) % waveLength;
+                for (int j=0; j<distanceMap.Length;j++)
+                {
+                    if (distanceMap[j] == i)
+                        tiles[j].Enact(cycleStep);
+                }
+                if (i % 3 == 2)
+                    yield return new WaitForSeconds(0.04f);
+            }
+
+            wavePeak++;
+            Tower.RoomDone();
         }
 
 #if UNITY_EDITOR
