@@ -23,8 +23,14 @@ namespace ProcRoom
         [SerializeField]
         int actionPointsPerTurn = 3;
 
-        [SerializeField]
+        [SerializeField, Range(0, 50)]
         int evasion = 10;
+
+        [SerializeField]
+        int shootingRange = 4;
+
+        [SerializeField, Range(0, 20)]
+        int shootingAccuracy = 10;
 
         int health;
         int ammo = 0;

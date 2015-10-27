@@ -383,6 +383,11 @@ namespace ProcRoom
            return new Vector2( coord.x * tileSpacing.x, coord.y * tileSpacing.y);
         }
 
+        public Vector3 GetTileCentre(Coordinate coordinate)
+        {
+            return GetTileCentre(coordinate.ToPosition(width, height));
+        }
+
         public Vector3 GetTileCentre(int position)
         {
             return transform.TransformPoint(GetTileLocalPosition(position));

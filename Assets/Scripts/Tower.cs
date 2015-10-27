@@ -15,6 +15,14 @@ namespace ProcRoom
         Room room;
         Player player;
         
+        public static Room ActiveRoom
+        {
+            get
+            {
+                return room;
+            }
+        }
+
         void Awake() {
             if (_instance == null)
             {
