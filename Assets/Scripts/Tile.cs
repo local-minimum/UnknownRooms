@@ -46,18 +46,6 @@ namespace ProcRoom
             {
                 previousCycle = -1;
                 typeOfTile = value;
-                if (value == TileType.SpikeTrap)
-                    anim.SetTrigger("SpikesRetrackted");
-                else if (value == TileType.StairsDown)
-                    anim.SetTrigger("StairsDown");
-                else if (value == TileType.StairsUp)
-                    anim.SetTrigger("StairsUp");
-                else if (value == TileType.Walkable)
-                    anim.SetTrigger("WalkableArea");
-                else if (value == TileType.Wall)
-                    anim.SetTrigger("Wall");
-                else if (value != TileType.None)
-                    anim.SetTrigger("UnknownTile");
             }
         }
 
@@ -82,7 +70,16 @@ namespace ProcRoom
                
                 if (previousCycle >= 0)
                     StepSpikesCycle();
-            }
+            } else if (typeOfTile == TileType.StairsDown)
+                anim.SetTrigger("StairsDown");
+            else if (typeOfTile == TileType.StairsUp)
+                anim.SetTrigger("StairsUp");
+            else if (typeOfTile == TileType.Walkable)
+                anim.SetTrigger("WalkableArea");
+            else if (typeOfTile == TileType.Wall)
+                anim.SetTrigger("Wall");
+            else if (typeOfTile != TileType.None)
+                anim.SetTrigger("UnknownTile");
         }
 
         void StepSpikesCycle()
