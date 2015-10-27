@@ -21,6 +21,8 @@ namespace ProcRoom
         int roomWidth;
         int roomHeight;
 
+        int steps = 0;
+
         [SerializeField]
         int minDistanceSpawninfFirstLevel = 8;
 
@@ -31,6 +33,11 @@ namespace ProcRoom
             {
                 return actionPoints > 0;
             }
+        }
+
+        void Start()
+        {
+            NewGame();
         }
 
         void OnEnable()
@@ -108,6 +115,7 @@ namespace ProcRoom
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
                 actionPoints--;
+                steps++;
                 if (actionPoints < 1)
                     EndTurn();
             }
@@ -144,9 +152,17 @@ namespace ProcRoom
             }
         }
 
-        public void SetFullHealth()
+        public void NewGame()
         {
             health = startHealth;
+            steps = 0;
         }
+
+#if UNITY_EDITOR
+
+        void OnGUI() {
+            GUI.TextArea(new Rect(110, 10, 100, 50), string.Format("Health:\t{0}\nAmmo:\t{1}\nSteps:\t{2}", health, ammo, steps));
+        }
+#endif
     }
 }

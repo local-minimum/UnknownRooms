@@ -20,7 +20,6 @@ namespace ProcRoom
             {
                 _instance = this;
                 player = FindObjectOfType<Player>();
-                player.SetFullHealth();
                 
             } else if (_instance != this)
             {
@@ -87,7 +86,7 @@ namespace ProcRoom
         {
             _instance.roomHistory.Clear();
             _instance.room.Generate();
-            _instance.player.SetFullHealth();
+            _instance.player.NewGame();
         }
 
         public void animateRoom()
@@ -95,5 +94,12 @@ namespace ProcRoom
             StartCoroutine(_instance.room.Enact());
         }
 
+#if UNITY_EDITOR
+
+        void OnGUI()
+        {
+            GUI.TextArea(new Rect(210, 10, 100, 50), string.Format("Level:\t{0}", roomHistory.Count));
+        }
+#endif
     }
 }

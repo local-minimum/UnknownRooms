@@ -214,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01221c396d28cf44eab0cf28f9b58b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startHealth: 7
   minDistanceSpawninfFirstLevel: 8
 --- !u!1 &1358969309
 GameObject:
