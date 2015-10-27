@@ -29,6 +29,12 @@ namespace ProcRoom
     [System.Serializable]
     public struct Coordinate
     {
+
+        static Coordinate _Right = new Coordinate(1, 0);
+        static Coordinate _Left = new Coordinate(-1, 0);
+        static Coordinate _Up = new Coordinate(0, -1);
+        static Coordinate _Down = new Coordinate(0, 1);
+
         public int x;
         public int y;
 
@@ -77,6 +83,37 @@ namespace ProcRoom
 
         }
 
+        public static Coordinate Right {
+            get
+            {
+                return _Right;
+            }
+        }
+
+        public static Coordinate Left
+        {
+            get
+            {
+                return _Left;
+
+            }
+        }
+
+        public static Coordinate Up
+        {
+            get
+            {
+                return _Up;
+            }
+        }
+
+        public static Coordinate Down
+        {
+            get
+            {
+                return _Down;
+            }
+        }
     }
 
     public static class UtilExtensions

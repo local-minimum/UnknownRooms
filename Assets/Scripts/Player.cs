@@ -6,6 +6,7 @@ namespace ProcRoom
 {
     public delegate void PlayerEnterPosition(Player player, Coordinate position, TileType tileType);
 
+    [RequireComponent(typeof(Animator))]
     public class Player : MonoBehaviour
     {
 
@@ -16,17 +17,31 @@ namespace ProcRoom
         [SerializeField]
         int startHealth = 7;
 
+        [SerializeField]
+        int ammmoFull = 11;
+
+        [SerializeField]
+        int actionPointsPerTurn = 3;
+
+        [SerializeField]
+        int evasion = 10;
+
         int health;
-        int ammo = 11;
+        int ammo = 0;
         int roomWidth;
         int roomHeight;
 
         int steps = 0;
+        int shots = 0;
+
+        Coordinate lookDirection = Coordinate.Right;
 
         [SerializeField]
         int minDistanceSpawninfFirstLevel = 8;
 
         Room room;
+
+        Animator anim;
 
         bool playerTurn {
             get
@@ -38,6 +53,7 @@ namespace ProcRoom
         void Start()
         {
             NewGame();
+            anim = GetComponent<Animator>();
         }
 
         void OnEnable()
@@ -93,16 +109,59 @@ namespace ProcRoom
                 return;
 
             if (Input.GetButtonDown("right"))
-                AttemptMoveTo(position.RightSide());
+            {
+                if (lookDirection.Equals(Coordinate.Right))
+                    AttemptMoveTo(position.RightSide());
+                else
+                {
+                    lookDirection = Coordinate.Right;
+                    anim.SetTrigger("Right");
+                }
+            }
             else if (Input.GetButtonDown("left"))
-                AttemptMoveTo(position.LeftSide());
+            {
+                if (lookDirection.Equals(Coordinate.Left))
+                    AttemptMoveTo(position.LeftSide());
+                else
+                {
+                    lookDirection = Coordinate.Left;
+                    anim.SetTrigger("Left");
+                }
+            }
             else if (Input.GetButtonDown("up"))
-                AttemptMoveTo(position.UpSide());
+            {
+                if (lookDirection.Equals(Coordinate.Up))
+                    AttemptMoveTo(position.UpSide());
+                else
+                {
+                    lookDirection = Coordinate.Up;
+                    anim.SetTrigger("Up");
+                }
+            }
             else if (Input.GetButtonDown("down"))
-                AttemptMoveTo(position.DownSide());
+            {
+                if (lookDirection.Equals(Coordinate.Down))
+                    AttemptMoveTo(position.DownSide());
+                else
+                {
+                    lookDirection = Coordinate.Down;
+                    anim.SetTrigger("Down");
+                }
+            }
             else if (Input.GetButton("endTurn"))
-                EndTurn();
+                actionPoints = 0;
+            else if (Input.GetButton("reload"))
+                Reload();
 
+            if (actionPoints < 1)
+                EndTurn();
+        }
+
+
+        void Reload()
+        {
+            ammo = ammmoFull;
+            actionPoints--;
         }
 
         void AttemptMoveTo(Coordinate newPosition)
@@ -116,8 +175,6 @@ namespace ProcRoom
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
                 actionPoints--;
                 steps++;
-                if (actionPoints < 1)
-                    EndTurn();
             }
 
         }
@@ -130,7 +187,7 @@ namespace ProcRoom
 
         public void Enact()
         {
-            actionPoints = 3;
+            actionPoints = actionPointsPerTurn;
 
         }
 
@@ -156,6 +213,8 @@ namespace ProcRoom
         {
             health = startHealth;
             steps = 0;
+            shots = 0;
+            Reload();
         }
 
 #if UNITY_EDITOR
