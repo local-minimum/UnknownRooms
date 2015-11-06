@@ -11,5 +11,10 @@ namespace ProcRoom
             throw new NotImplementedException();
         }
 
+        protected override void Death()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

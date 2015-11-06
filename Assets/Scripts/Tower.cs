@@ -9,12 +9,16 @@ namespace ProcRoom
         static Tower _instance;
 
         List<RoomData> roomHistory = new List<RoomData>();
-
+        List<Agent> agents = new List<Agent>();
+        int activeAgent = 0;
         int activeLevel = 0;
 
         Room room;
         Player player;
-        
+        Projectile activeShot;
+        bool switchAgent = false;
+        bool queueRoom = false;
+
         public static Room ActiveRoom
         {
             get
@@ -28,6 +32,7 @@ namespace ProcRoom
             {
                 _instance = this;
                 player = FindObjectOfType<Player>();
+                agents.Add(player);
                 
             } else if (_instance != this)
             {
@@ -60,12 +65,28 @@ namespace ProcRoom
         void OnEnable() {
             Room.OnRoomGeneration += HandleRoomGenerated;
             Player.OnPlayerEnterNewPosition += HandleNewPlayerPosition;
+            Projectile.OnProjectileHit += HandleProjectileHit;
+            Projectile.OnProjectileLaunch += HandleProjectileLaunch;
         }
 
         void OnDisable()
         {
             Room.OnRoomGeneration -= HandleRoomGenerated;
             Player.OnPlayerEnterNewPosition -= HandleNewPlayerPosition;
+            Projectile.OnProjectileHit -= HandleProjectileHit;
+            Projectile.OnProjectileLaunch -= HandleProjectileLaunch;
+        }
+
+        private void HandleProjectileHit(Projectile projectile, Coordinate position)
+        {
+            activeShot = null;
+            if (switchAgent)
+                NextAgent();
+        }
+
+        private void HandleProjectileLaunch(Projectile projectile)
+        {
+            activeShot = projectile;
         }
 
         private void HandleRoomGenerated(Room room, RoomData data)
@@ -83,11 +104,35 @@ namespace ProcRoom
 
         public static void RoomDone()
         {
-            _instance.player.Enact();
+            _instance.queueRoom = false;
+            _instance.NextAgent();
         }
 
-        public static void PlayerDone() {
-            _instance.animateRoom();
+        public static void AgentDone(Agent agent)
+        {
+            _instance.queueRoom = agent == _instance.player;
+            _instance.switchAgent = true;
+            if (_instance.activeShot == null)
+                _instance.NextAgent();
+        }
+
+        void NextAgent()
+        {
+            switchAgent = false;
+            if (queueRoom)
+                animateRoom();
+            else
+            {
+                //TODO: This is a bit dangerous and should prob test if anyone is still alive.
+                do
+                {
+                    activeAgent++;
+                    if (activeAgent >= agents.Count)
+                        activeAgent = 0;
+                } while (!agents[activeAgent].alive);
+                agents[activeAgent].Enact();
+
+            }
         }
 
         public static void Reset()

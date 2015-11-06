@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 
 namespace ProcRoom
@@ -32,6 +33,15 @@ namespace ProcRoom
 
         [SerializeField, Tooltip("Size includes wall perimeter"), Range(3, 30)]
         int height;
+
+        [SerializeField]
+        bool runOnRealTime = false;
+
+        [SerializeField, Range(0, 2)]
+        float interWaveDelay = 1;
+
+        [SerializeField, Range(0, 0.1f)]
+        float waveSpeed = 0.04f;
 
         int[] tileTypeMap;
         int[] distanceMap;
@@ -87,6 +97,8 @@ namespace ProcRoom
         void Start()
         {
             Generate();
+            if (runOnRealTime)
+                StartCoroutine(InfiniWave());
         }
 
         public void Generate()
@@ -100,6 +112,7 @@ namespace ProcRoom
             JoinWalkableAreas();
             AddStairs();
             RigTraps();
+
             StartCoroutine(Enact());
             if (OnRoomGeneration != null)
                 OnRoomGeneration(this, GetData());
@@ -419,29 +432,56 @@ namespace ProcRoom
             
         }
 
-        public IEnumerator<WaitForSeconds> Enact()
+        public IEnumerator Enact()
         {
-            if (wavePeak > highestDistance)
+            if (runOnRealTime)
             {
-                waveSource = waveSource == TileType.StairsUp ? (RoomSearch.HasAnyOfType(TileType.StairsDown, tileTypeMap) ? TileType.StairsDown : TileType.StairsUp) : TileType.StairsUp;                
-                SetDistanceMap(RoomSearch.GetFirstOccurance(tileTypeMap, waveSource));
-                wavePeak = 0;
+                Tower.RoomDone();
+                yield break;
             }
 
-            for (int i=0; i<=highestDistance; i++)
+            NewWaveSource();
+
+            yield return StartCoroutine(PropagateWave());
+
+            wavePeak++;
+            Tower.RoomDone();
+        }
+
+        IEnumerator InfiniWave()
+        {
+            while (true) {
+                if (wavePeak > highestDistance)
+                    NewWaveSource();
+
+                yield return StartCoroutine(PropagateWave());
+                wavePeak++;
+                yield return new WaitForSeconds(interWaveDelay);
+            }
+        }
+
+
+        void NewWaveSource()
+        {
+            waveSource = waveSource == TileType.StairsUp ? (RoomSearch.HasAnyOfType(TileType.StairsDown, tileTypeMap) ? TileType.StairsDown : TileType.StairsUp) : TileType.StairsUp;
+            SetDistanceMap(RoomSearch.GetFirstOccurance(tileTypeMap, waveSource));
+            wavePeak = 0;
+        }
+
+        IEnumerator<WaitForSeconds> PropagateWave()
+        {
+
+            for (int i = 0; i <= highestDistance; i++)
             {
                 var cycleStep = Mathf.Abs(wavePeak - i) % waveLength;
-                for (int j=0; j<distanceMap.Length;j++)
+                for (int j = 0; j < distanceMap.Length; j++)
                 {
                     if (distanceMap[j] == i)
                         tiles[j].Enact(cycleStep);
                 }
                 if (i % 3 == 2)
-                    yield return new WaitForSeconds(0.04f);
+                    yield return new WaitForSeconds(waveSpeed);
             }
-
-            wavePeak++;
-            Tower.RoomDone();
         }
 
 #if UNITY_EDITOR

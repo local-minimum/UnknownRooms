@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-
 namespace ProcRoom
 {
     public delegate void PlayerEnterPosition(Player player, Coordinate position, TileType tileType);
@@ -13,7 +12,6 @@ namespace ProcRoom
         public static event PlayerEnterPosition OnPlayerEnterNewPosition;
 
         int steps = 0;
-        int shots = 0;
 
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
@@ -21,31 +19,6 @@ namespace ProcRoom
         Room room;
 
         Animator anim;
-
-        [SerializeField]
-        Weapon weapon;
-
-        int actionPoints
-        {
-            get
-            {
-                return _stats.actionPoints;
-            }
-
-            set
-            {
-                _stats.actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
-                if (_stats.actionPoints == 0)
-                    EndTurn();
-            }
-        }
-
-        bool playerTurn {
-            get
-            {
-                return !weapon.isShooting && actionPoints > 0;
-            }
-        }
 
         void Start()
         {
@@ -65,15 +38,6 @@ namespace ProcRoom
             Room.OnRoomGeneration -= HandleNewRoom;
             Tile.OnTileAction -= HandleTileAction;
             Projectile.OnProjectileHit -= HandleProjectileHit;
-        }
-
-        private void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
-        {
-            if (position.Equals(_stats.position) && typeOfTile == TileType.SpikeTrap)
-            {
-                tile.Maim();
-                Hurt();
-            }
         }
 
         private void HandleNewRoom(Room room, RoomData data)
@@ -110,8 +74,9 @@ namespace ProcRoom
 
         void Update()
         {
-            if (!playerTurn)
+            if (!myTurn)            
                 return;
+            
 
             if (Input.GetButtonDown("right"))
             {
@@ -158,7 +123,7 @@ namespace ProcRoom
             else if (Input.GetButton("reload"))
                 Reload();
             else if (Input.GetButton("shoot"))
-                Shoot();
+                Attack();
 
         }
 
@@ -184,14 +149,6 @@ namespace ProcRoom
 
         }
 
-        void Shoot() {
-            if (_stats.ammo > 0 && weapon.Shoot(_stats.position, _stats.lookDirection)) {
-                _stats.ammo--;
-                shots++;
-                actionPoints--;
-            }
-        }
-
         void UpdatePlayerPosition(Coordinate newPosition)
         {
             _stats.position = newPosition;
@@ -204,29 +161,17 @@ namespace ProcRoom
 
         }
 
-        public void EndTurn()
-        {
-            _stats.actionPoints = 0;
-            Tower.PlayerDone();
-        }
-
-        public void Hurt()
-        {
-            _stats.health--;
-
-            if (_stats.health < 1)
-            {
-                actionPoints = 0;
-                Tower.Reset();
-            }
-        }
-
         public void NewGame()
         {
             _stats.health = _stats.maxHealth;
             steps = 0;
             shots = 0;
             _stats.ammo = _stats.maxAmmo;
+        }
+
+        protected override void Death()
+        {
+            Tower.Reset();
         }
 
 #if UNITY_EDITOR

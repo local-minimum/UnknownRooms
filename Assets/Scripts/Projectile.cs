@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace ProcRoom
 {
     public delegate void ProjectileHit(Projectile projectile, Coordinate position);
+    public delegate void ProjectileLaunch(Projectile projectile);
 
     public class Projectile : MonoBehaviour
     {
 
         public static event ProjectileHit OnProjectileHit;
+        public static event ProjectileLaunch OnProjectileLaunch;
 
         int accuracyLossPerDistance;
         int range;
@@ -37,6 +39,8 @@ namespace ProcRoom
             this.direction = direction;
             position = from;
             shooting = true;
+            if (OnProjectileLaunch != null)
+                OnProjectileLaunch(this);
             StartCoroutine(_shoot());
             return true;
         }
