@@ -7,13 +7,14 @@ namespace ProcRoom
     public delegate void PlayerEnterPosition(Player player, Coordinate position, TileType tileType);
 
     [RequireComponent(typeof(Animator))]
-    public class Player : MonoBehaviour
+    public class Player : Agent
     {
 
         public static event PlayerEnterPosition OnPlayerEnterNewPosition;
 
-        int actionPoints = -1;
+        int _actionPoints = -1;
         Coordinate position;
+
         [SerializeField]
         int startHealth = 7;
 
@@ -25,6 +26,9 @@ namespace ProcRoom
 
         [SerializeField, Range(0, 50)]
         int evasion = 10;
+
+        [SerializeField]
+        int attack = 80;
 
         [SerializeField]
         int shootingRange = 4;
@@ -43,16 +47,34 @@ namespace ProcRoom
         Coordinate lookDirection = Coordinate.Right;
 
         [SerializeField]
-        int minDistanceSpawninfFirstLevel = 8;
+        int minDistanceSpawnInFirstLevel = 8;
 
         Room room;
 
         Animator anim;
 
+        [SerializeField]
+        Weapon weapon;
+
+        int actionPoints
+        {
+            get
+            {
+                return _actionPoints;
+            }
+
+            set
+            {
+                _actionPoints = Mathf.Clamp(value, 0, actionPointsPerTurn);
+                if (_actionPoints == 0)
+                    EndTurn();
+            }
+        }
+
         bool playerTurn {
             get
             {
-                return actionPoints > 0;
+                return !weapon.isShooting && actionPoints > 0;
             }
         }
 
@@ -66,12 +88,14 @@ namespace ProcRoom
         {
             Room.OnRoomGeneration += HandleNewRoom;
             Tile.OnTileAction += HandleTileAction;
+            Projectile.OnProjectileHit += HandleProjectileHit;
         }
 
         void OnDisable()
         {
             Room.OnRoomGeneration -= HandleNewRoom;
             Tile.OnTileAction -= HandleTileAction;
+            Projectile.OnProjectileHit -= HandleProjectileHit;
         }
 
         private void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
@@ -91,6 +115,12 @@ namespace ProcRoom
             UpdatePlayerPosition(Coordinate.FromPosition(PlayerSpawnPosition(data), roomWidth));
         }
 
+        private void HandleProjectileHit(Projectile projectile, Coordinate position)
+        {
+            if (position.Equals(this.position))
+                Hurt();
+        }
+
         int PlayerSpawnPosition(RoomData data)
         {
             if (RoomSearch.HasAnyOfType(TileType.StairsDown, data.tileTypeMap))
@@ -102,7 +132,7 @@ namespace ProcRoom
 
                 var candidates = RoomSearch.GetPositionsAtDistance(data.tileTypeMap,
                     RoomSearch.GetFirstOccurance(data.tileTypeMap, TileType.StairsUp),
-                    new Range(minDistanceSpawninfFirstLevel), TileType.Walkable, false, data.width);
+                    new Range(minDistanceSpawnInFirstLevel), TileType.Walkable, false, data.width);
 
                 return candidates[Random.Range(0, candidates.Count)];
             }
@@ -158,9 +188,9 @@ namespace ProcRoom
                 actionPoints = 0;
             else if (Input.GetButton("reload"))
                 Reload();
+            else if (Input.GetButton("shoot"))
+                Shoot();
 
-            if (actionPoints < 1)
-                EndTurn();
         }
 
 
@@ -172,7 +202,7 @@ namespace ProcRoom
 
         void AttemptMoveTo(Coordinate newPosition)
         {
-            var tileType = room.GetTileAt(newPosition);
+            var tileType = room.GetTileTypeAt(newPosition);
 
             if (tileType == TileType.Walkable || tileType == TileType.SpikeTrap || tileType == TileType.StairsUp) { 
                 
@@ -183,6 +213,14 @@ namespace ProcRoom
                 steps++;
             }
 
+        }
+
+        void Shoot() {
+            if (ammo > 0 && weapon.Shoot(position, lookDirection)) {
+                ammo--;
+                shots++;
+                actionPoints--;
+            }
         }
 
         void UpdatePlayerPosition(Coordinate newPosition)
@@ -199,7 +237,7 @@ namespace ProcRoom
 
         public void EndTurn()
         {
-            actionPoints = 0;
+            _actionPoints = 0;
             Tower.PlayerDone();
         }
 
@@ -210,7 +248,7 @@ namespace ProcRoom
 
             if (health < 1)
             {
-                actionPoints = -1;
+                actionPoints = 0;
                 Tower.Reset();
             }
         }
@@ -220,7 +258,7 @@ namespace ProcRoom
             health = startHealth;
             steps = 0;
             shots = 0;
-            Reload();
+            ammo = ammmoFull;
         }
 
 #if UNITY_EDITOR

@@ -393,11 +393,18 @@ namespace ProcRoom
             return transform.TransformPoint(GetTileLocalPosition(position));
         }
 
-        public TileType GetTileAt(Coordinate position)
+        public TileType GetTileTypeAt(Coordinate position)
         {
             if (RoomMath.CoordinateOnMap(position, width, height))
                 return (TileType) tileTypeMap[position.ToPosition(width, height)];
             return TileType.None;
+        }
+
+        public bool PassableTile(Coordinate position)
+        {
+            //TODO: Add check if occupied too
+            var tileType = GetTileTypeAt(position);
+            return (tileType == TileType.Walkable || tileType == TileType.SpikeTrap);
         }
 
         void SetDistanceMap(int source)

@@ -19,7 +19,7 @@ namespace ProcRoom
         {
             get
             {
-                return room;
+                return _instance.room;
             }
         }
 

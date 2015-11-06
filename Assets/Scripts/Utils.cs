@@ -32,8 +32,8 @@ namespace ProcRoom
 
         static Coordinate _Right = new Coordinate(1, 0);
         static Coordinate _Left = new Coordinate(-1, 0);
-        static Coordinate _Up = new Coordinate(0, -1);
-        static Coordinate _Down = new Coordinate(0, 1);
+        static Coordinate _Up = new Coordinate(0, 1);
+        static Coordinate _Down = new Coordinate(0, -1);
 
         public int x;
         public int y;
