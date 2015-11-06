@@ -12,39 +12,8 @@ namespace ProcRoom
 
         public static event PlayerEnterPosition OnPlayerEnterNewPosition;
 
-        int _actionPoints = -1;
-        Coordinate position;
-
-        [SerializeField]
-        int startHealth = 7;
-
-        [SerializeField]
-        int ammmoFull = 11;
-
-        [SerializeField]
-        int actionPointsPerTurn = 3;
-
-        [SerializeField, Range(0, 50)]
-        int evasion = 10;
-
-        [SerializeField]
-        int attack = 80;
-
-        [SerializeField]
-        int shootingRange = 4;
-
-        [SerializeField, Range(0, 20)]
-        int shootingAccuracy = 10;
-
-        int health;
-        int ammo = 0;
-        int roomWidth;
-        int roomHeight;
-
         int steps = 0;
         int shots = 0;
-
-        Coordinate lookDirection = Coordinate.Right;
 
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
@@ -60,13 +29,13 @@ namespace ProcRoom
         {
             get
             {
-                return _actionPoints;
+                return _stats.actionPoints;
             }
 
             set
             {
-                _actionPoints = Mathf.Clamp(value, 0, actionPointsPerTurn);
-                if (_actionPoints == 0)
+                _stats.actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
+                if (_stats.actionPoints == 0)
                     EndTurn();
             }
         }
@@ -100,7 +69,7 @@ namespace ProcRoom
 
         private void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
         {
-            if (position.Equals(this.position) && typeOfTile == TileType.SpikeTrap)
+            if (position.Equals(_stats.position) && typeOfTile == TileType.SpikeTrap)
             {
                 tile.Maim();
                 Hurt();
@@ -117,7 +86,7 @@ namespace ProcRoom
 
         private void HandleProjectileHit(Projectile projectile, Coordinate position)
         {
-            if (position.Equals(this.position))
+            if (position.Equals(_stats.position))
                 Hurt();
         }
 
@@ -146,41 +115,41 @@ namespace ProcRoom
 
             if (Input.GetButtonDown("right"))
             {
-                if (lookDirection.Equals(Coordinate.Right))
-                    AttemptMoveTo(position.RightSide());
+                if (_stats.lookDirection.Equals(Coordinate.Right))
+                    AttemptMoveTo(_stats.position.RightSide());
                 else
                 {
-                    lookDirection = Coordinate.Right;
+                    _stats.lookDirection = Coordinate.Right;
                     anim.SetTrigger("Right");
                 }
             }
             else if (Input.GetButtonDown("left"))
             {
-                if (lookDirection.Equals(Coordinate.Left))
-                    AttemptMoveTo(position.LeftSide());
+                if (_stats.lookDirection.Equals(Coordinate.Left))
+                    AttemptMoveTo(_stats.position.LeftSide());
                 else
                 {
-                    lookDirection = Coordinate.Left;
+                    _stats.lookDirection = Coordinate.Left;
                     anim.SetTrigger("Left");
                 }
             }
             else if (Input.GetButtonDown("up"))
             {
-                if (lookDirection.Equals(Coordinate.Up))
-                    AttemptMoveTo(position.UpSide());
+                if (_stats.lookDirection.Equals(Coordinate.Up))
+                    AttemptMoveTo(_stats.position.UpSide());
                 else
                 {
-                    lookDirection = Coordinate.Up;
+                    _stats.lookDirection = Coordinate.Up;
                     anim.SetTrigger("Up");
                 }
             }
             else if (Input.GetButtonDown("down"))
             {
-                if (lookDirection.Equals(Coordinate.Down))
-                    AttemptMoveTo(position.DownSide());
+                if (_stats.lookDirection.Equals(Coordinate.Down))
+                    AttemptMoveTo(_stats.position.DownSide());
                 else
                 {
-                    lookDirection = Coordinate.Down;
+                    _stats.lookDirection = Coordinate.Down;
                     anim.SetTrigger("Down");
                 }
             }
@@ -196,7 +165,7 @@ namespace ProcRoom
 
         void Reload()
         {
-            ammo = ammmoFull;
+            _stats.ammo = _stats.maxAmmo;
             actionPoints--;
         }
 
@@ -216,8 +185,8 @@ namespace ProcRoom
         }
 
         void Shoot() {
-            if (ammo > 0 && weapon.Shoot(position, lookDirection)) {
-                ammo--;
+            if (_stats.ammo > 0 && weapon.Shoot(_stats.position, _stats.lookDirection)) {
+                _stats.ammo--;
                 shots++;
                 actionPoints--;
             }
@@ -225,28 +194,27 @@ namespace ProcRoom
 
         void UpdatePlayerPosition(Coordinate newPosition)
         {
-            position = newPosition;
-            transform.position = room.GetTileCentre(position.ToPosition(roomWidth, roomHeight));
+            _stats.position = newPosition;
+            transform.position = room.GetTileCentre(_stats.position.ToPosition(roomWidth, roomHeight));
         }
 
-        public void Enact()
+        public override void Enact()
         {
-            actionPoints = actionPointsPerTurn;
+            actionPoints = _stats.actionPointsPerTurn;
 
         }
 
         public void EndTurn()
         {
-            _actionPoints = 0;
+            _stats.actionPoints = 0;
             Tower.PlayerDone();
         }
 
         public void Hurt()
         {
-            health--;
-            Debug.Log(health);
+            _stats.health--;
 
-            if (health < 1)
+            if (_stats.health < 1)
             {
                 actionPoints = 0;
                 Tower.Reset();
@@ -255,16 +223,16 @@ namespace ProcRoom
 
         public void NewGame()
         {
-            health = startHealth;
+            _stats.health = _stats.maxHealth;
             steps = 0;
             shots = 0;
-            ammo = ammmoFull;
+            _stats.ammo = _stats.maxAmmo;
         }
 
 #if UNITY_EDITOR
 
         void OnGUI() {
-            GUI.TextArea(new Rect(110, 10, 100, 50), string.Format("Health:\t{0}\nAmmo:\t{1}\nSteps:\t{2}", health, ammo, steps));
+            GUI.TextArea(new Rect(110, 10, 100, 50), string.Format("Health:\t{0}\nAmmo:\t{1}\nSteps:\t{2}", _stats.health, _stats.ammo, steps));
         }
 #endif
     }
