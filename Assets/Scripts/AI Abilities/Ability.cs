@@ -23,7 +23,7 @@ namespace ProcRoom.AI.Abilities
 
         protected int usageCurrentTurn;
 
-        public bool Allowed
+        public virtual bool Allowed
         {
             get
             {

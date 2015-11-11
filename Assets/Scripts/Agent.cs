@@ -49,11 +49,74 @@ namespace ProcRoom
 
         protected Room room;
 
+        Animator anim;
+
+        [SerializeField, Range(0, 2)]
+        float moveSpeed = 0.3f;
+
+        float lastMove;
+
+        protected bool actionTick
+        {
+            get
+            {
+                if (Time.timeSinceLevelLoad - lastMove > moveSpeed)
+                {
+                    lastMove = Time.timeSinceLevelLoad;
+                    return true;
+                }
+                return false;
+            }
+        }
+
         public Coordinate position
         {
             get
             {
                 return _stats.position;
+            }
+        }
+
+        public Coordinate lookDirection
+        {
+            get
+            {
+                return _stats.lookDirection;
+            }
+
+            set
+            {
+                if ((value.x ^ value.y) == 0 || Mathf.Abs(value.x * value.y) > 1)
+                {
+                    Debug.LogWarning(string.Format("Attempting invalid look direction x: {0} y: {1}", value.x, value.y));
+                    Debug.Log((value.x ^ value.y));
+                    Debug.Log(Mathf.Abs(value.x * value.y));
+                }
+                else
+                {
+                    _stats.lookDirection = value;
+                    if (anim)
+                    {
+                        if (Coordinate.Right.Equals(value))
+                            anim.SetTrigger("Right");
+                        else if (Coordinate.Left.Equals(value))
+                            anim.SetTrigger("Left");
+                        else if (Coordinate.Down.Equals(value))
+                            anim.SetTrigger("Down");
+                        else if (Coordinate.Up.Equals(value))
+                            anim.SetTrigger("Up");
+                    } else
+                    {
+                        if (Coordinate.Right.Equals(value))
+                            transform.rotation = Quaternion.Euler(0, 0, 0);
+                        else if (Coordinate.Left.Equals(value))
+                            transform.rotation = Quaternion.Euler(0, 0, 180);
+                        else if (Coordinate.Up.Equals(value))
+                            transform.rotation = Quaternion.Euler(0, 0, 90);
+                        else if (Coordinate.Down.Equals(value))
+                            transform.rotation = Quaternion.Euler(0, 0, 270);
+                    }
+                }
             }
         }
 
@@ -92,6 +155,8 @@ namespace ProcRoom
 
         void OnEnable()
         {
+            if (anim == null)
+                anim = GetComponent<Animator>();
             Room.OnRoomGeneration += HandleNewRoom;
             Tile.OnTileAction += HandleTileAction;
             Projectile.OnProjectileHit += HandleProjectileHit;

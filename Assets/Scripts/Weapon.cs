@@ -56,6 +56,14 @@ namespace ProcRoom
             }
         }
 
+        public int range
+        {
+            get {
+                return _stats.maxRange;
+            }
+
+        }
+
         public bool Shoot(Coordinate position, Coordinate lookDirection)
         {
             if (!_isShooting && bullet.Shoot(position, lookDirection, _stats.attack, _stats.maxRange, _stats.accuracyLossPerTile))

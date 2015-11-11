@@ -8,6 +8,8 @@ namespace ProcRoom
     {
         Player _player;
         AI.Abilities.Ability[] abilities;
+
+        [HideInInspector]
         public bool trackingPlayer = false;
 
         public Player player
@@ -30,6 +32,7 @@ namespace ProcRoom
         {
             _player = FindObjectOfType<Player>();
             abilities = GetComponentsInChildren<AI.Abilities.Ability>();
+            lookDirection = _stats.lookDirection;
             for (int i = 0; i < abilities.Length; i++)
                 abilities[i].enabled = true;
         }
@@ -46,6 +49,14 @@ namespace ProcRoom
 
         }
 
+        public int weaponRange
+        {
+            get
+            {
+                return weapon.range;
+            }
+        }
+
         void Update()
         {
             if (!myTurn)
@@ -55,7 +66,7 @@ namespace ProcRoom
 
             if (usables.Count == 0)
                 EndTurn();
-            else
+            else if (actionTick)
             {
                 var ability = SelectAbility(usables);
 

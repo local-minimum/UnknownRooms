@@ -16,30 +16,10 @@ namespace ProcRoom
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
 
-        Animator anim;
-
-        [SerializeField, Range(0, 2)]
-        float moveSpeed = 0.3f;
-
-        float lastMove;
-
         void Start()
         {
             NewGame();
-            anim = GetComponent<Animator>();
-        }
-
-        bool moveTick
-        {
-            get
-            {
-                if (Time.timeSinceLevelLoad - lastMove > moveSpeed)
-                {
-                    lastMove = Time.timeSinceLevelLoad;
-                    return true;
-                }
-                return false;
-            }
+        
         }
 
         protected override void HandleNewRoom(Room room, RoomData data)
@@ -72,44 +52,42 @@ namespace ProcRoom
                 return;
 
 
-            if (Input.GetButton("right") && moveTick)
+            if (Input.GetButton("right") && actionTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Right))
                     AttemptMoveTo(_stats.position.RightSide());
                 else
                 {
-                    _stats.lookDirection = Coordinate.Right;
-                    anim.SetTrigger("Right");
+                    lookDirection = Coordinate.Right;
+
                 }
             }
-            else if (Input.GetButton("left") && moveTick)
+            else if (Input.GetButton("left") && actionTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Left))
                     AttemptMoveTo(_stats.position.LeftSide());
                 else
                 {
-                    _stats.lookDirection = Coordinate.Left;
-                    anim.SetTrigger("Left");
+                    lookDirection = Coordinate.Left;
+
                 }
             }
-            else if (Input.GetButton("up") && moveTick)
+            else if (Input.GetButton("up") && actionTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Up))
                     AttemptMoveTo(_stats.position.UpSide());
                 else
                 {
-                    _stats.lookDirection = Coordinate.Up;
-                    anim.SetTrigger("Up");
+                    lookDirection = Coordinate.Up;
                 }
             }
-            else if (Input.GetButton("down") && moveTick)
+            else if (Input.GetButton("down") && actionTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Down))
                     AttemptMoveTo(_stats.position.DownSide());
                 else
                 {
-                    _stats.lookDirection = Coordinate.Down;
-                    anim.SetTrigger("Down");
+                    lookDirection = Coordinate.Down;
                 }
             }
             else if (Input.GetButtonDown("endTurn"))
