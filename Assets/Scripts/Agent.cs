@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace ProcRoom
 {
@@ -45,14 +47,24 @@ namespace ProcRoom
 
         protected int shots = 0;
 
-        protected int actionPoints
+        protected Room room;
+
+        public Coordinate position
+        {
+            get
+            {
+                return _stats.position;
+            }
+        }
+
+        public int actionPoints
         {
             get
             {
                 return _stats.actionPoints;
             }
 
-            set
+            protected set
             {
                 _stats.actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
                 if (_stats.actionPoints == 0)
@@ -78,15 +90,45 @@ namespace ProcRoom
 
         }
 
-        abstract public void Enact();
+        void OnEnable()
+        {
+            Room.OnRoomGeneration += HandleNewRoom;
+            Tile.OnTileAction += HandleTileAction;
+            Projectile.OnProjectileHit += HandleProjectileHit;
+        }
 
-        protected void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
+        void OnDisable()
+        {
+            Room.OnRoomGeneration -= HandleNewRoom;
+            Tile.OnTileAction -= HandleTileAction;
+            Projectile.OnProjectileHit -= HandleProjectileHit;
+        }
+
+        protected virtual void HandleNewRoom(Room room, RoomData data)
+        {
+            roomWidth = data.width;
+            roomHeight = data.height;
+            this.room = room;
+        
+        }
+
+        virtual public void Enact() {
+            actionPoints = _stats.actionPointsPerTurn;
+        }
+
+        protected virtual void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
         {
             if (position.Equals(_stats.position) && typeOfTile == TileType.SpikeTrap)
             {
                 tile.Maim();
                 Hurt();
             }
+        }
+
+        protected virtual void HandleProjectileHit(Projectile projectile, Coordinate position)
+        {
+            if (position.Equals(_stats.position))
+                Hurt();
         }
 
         public void Hurt()
@@ -102,6 +144,7 @@ namespace ProcRoom
 
         public void EndTurn()
         {
+            Debug.Log(name + " turn ended.");
             _stats.actionPoints = 0;
             Tower.AgentDone(this);
         }
@@ -117,5 +160,41 @@ namespace ProcRoom
                 actionPoints--;
             }
         }
+
+        protected void UpdatePosition(Coordinate newPosition)
+        {
+            _stats.position = newPosition;
+            transform.position = room.GetTileCentre(_stats.position.ToPosition(roomWidth, roomHeight));
+        }
+
+#if UNITY_EDITOR
+
+        string LookDirectionText
+        {
+            get
+            {
+                switch (_stats.lookDirection.x + _stats.lookDirection.y * 2)
+                {
+                    case -2:
+                        return "Down";
+                    case 2:
+                        return "Up";
+                    case -1:
+                        return "Left";
+                    case 1:
+                        return "Right";
+                    default:
+                        return "Unknown";                        
+                }
+            }
+        }
+
+        void OnGUI()
+        {
+            if (Selection.activeObject == gameObject)
+                GUI.TextArea(new Rect(110, 2, 140, 70), string.Format("Health:\t{0}\nAmmo:\t{1}\nAP:\t{2}\nLookDir\t{3}", _stats.health, _stats.ammo, actionPoints, LookDirectionText));
+        }
+#endif
+
     }
 }

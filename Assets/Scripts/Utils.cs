@@ -211,6 +211,11 @@ namespace ProcRoom
             return Mathf.Abs(A % width - B % width) + Mathf.Abs(A / width - B / width);
         }
 
+        public static int GetManhattanDistance(Coordinate A, Coordinate B)
+        {
+            return Mathf.Abs(A.x - B.x) + Mathf.Abs(A.y - B.y);
+        }
+
         public static int GetCorrespondingPosition(RoomData data, int position, int roomWidth, int roomHeight, bool stayOnEdge)
         {
             var coord = Coordinate.FromPosition(position, data.width);
@@ -238,6 +243,16 @@ namespace ProcRoom
                 return -1;
 
             return coord.ToPosition(roomWidth, roomHeight);
+        }
+
+        public static bool IsInLookDirection(Coordinate source, Coordinate target, Coordinate lookDirection)
+        {
+            if (source.x == target.x)
+                return Mathf.Sign(target.x - source.x) == lookDirection.x;
+            else if (source.y == target.y)
+                return Mathf.Sign(target.y - source.y) == lookDirection.y;
+            else
+                return false;
         }
 
     }

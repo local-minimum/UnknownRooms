@@ -487,7 +487,7 @@ namespace ProcRoom
 #if UNITY_EDITOR
 
         void OnGUI() {
-            if (GUI.Button(new Rect(20, 10, 80, 30), "Next Lvl"))
+            if (GUI.Button(new Rect(2, 2, 80, 30), "Next Lvl"))
                 Generate();
         }
 

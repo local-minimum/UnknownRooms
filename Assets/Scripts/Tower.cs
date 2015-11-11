@@ -30,9 +30,13 @@ namespace ProcRoom
         void Awake() {
             if (_instance == null)
             {
-                _instance = this;
-                player = FindObjectOfType<Player>();
-                agents.Add(player);
+                _instance = this;                
+                agents.AddRange(FindObjectsOfType<Agent>());
+                for (int i=0;i<agents.Count;i++)
+                {
+                    if (agents[i] is Player)
+                        player = agents[i] as Player;
+                }
                 
             } else if (_instance != this)
             {
@@ -151,7 +155,7 @@ namespace ProcRoom
 
         void OnGUI()
         {
-            GUI.TextArea(new Rect(210, 10, 100, 50), string.Format("Level:\t{0}", roomHistory.Count));
+            GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Level:\t{0}\nAgents:\t{1}\nActive:\t{2}", roomHistory.Count, agents.Count, activeAgent));
         }
 #endif
     }

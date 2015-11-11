@@ -16,9 +16,12 @@ namespace ProcRoom
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
 
-        Room room;
-
         Animator anim;
+
+        [SerializeField, Range(0, 2)]
+        float moveSpeed = 0.3f;
+
+        float lastMove;
 
         void Start()
         {
@@ -26,32 +29,23 @@ namespace ProcRoom
             anim = GetComponent<Animator>();
         }
 
-        void OnEnable()
+        bool moveTick
         {
-            Room.OnRoomGeneration += HandleNewRoom;
-            Tile.OnTileAction += HandleTileAction;
-            Projectile.OnProjectileHit += HandleProjectileHit;
+            get
+            {
+                if (Time.timeSinceLevelLoad - lastMove > moveSpeed)
+                {
+                    lastMove = Time.timeSinceLevelLoad;
+                    return true;
+                }
+                return false;
+            }
         }
 
-        void OnDisable()
+        protected override void HandleNewRoom(Room room, RoomData data)
         {
-            Room.OnRoomGeneration -= HandleNewRoom;
-            Tile.OnTileAction -= HandleTileAction;
-            Projectile.OnProjectileHit -= HandleProjectileHit;
-        }
-
-        private void HandleNewRoom(Room room, RoomData data)
-        {
-            roomWidth = data.width;
-            roomHeight = data.height;
-            this.room = room;
-            UpdatePlayerPosition(Coordinate.FromPosition(PlayerSpawnPosition(data), roomWidth));
-        }
-
-        private void HandleProjectileHit(Projectile projectile, Coordinate position)
-        {
-            if (position.Equals(_stats.position))
-                Hurt();
+            base.HandleNewRoom(room, data);
+            UpdatePosition(Coordinate.FromPosition(PlayerSpawnPosition(data), roomWidth));
         }
 
         int PlayerSpawnPosition(RoomData data)
@@ -76,9 +70,9 @@ namespace ProcRoom
         {
             if (!myTurn)            
                 return;
-            
 
-            if (Input.GetButtonDown("right"))
+
+            if (Input.GetButton("right") && moveTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Right))
                     AttemptMoveTo(_stats.position.RightSide());
@@ -88,7 +82,7 @@ namespace ProcRoom
                     anim.SetTrigger("Right");
                 }
             }
-            else if (Input.GetButtonDown("left"))
+            else if (Input.GetButton("left") && moveTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Left))
                     AttemptMoveTo(_stats.position.LeftSide());
@@ -98,7 +92,7 @@ namespace ProcRoom
                     anim.SetTrigger("Left");
                 }
             }
-            else if (Input.GetButtonDown("up"))
+            else if (Input.GetButton("up") && moveTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Up))
                     AttemptMoveTo(_stats.position.UpSide());
@@ -108,7 +102,7 @@ namespace ProcRoom
                     anim.SetTrigger("Up");
                 }
             }
-            else if (Input.GetButtonDown("down"))
+            else if (Input.GetButton("down") && moveTick)
             {
                 if (_stats.lookDirection.Equals(Coordinate.Down))
                     AttemptMoveTo(_stats.position.DownSide());
@@ -118,9 +112,9 @@ namespace ProcRoom
                     anim.SetTrigger("Down");
                 }
             }
-            else if (Input.GetButton("endTurn"))
-                actionPoints = 0;
-            else if (Input.GetButton("reload"))
+            else if (Input.GetButtonDown("endTurn"))
+                EndTurn();
+            else if (Input.GetButtonDown("reload"))
                 Reload();
             else if (Input.GetButton("shoot"))
                 Attack();
@@ -140,24 +134,15 @@ namespace ProcRoom
 
             if (tileType == TileType.Walkable || tileType == TileType.SpikeTrap || tileType == TileType.StairsUp) { 
                 
-                UpdatePlayerPosition(newPosition);
+                UpdatePosition(newPosition);
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
-                actionPoints--;
+                if (tileType == TileType.StairsUp)
+                    EndTurn();
+                else
+                    actionPoints--;
                 steps++;
             }
-
-        }
-
-        void UpdatePlayerPosition(Coordinate newPosition)
-        {
-            _stats.position = newPosition;
-            transform.position = room.GetTileCentre(_stats.position.ToPosition(roomWidth, roomHeight));
-        }
-
-        public override void Enact()
-        {
-            actionPoints = _stats.actionPointsPerTurn;
 
         }
 
@@ -174,11 +159,5 @@ namespace ProcRoom
             Tower.Reset();
         }
 
-#if UNITY_EDITOR
-
-        void OnGUI() {
-            GUI.TextArea(new Rect(110, 10, 100, 50), string.Format("Health:\t{0}\nAmmo:\t{1}\nSteps:\t{2}", _stats.health, _stats.ammo, steps));
-        }
-#endif
     }
 }

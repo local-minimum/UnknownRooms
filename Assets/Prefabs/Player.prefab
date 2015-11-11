@@ -117,15 +117,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01221c396d28cf44eab0cf28f9b58b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHealth: 7
-  ammmoFull: 11
-  actionPointsPerTurn: 3
-  evasion: 10
-  attack: 80
-  shootingRange: 4
-  shootingAccuracy: 10
-  minDistanceSpawnInFirstLevel: 8
+  _stats:
+    actionPointsPerTurn: 3
+    actionPoints: -1
+    maxHealth: 7
+    health: 0
+    maxAmmo: 11
+    ammo: 0
+    evasion: 10
+    position:
+      x: 0
+      y: 0
+    lookDirection:
+      x: 1
+      y: 0
   weapon: {fileID: 11457468}
+  minDistanceSpawnInFirstLevel: 8
 --- !u!114 &11457468
 MonoBehaviour:
   m_ObjectHideFlags: 1
