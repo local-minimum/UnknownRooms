@@ -248,9 +248,9 @@ namespace ProcRoom
         public static bool IsInLookDirection(Coordinate source, Coordinate target, Coordinate lookDirection)
         {
             if (source.x == target.x)
-                return Mathf.Sign(target.x - source.x) == lookDirection.x;
-            else if (source.y == target.y)
                 return Mathf.Sign(target.y - source.y) == lookDirection.y;
+            else if (source.y == target.y)
+                return Mathf.Sign(target.x - source.x) == lookDirection.x;
             else
                 return false;
         }

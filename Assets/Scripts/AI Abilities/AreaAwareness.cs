@@ -12,10 +12,10 @@ namespace ProcRoom.AI.Abilities
         {
             if (RoomMath.GetManhattanDistance(monster.player.position, monster.position) <= awarenessRange)
             {
+                Debug.Log("Enacting Area Awareness");
                 monster.trackingPlayer = true;
-                return base.Enact();
             }
-            return false;
+            return base.Enact();
         }
     }
 }

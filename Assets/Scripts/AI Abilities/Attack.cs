@@ -9,12 +9,11 @@ namespace ProcRoom.AI.Abilities
 
         public override bool Enact()
         {
-            if (Allowed && base.Enact())
-            {
-                SendMessage("Attack");
-                return true;
-            }
-            return false;
+
+            Debug.Log("Enacting Attack");
+            SendMessage("Attack", SendMessageOptions.RequireReceiver);
+
+            return base.Enact();
         }
     }
     
