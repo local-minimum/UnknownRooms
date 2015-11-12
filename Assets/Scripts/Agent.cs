@@ -86,6 +86,8 @@ namespace ProcRoom
 
             set
             {
+                lastMove = Time.timeSinceLevelLoad;
+
                 if ((value.x ^ value.y) == 0 || Mathf.Abs(value.x * value.y) > 1)
                 {
                     Debug.LogWarning(string.Format("Attempting invalid look direction x: {0} y: {1}", value.x, value.y));

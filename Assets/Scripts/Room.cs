@@ -118,7 +118,7 @@ namespace ProcRoom
                 OnRoomGeneration(this, GetData());
         }
 
-        RoomData GetData()
+        public RoomData GetData()
         {
             var data = new RoomData();
             data.biasTowardsGrowingIslands = biasTowardsGrowingTheIslands;
@@ -415,6 +415,8 @@ namespace ProcRoom
 
         public bool PassableTile(Coordinate position)
         {
+            if (!position.Inside(width, height))
+                return false;
             //TODO: Add check if occupied too
             var tileType = GetTileTypeAt(position);
             return (tileType == TileType.Walkable || tileType == TileType.SpikeTrap);

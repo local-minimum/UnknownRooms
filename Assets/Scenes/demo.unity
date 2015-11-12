@@ -193,6 +193,7 @@ GameObject:
   - 114: {fileID: 130402377}
   - 114: {fileID: 130402378}
   - 114: {fileID: 130402379}
+  - 114: {fileID: 130402373}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -200,6 +201,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &130402373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 130402372}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84ff49b0fbd88cd438f056a540bee601, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 2
+  allowancePerTurn: 7
+  playerInSight: 0
+  playerTracking: 0
 --- !u!4 &130402374
 Transform:
   m_ObjectHideFlags: 0
@@ -241,7 +257,6 @@ MonoBehaviour:
       y: 0
   weapon: {fileID: 130402376}
   moveSpeed: .400000006
-  trackingPlayer: 0
 --- !u!114 &130402376
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -51,10 +51,10 @@ namespace ProcRoom
                     position = (offset + selectedCoordinates[prevCoordIndex]).ToPosition(data.width, data.height);
                     if (!nextCandidates.Contains(position))
                     {
-                        position = (offset.Rotate90CCW() + selectedCoordinates[prevCoordIndex]).ToPosition(data.width, data.height);
+                        position = (offset.Rotated90CCW() + selectedCoordinates[prevCoordIndex]).ToPosition(data.width, data.height);
                         if (!nextCandidates.Contains(position))
                         {
-                            position = (offset.Rotate90CW() + selectedCoordinates[prevCoordIndex]).ToPosition(data.width, data.height);
+                            position = (offset.Rotated90CW() + selectedCoordinates[prevCoordIndex]).ToPosition(data.width, data.height);
                             if (!nextCandidates.Contains(position))
                                 return;
                         }

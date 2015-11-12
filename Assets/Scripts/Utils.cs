@@ -123,14 +123,19 @@ namespace ProcRoom
             return coord.x + coord.y * width;
         }
 
-        public static Coordinate Rotate90CCW(this Coordinate coord)
+        public static Coordinate Rotated90CCW(this Coordinate coord)
         {
             return new Coordinate(-coord.y, coord.x);
         }
 
-        public static Coordinate  Rotate90CW(this Coordinate coord)
+        public static Coordinate  Rotated90CW(this Coordinate coord)
         {
             return new Coordinate(coord.y, -coord.x);
+        }
+
+        public static Coordinate Rotated180(this Coordinate coord)
+        {
+            return new Coordinate(-coord.y, -coord.x);
         }
 
         public static Coordinate LeftSide(this Coordinate coord)
@@ -151,6 +156,24 @@ namespace ProcRoom
         public static Coordinate DownSide(this Coordinate coord)
         {
             return new Coordinate(coord.x, coord.y - 1);
+        }
+
+        public static IEnumerable<Coordinate> Neighbours(this Coordinate coord)
+        {
+            yield return coord.LeftSide();
+            yield return coord.UpSide();
+            yield return coord.LeftSide();
+            yield return coord.DownSide();
+        }
+
+        public static bool Inside(this Coordinate coord, int width, int height)
+        {
+            return coord.x >= 0 && coord.y >= 0 && coord.x < width && coord.y < height;
+        }
+
+        public static bool Inside(this Coordinate coord, int[,] map2D)
+        {
+            return coord.Inside(map2D.GetLength(0), map2D.GetLength(1));
         }
 
         public static bool Inside(this Range range, int value)
@@ -370,6 +393,76 @@ namespace ProcRoom
                     borderingTiles.Add(candidates[i]);
             }
             return borderingTiles;
+        }
+
+        public static bool Passable(Coordinate coord, int[] tileTypeMap, int width, int height)
+        {
+            var tileType = tileTypeMap[coord.ToPosition(width, height)];
+            return tileType == (int)TileType.Walkable || tileType == (int)TileType.SpikeTrap;
+        }
+
+        static int[,] GetDistanceMapInit(int width, int height)
+        {
+            int[,] distances = new int[width, height];
+            var maxDistance = width * height;
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                    distances[x, y] = maxDistance;
+            }
+            return distances;
+        }
+
+        static Coordinate[] PathFromDistanceMap(int[,] map, Coordinate pathStart)
+        {
+            var path = new Coordinate[map[pathStart.x, pathStart.y]];
+            var neighbours = new List<Coordinate>();
+            for (int index=path.Length - 1; index >=0; index--)
+            {
+                path[index] = pathStart;
+                neighbours.Clear();
+                foreach (Coordinate neighbour in pathStart.Neighbours())
+                {
+                    if (neighbour.Inside(map) && map[pathStart.x, pathStart.y] == map[neighbour.x, neighbour.y] + 1)
+                        neighbours.Add(neighbour);
+                }
+                if (neighbours.Count > 0)
+                    pathStart = neighbours[Random.Range(0, neighbours.Count)];
+                else
+                    return new Coordinate[0];
+            }
+            return path;
+        }
+
+        public static Coordinate[] FindShortestPath(Coordinate source, Coordinate target, int[] tileTypeMap, int width)
+        {
+            int height = tileTypeMap.Length / width;
+
+            int[,] distances = GetDistanceMapInit(width, height);
+            distances[source.x, source.y] = 0;
+
+            var queue = new Queue<Coordinate>();
+            queue.Enqueue(source);
+            
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                var nextDist = distances[current.x, current.y] + 1;
+
+                foreach (Coordinate neighbour in current.Neighbours())
+                {
+                    
+                    if (distances[neighbour.x, neighbour.y] > nextDist && Passable(neighbour, tileTypeMap, width, height))
+                    {
+                        distances[neighbour.x, neighbour.y] = nextDist;
+                        if (!queue.Contains(neighbour) && nextDist < distances[target.x, target.y] && neighbour.Inside(width, height))
+                            queue.Enqueue(neighbour);
+                    }
+
+                }
+            }
+
+            return PathFromDistanceMap(distances, target);
         }
     }
 }

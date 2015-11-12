@@ -10,8 +10,58 @@ namespace ProcRoom
         AI.Abilities.Ability[] abilities;
 
         [HideInInspector]
-        public bool trackingPlayer = false;
+        bool _trackingPlayer = false;
 
+        bool queuedMove = false;
+        Coordinate moveTarget;
+
+        public bool trackingPlayer
+        {
+            get
+            {
+                return _trackingPlayer;
+            }
+
+            set
+            {
+                if (value) {
+                    _playerLastSeenPosition = player.position;
+                    _playerLastSeenDirection = player.lookDirection;
+                    _hasEverSeenPlayer = true;
+                }
+                _trackingPlayer = value;
+            }
+        }
+
+        bool _hasEverSeenPlayer = false;
+
+        public bool hasEverSeenPlayer
+        {
+            get
+            {
+                return _hasEverSeenPlayer;
+            }
+        }
+        Coordinate _playerLastSeenPosition;
+
+        public Coordinate playerLastSeenPosition
+        {
+            get
+            {
+                return _playerLastSeenPosition;
+            }
+        }
+
+        Coordinate _playerLastSeenDirection;
+
+        public Coordinate playerLastSeenDirection
+        {
+            get
+            {
+                return _playerLastSeenDirection;
+            }
+        }
+        
         public Player player
         {
             get
@@ -19,6 +69,7 @@ namespace ProcRoom
                 return _player;
             }
         }
+
 
         public bool PlayerInSight
         {
@@ -57,19 +108,35 @@ namespace ProcRoom
             }
         }
 
+        public void RequestMove(Coordinate target)
+        {
+            if (RoomMath.GetManhattanDistance(target, position) == 1 && target.Inside(roomWidth, roomHeight))
+            {
+                moveTarget = target;
+                queuedMove = true;
+            }
+        }
+
         void Update()
         {
-            if (!myTurn)
+            if (!myTurn || !actionTick)
                 return;
+
+            if (queuedMove)
+            {
+                UpdatePosition(moveTarget);
+                actionPoints--;
+                queuedMove = false;
+                return;
+            }
 
             var usables = GetUsableAbilities();
 
             if (usables.Count == 0)
                 EndTurn();
-            else if (actionTick)
+            else
             {
                 var ability = SelectAbility(usables);
-
                 ability.Enact();
             }
         }
@@ -88,6 +155,7 @@ namespace ProcRoom
 
         AI.Abilities.Ability SelectAbility(List<AI.Abilities.Ability> options)
         {
+            Debug.Log(string.Format("{0} abilities possible", options.Count));
             return options[Random.Range(0, options.Count)];
         }
 

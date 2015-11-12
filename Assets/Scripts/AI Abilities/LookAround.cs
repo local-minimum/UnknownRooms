@@ -5,7 +5,7 @@ namespace ProcRoom.AI.Abilities
 {
     public class LookAround : Ability
     {
-        Coordinate GetRandomDirectionFrom(Coordinate coordinate)
+        public static Coordinate GetRandomDirectionFrom(Coordinate coordinate)
         {
             if (Random.value < 0.5)
             {
