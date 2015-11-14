@@ -433,9 +433,15 @@ namespace ProcRoom
         {
             if (!position.Inside(width, height))
                 return false;
-            //TODO: Add check if occupied too
+            
             var tileType = GetTileTypeAt(position);
-            return (tileType == TileType.Walkable || tileType == TileType.SpikeTrap);
+            if (!(tileType == TileType.Walkable || tileType == TileType.SpikeTrap))
+                return false;
+            for (int i = 0, l = Tower.Agents; i < l; i++) {
+                if (Tower.GetAgentPosition(i) == position)
+                    return false;
+            }
+            return true;
         }
 
         void SetDistanceMap(int source)

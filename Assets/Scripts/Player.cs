@@ -52,7 +52,7 @@ namespace ProcRoom
                 return;
 
 
-            if (Input.GetButton("right") && actionTick)
+            if (Input.GetButton("right") && actionTick())
             {
                 if (_stats.lookDirection.Equals(Coordinate.Right))
                     AttemptMoveTo(_stats.position.RightSide());
@@ -62,7 +62,7 @@ namespace ProcRoom
 
                 }
             }
-            else if (Input.GetButton("left") && actionTick)
+            else if (Input.GetButton("left") && actionTick())
             {
                 if (_stats.lookDirection.Equals(Coordinate.Left))
                     AttemptMoveTo(_stats.position.LeftSide());
@@ -72,7 +72,7 @@ namespace ProcRoom
 
                 }
             }
-            else if (Input.GetButton("up") && actionTick)
+            else if (Input.GetButton("up") && actionTick())
             {
                 if (_stats.lookDirection.Equals(Coordinate.Up))
                     AttemptMoveTo(_stats.position.UpSide());
@@ -81,7 +81,7 @@ namespace ProcRoom
                     lookDirection = Coordinate.Up;
                 }
             }
-            else if (Input.GetButton("down") && actionTick)
+            else if (Input.GetButton("down") && actionTick())
             {
                 if (_stats.lookDirection.Equals(Coordinate.Down))
                     AttemptMoveTo(_stats.position.DownSide());

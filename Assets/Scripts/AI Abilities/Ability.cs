@@ -21,6 +21,13 @@ namespace ProcRoom.AI.Abilities
         [SerializeField]
         RequirementTypes playerTracking = RequirementTypes.None;
 
+        [SerializeField, Range(1, 100)]
+        int priority = 1;
+
+        public int Priority
+        {
+            get { return priority; }
+        }
         protected int usageCurrentTurn;
 
         public virtual bool Allowed

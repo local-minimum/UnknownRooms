@@ -52,22 +52,25 @@ namespace ProcRoom
         Animator anim;
 
         [SerializeField, Range(0, 2)]
-        float moveSpeed = 0.3f;
+        float actionSpeed = 0.3f;
 
-        float lastMove;
+        float lastAction;
 
-        protected bool actionTick
+        protected bool actionTick()
         {
-            get
+            if (actionAllowed)
             {
-                if (Time.timeSinceLevelLoad - lastMove > moveSpeed)
-                {
-                    lastMove = Time.timeSinceLevelLoad;
-                    return true;
-                }
-                return false;
+                lastAction = Time.timeSinceLevelLoad;
+                return true;
             }
+            return false;
         }
+
+        protected bool actionAllowed
+        {
+            get { return Time.timeSinceLevelLoad - lastAction > actionSpeed; }
+        }
+
 
         public Coordinate position
         {
@@ -86,7 +89,7 @@ namespace ProcRoom
 
             set
             {
-                lastMove = Time.timeSinceLevelLoad;
+                lastAction = Time.timeSinceLevelLoad;
 
                 if ((value.x ^ value.y) == 0 || Mathf.Abs(value.x * value.y) > 1)
                 {

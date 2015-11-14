@@ -52,7 +52,8 @@ namespace ProcRoom.AI.Abilities
                 }
             }
 
-            return base.Enact();
+            base.Enact();
+            return false;
         }
     }
 }

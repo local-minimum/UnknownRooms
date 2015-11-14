@@ -139,6 +139,21 @@ namespace ProcRoom
             }
         }
 
+        public static int Agents
+        {
+            get { return _instance.agents.Count; }
+        }
+
+        public static Coordinate GetAgentPosition(int agentIndex)
+        {
+            var agent = _instance.agents[agentIndex];
+
+            if (agent.alive)
+                return agent.position;
+            else
+                return Coordinate.InvalidPlacement;
+        }
+
         public static void Reset()
         {
             _instance.roomHistory.Clear();

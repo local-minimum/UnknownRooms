@@ -217,6 +217,7 @@ MonoBehaviour:
   allowancePerTurn: 7
   playerInSight: 0
   playerTracking: 0
+  priority: 70
 --- !u!4 &130402374
 Transform:
   m_ObjectHideFlags: 0
@@ -243,7 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stats:
-    actionPointsPerTurn: 3
+    actionPointsPerTurn: 5
     actionPoints: -1
     maxHealth: 7
     health: 3
@@ -285,6 +286,7 @@ MonoBehaviour:
   allowancePerTurn: 10
   playerInSight: 1
   playerTracking: 0
+  priority: 30
 --- !u!114 &130402378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,6 +302,7 @@ MonoBehaviour:
   allowancePerTurn: 1
   playerInSight: 0
   playerTracking: 2
+  priority: 80
   awarenessRange: 5
 --- !u!114 &130402379
 MonoBehaviour:
@@ -316,6 +319,7 @@ MonoBehaviour:
   allowancePerTurn: 4
   playerInSight: 2
   playerTracking: 0
+  priority: 1
 --- !u!114 &130402380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,6 +335,7 @@ MonoBehaviour:
   allowancePerTurn: 7
   playerInSight: 2
   playerTracking: 2
+  priority: 4
   eagerness: .699999988
 --- !u!1 &212562600
 GameObject:
@@ -567,6 +572,7 @@ MonoBehaviour:
   allowancePerTurn: 10
   playerInSight: 1
   playerTracking: 0
+  priority: 1
 --- !u!4 &1332188266
 Transform:
   m_ObjectHideFlags: 0
@@ -594,6 +600,7 @@ MonoBehaviour:
   allowancePerTurn: 1
   playerInSight: 0
   playerTracking: 2
+  priority: 1
   awarenessRange: 3
 --- !u!1 &1338904141
 GameObject:

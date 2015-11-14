@@ -119,13 +119,14 @@ namespace ProcRoom
 
         void Update()
         {
-            if (!myTurn || !actionTick)
+            if (!myTurn || !actionAllowed)
                 return;
 
             if (queuedMove)
             {
                 UpdatePosition(moveTarget);
                 actionPoints--;
+                actionTick();
                 queuedMove = false;
                 return;
             }
@@ -137,7 +138,8 @@ namespace ProcRoom
             else
             {
                 var ability = SelectAbility(usables);
-                ability.Enact();
+                if (ability.Enact())
+                    actionTick();
             }
         }
 
@@ -155,7 +157,18 @@ namespace ProcRoom
 
         AI.Abilities.Ability SelectAbility(List<AI.Abilities.Ability> options)
         {
-            Debug.Log(string.Format("{0} abilities possible", options.Count));
+            int totalPrio = 0;
+            for (int i = 0, l = options.Count; i < l; i++)
+                totalPrio += options[i].Priority;
+
+            int roll = Random.Range(0, totalPrio);
+            for (int i = 0, l = options.Count; i< l; i ++)
+            {
+                if (roll <= options[i].Priority)
+                    return options[i];
+                else
+                    roll -= options[i].Priority;
+            }
             return options[Random.Range(0, options.Count)];
         }
 

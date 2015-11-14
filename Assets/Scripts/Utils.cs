@@ -35,6 +35,11 @@ namespace ProcRoom
         static Coordinate _Up = new Coordinate(0, 1);
         static Coordinate _Down = new Coordinate(0, -1);
 
+        public static Coordinate InvalidPlacement
+        {
+            get { return new Coordinate(-1, -1); }
+        }
+
         public int x;
         public int y;
 

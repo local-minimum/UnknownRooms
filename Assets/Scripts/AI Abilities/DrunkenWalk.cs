@@ -36,7 +36,8 @@ namespace ProcRoom.AI.Abilities
                     if (AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated180())) ;
                 }
             }
-            return base.Enact();
+            base.Enact();
+            return false;
         }
     }
 }

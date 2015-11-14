@@ -15,7 +15,8 @@ namespace ProcRoom.AI.Abilities
                 Debug.Log("Enacting Area Awareness");
                 monster.trackingPlayer = true;
             }
-            return base.Enact();
+            base.Enact();
+            return false;
         }
     }
 }
