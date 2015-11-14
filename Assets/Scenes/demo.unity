@@ -216,7 +216,7 @@ MonoBehaviour:
   buildCost: 2
   allowancePerTurn: 7
   playerInSight: 0
-  playerTracking: 0
+  playerTracking: 1
   priority: 70
 --- !u!4 &130402374
 Transform:
@@ -258,7 +258,7 @@ MonoBehaviour:
       x: 1
       y: 0
   weapon: {fileID: 130402376}
-  moveSpeed: .400000006
+  actionSpeed: .300000012
 --- !u!114 &130402376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,7 +336,7 @@ MonoBehaviour:
   playerInSight: 2
   playerTracking: 2
   priority: 4
-  eagerness: .699999988
+  eagerness: .899999976
 --- !u!1 &212562600
 GameObject:
   m_ObjectHideFlags: 0

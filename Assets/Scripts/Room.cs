@@ -444,6 +444,11 @@ namespace ProcRoom
             return true;
         }
 
+        public Coordinate GetRandomFreeTileCoordinate(Coordinate referencePosition, int minDistance)
+        {
+            return Coordinate.InvalidPlacement;
+        }
+
         void SetDistanceMap(int source)
         {
             distanceMap = new int[tileTypeMap.Length];
