@@ -35,19 +35,20 @@ namespace ProcRoom.AI.Abilities
                 if (path.Length == 0)
                 {
                     Coordinate playerPosition = monster.trackingPlayer ? monster.player.position : monster.playerLastSeenPosition;
-                    var roomData = Tower.ActiveRoom.GetData();
-                    path = RoomSearch.FindShortestPath(monster.position, playerPosition, roomData.tileTypeMap, roomData.width);
+                    path = RoomSearch.FindShortestPath(Tower.ActiveRoom, monster.position, playerPosition);
                     Debug.Log("Shortest path is " + path.Length);
-                    pathPosition = path.Length > 0 ? 0 : -1;
+                    pathPosition = -1;
                 }
-                if (pathPosition >= 0)
+                pathPosition++;
+                if (pathPosition < path.Length)
                 {
-                    pathPosition++;
                     if (pathPosition < path.Length - (monster.trackingPlayer ? 1 : 0))
                     {
-                        monster.lookDirection = path[pathPosition] - path[pathPosition - 1];
+                        monster.lookDirection = path[pathPosition] - monster.position;
                         monster.RequestMove(path[pathPosition]);
                     }
+                    else
+                        path = new Coordinate[0];
                 }
             }
 

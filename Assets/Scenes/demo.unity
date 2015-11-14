@@ -194,6 +194,7 @@ GameObject:
   - 114: {fileID: 130402378}
   - 114: {fileID: 130402379}
   - 114: {fileID: 130402373}
+  - 114: {fileID: 130402380}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -299,7 +300,7 @@ MonoBehaviour:
   allowancePerTurn: 1
   playerInSight: 0
   playerTracking: 2
-  awarenessRange: 3
+  awarenessRange: 5
 --- !u!114 &130402379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,6 +316,22 @@ MonoBehaviour:
   allowancePerTurn: 4
   playerInSight: 2
   playerTracking: 0
+--- !u!114 &130402380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 130402372}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f3e567f2136d1249a85c11ad49d7cd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 5
+  allowancePerTurn: 7
+  playerInSight: 2
+  playerTracking: 2
+  eagerness: .699999988
 --- !u!1 &212562600
 GameObject:
   m_ObjectHideFlags: 0

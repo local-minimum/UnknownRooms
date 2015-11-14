@@ -72,6 +72,16 @@ namespace ProcRoom
             return new Coordinate(A.x + B.x, A.y + B.y);
         }
 
+        public static bool operator ==(Coordinate A, Coordinate B)
+        {
+            return object.ReferenceEquals(A, B) || A.Equals(B);
+        }
+
+        public static bool operator !=(Coordinate A, Coordinate B)
+        {
+            return !object.ReferenceEquals(A, B) || !A.Equals(B);
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is Coordinate))
@@ -160,7 +170,7 @@ namespace ProcRoom
 
         public static IEnumerable<Coordinate> Neighbours(this Coordinate coord)
         {
-            yield return coord.LeftSide();
+            yield return coord.RightSide();
             yield return coord.UpSide();
             yield return coord.LeftSide();
             yield return coord.DownSide();
@@ -395,12 +405,6 @@ namespace ProcRoom
             return borderingTiles;
         }
 
-        public static bool Passable(Coordinate coord, int[] tileTypeMap, int width, int height)
-        {
-            var tileType = tileTypeMap[coord.ToPosition(width, height)];
-            return tileType == (int)TileType.Walkable || tileType == (int)TileType.SpikeTrap;
-        }
-
         static int[,] GetDistanceMapInit(int width, int height)
         {
             int[,] distances = new int[width, height];
@@ -413,30 +417,40 @@ namespace ProcRoom
             return distances;
         }
 
-        static Coordinate[] PathFromDistanceMap(int[,] map, Coordinate pathStart)
+        static Coordinate[] PathFromDistanceMap(int[,] map, Coordinate pathPosition)
         {
-            var path = new Coordinate[map[pathStart.x, pathStart.y]];
+            var path = new Coordinate[map[pathPosition.x, pathPosition.y]];
+            Debug.Log("Valid path at " + path.Length);
             var neighbours = new List<Coordinate>();
             for (int index=path.Length - 1; index >=0; index--)
             {
-                path[index] = pathStart;
-                neighbours.Clear();
-                foreach (Coordinate neighbour in pathStart.Neighbours())
+                path[index] = pathPosition;
+
+                foreach (Coordinate neighbour in pathPosition.Neighbours())
                 {
-                    if (neighbour.Inside(map) && map[pathStart.x, pathStart.y] == map[neighbour.x, neighbour.y] + 1)
+                    if (neighbour.Inside(map) && map[neighbour.x, neighbour.y] == map[pathPosition.x, pathPosition.y] -1 )
                         neighbours.Add(neighbour);
+                    /*else
+                        Debug.Log(string.Format("{0},{1} has value {2} should be {3}", 
+                            neighbour.x,
+                            neighbour.y,
+                            neighbour.Inside(map) ? map[neighbour.x, neighbour.y].ToString() : "outside map", 
+                            map[pathPosition.x, pathPosition.y] - 1));*/
                 }
                 if (neighbours.Count > 0)
-                    pathStart = neighbours[Random.Range(0, neighbours.Count)];
+                    pathPosition = neighbours[Random.Range(0, neighbours.Count)];
                 else
                     return new Coordinate[0];
+
+                neighbours.Clear();
             }
             return path;
         }
 
-        public static Coordinate[] FindShortestPath(Coordinate source, Coordinate target, int[] tileTypeMap, int width)
+        public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target)
         {
-            int height = tileTypeMap.Length / width;
+            int height = room.Height;
+            int width = room.Width;
 
             int[,] distances = GetDistanceMapInit(width, height);
             distances[source.x, source.y] = 0;
@@ -452,7 +466,7 @@ namespace ProcRoom
                 foreach (Coordinate neighbour in current.Neighbours())
                 {
                     
-                    if (distances[neighbour.x, neighbour.y] > nextDist && Passable(neighbour, tileTypeMap, width, height))
+                    if ((neighbour == target || room.PassableTile(neighbour)) && distances[neighbour.x, neighbour.y] > nextDist)
                     {
                         distances[neighbour.x, neighbour.y] = nextDist;
                         if (!queue.Contains(neighbour) && nextDist < distances[target.x, target.y] && neighbour.Inside(width, height))

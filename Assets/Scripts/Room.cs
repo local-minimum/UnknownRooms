@@ -133,6 +133,22 @@ namespace ProcRoom
             return data;
         }
 
+        public int Width
+        {
+            get
+            {
+                return width;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return height;
+            }
+        }
+
         void GenerateBlank()
         {
             tileTypeMap = new int[width * height];

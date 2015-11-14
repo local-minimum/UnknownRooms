@@ -6,9 +6,12 @@ namespace ProcRoom.AI.Abilities
     public class DrunkenWalk : Ability
     {
 
+        [SerializeField, Range(0, 1)]
+        float eagerness = 0.7f;
+
         bool AttemptMove(Coordinate lookDirection)
         {
-            if (Random.value < 0.5f)
+            if (Random.value > eagerness)
                 return false;
 
             var suggestedPosition = monster.position + lookDirection;
