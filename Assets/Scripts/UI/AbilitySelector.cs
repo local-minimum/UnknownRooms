@@ -55,6 +55,11 @@ namespace ProcRoom.UI
             this.selectors = new AbilityStat[nextIndex];
             System.Array.Copy(selectors, this.selectors, nextIndex);
             OnNewPointsAvailable(CharacterCreation.Points);
+            for (int i=0; i<this.selectors.Length; i++)
+            {
+                if (this.selectors[i].selected)
+                    selected = this.selectors[i];
+            }
         }
                 
         public void EmulateSelect(AbilityStat selector)
