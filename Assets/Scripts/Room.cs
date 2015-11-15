@@ -81,7 +81,7 @@ namespace ProcRoom
         [SerializeField]
         int spikeTrapClusterSize = 3;
 
-        bool roomGenerating = false;
+        bool roomGenerating = true;
         
         [SerializeField, Range(0, 2)]
         float roomStartDelay = 1f;
@@ -106,7 +106,7 @@ namespace ProcRoom
 
         void Start()
         {
-            Generate();
+ 
             if (runOnRealTime)
                 StartCoroutine(InfiniWave());
         }
@@ -499,6 +499,7 @@ namespace ProcRoom
                     }
                 }
             }
+            Debug.LogWarning("No valid position found");
             return Coordinate.InvalidPlacement;
         }
 
@@ -533,11 +534,15 @@ namespace ProcRoom
         IEnumerator InfiniWave()
         {
             while (true) {
-                if (wavePeak > highestDistance)
-                    NewWaveSource();
+                if (!isGenerating)
+                {
 
-                yield return StartCoroutine(PropagateWave());
-                wavePeak++;
+                    if (wavePeak > highestDistance)
+                        NewWaveSource();
+
+                    yield return StartCoroutine(PropagateWave());
+                    wavePeak++;
+                }
                 yield return new WaitForSeconds(interWaveDelay);
             }
         }

@@ -56,6 +56,16 @@ namespace ProcRoom
             this.y = Mathf.RoundToInt(y);
         }
 
+        public Coordinate asDirection
+        {
+            get
+            {
+                if (Mathf.Abs(x) > Mathf.Abs(y))
+                    return new Coordinate(Mathf.Sign(x), 0);
+                else
+                    return new Coordinate(0, Mathf.Sign(y));
+            }
+        }
 
         public static Coordinate FromPosition(int index, int width)
         {
@@ -488,6 +498,9 @@ namespace ProcRoom
 
         public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target)
         {
+            if (source == Coordinate.InvalidPlacement || target == Coordinate.InvalidPlacement)
+                return new Coordinate[0];
+
             var distances = GetDistanceMap(room, source);
             foreach (Coordinate neighbour in target.Neighbours())
             {
@@ -496,6 +509,24 @@ namespace ProcRoom
             }
             
             return PathFromDistanceMap(distances, target);
+        }
+
+        public static bool IsClearStraightPath(Room room, Coordinate source, Coordinate target)
+        {
+            var offset = (target - source).asDirection;
+            while (true)
+            {
+                source += offset;
+                if (source == target)
+                    return true;
+                else if (!source.Inside(room.Width, room.Height))
+                    return false;
+                else if (!room.PassableTile(source))
+                    return false;
+                
+            }
+            
+            
         }
     }
 }

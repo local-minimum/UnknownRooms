@@ -11,7 +11,7 @@ namespace ProcRoom.AI.Abilities
             get
             {
                 if (monster.trackingPlayer)
-                    return base.Allowed && monster.weaponRange < RoomMath.GetManhattanDistance(monster.player.position, monster.position);
+                    return base.Allowed && !monster.canShootPlayer;
                 else
                     return base.Allowed && monster.hasEverSeenPlayer && !monster.position.Equals(monster.playerLastSeenPosition); 
             }

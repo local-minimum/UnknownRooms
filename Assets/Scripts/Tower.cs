@@ -11,7 +11,7 @@ namespace ProcRoom
         List<RoomData> roomHistory = new List<RoomData>();
         List<Agent> agents = new List<Agent>();
         int activeAgent = 0;
-        int activeLevel = 0;
+        int activeLevel = -1;
 
         Room room;
         Player player;
@@ -23,6 +23,8 @@ namespace ProcRoom
         {
             get
             {
+                if (_instance.room == null)
+                    _instance.room = FindObjectOfType<Room>();
                 return _instance.room;
             }
         }
@@ -144,6 +146,18 @@ namespace ProcRoom
             get { return _instance.agents.Count; }
         }
 
+        bool AllAgentsReady
+        {
+            get
+            {
+                for (int i=0, l=agents.Count;i< l;i++)
+                {
+                    if (!agents[i].isActiveAndEnabled)
+                        return false;
+                }
+                return true;
+            }
+        }
         public static Coordinate GetAgentPosition(int agentIndex)
         {
             var agent = _instance.agents[agentIndex];
@@ -164,6 +178,15 @@ namespace ProcRoom
         public void animateRoom()
         {
             StartCoroutine(_instance.room.Enact());
+        }
+
+        void Update()
+        {
+            if (activeLevel < 0 && AllAgentsReady && Time.timeSinceLevelLoad > 1f)
+            {
+                activeLevel = 0;
+                ActiveRoom.Generate();
+            }
         }
 
 #if UNITY_EDITOR

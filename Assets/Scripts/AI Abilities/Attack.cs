@@ -11,7 +11,7 @@ namespace ProcRoom.AI.Abilities
         {
             get
             {
-                return base.Allowed && monster.weaponRange >= RoomMath.GetManhattanDistance(monster.player.position, monster.position);
+                return base.Allowed && monster.canShootPlayer;
             }
         }
 

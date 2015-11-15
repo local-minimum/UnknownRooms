@@ -123,7 +123,7 @@ namespace ProcRoom
                     }
                 }
             }
-        }
+        }        
 
         public int actionPoints
         {
@@ -144,7 +144,7 @@ namespace ProcRoom
         {
             get
             {
-                return !room.isGenerating && !weapon.isShooting && actionPoints > 0;
+                return room != null && !room.isGenerating && !weapon.isShooting && actionPoints > 0;
             }
         }
 
@@ -154,6 +154,20 @@ namespace ProcRoom
             get
             {
                 return _stats.health > 0;
+            }
+
+            protected set
+            {
+                _stats.health = value ? _stats.maxHealth : 0;
+                if (anim)
+                {
+                    if (value)
+                        anim.StartPlayback();
+                    else
+                        anim.Stop();
+                }
+                foreach (var rend in GetComponentsInChildren<SpriteRenderer>())
+                    rend.enabled = value;
             }
 
         }

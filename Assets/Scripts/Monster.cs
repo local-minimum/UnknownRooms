@@ -82,6 +82,15 @@ namespace ProcRoom
             }
         }
 
+        public bool canShootPlayer
+        {
+            get {
+                var distOK = weaponRange <= RoomMath.GetManhattanDistance(player.position, position);
+                var offset = player.position - position;
+                return distOK && RoomSearch.IsClearStraightPath(room, position, player.position);
+            }
+        }
+
         void Awake()
         {
             _player = FindObjectOfType<Player>();
@@ -89,26 +98,37 @@ namespace ProcRoom
             lookDirection = _stats.lookDirection;
             for (int i = 0; i < abilities.Length; i++)
                 abilities[i].enabled = true;
+            alive = false;
         }
 
         
         protected override void Death()
         {
             enabled = false;
-            foreach(var rend in GetComponentsInChildren<SpriteRenderer>())
-                rend.enabled = false;
+            alive = false;
         }
 
         protected override void HandleNewRoom(Room room, RoomData data)
         {
+            queuedMove = false;
             base.HandleNewRoom(room, data);
+            alive = false;
+            StartCoroutine(delayMonsterSpawn());
+        }
+
+        IEnumerator<WaitForSeconds> delayMonsterSpawn()
+        {
+            yield return new WaitForSeconds(0.5f);
             int minDistance = minSpawnDistanceToPlayer;
             Coordinate pos = Coordinate.InvalidPlacement;
-            do {
+            do
+            {
                 pos = room.GetRandomFreeTileCoordinate(player.position, minDistance);
                 minDistance--;
             } while (pos == Coordinate.InvalidPlacement);
+            Debug.Log(name + string.Format(" will start level at {0},{1}", pos.x, pos.y));
             UpdatePosition(pos);
+            alive = true;
 
         }
 

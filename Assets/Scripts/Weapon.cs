@@ -4,6 +4,7 @@ using System.Collections;
 
 namespace ProcRoom
 {
+    [System.Serializable]
     public struct WeaponStats
     {
         public int attack;
@@ -33,6 +34,7 @@ namespace ProcRoom
     public class Weapon : MonoBehaviour
     {
 
+        [SerializeField]
         WeaponStats _stats = WeaponStats.DefaultWeapon;
 
         [SerializeField]
