@@ -19,6 +19,7 @@ namespace ProcRoom.AI.Abilities
         {
             
             Debug.Log("Enacting Attack");
+            monster.lookDirection = (monster.player.position - monster.position).asDirection;
             SendMessage("Attack", SendMessageOptions.RequireReceiver);
 
             return base.Enact();

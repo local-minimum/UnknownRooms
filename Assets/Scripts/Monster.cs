@@ -85,8 +85,9 @@ namespace ProcRoom
         public bool canShootPlayer
         {
             get {
-                var distOK = weaponRange <= RoomMath.GetManhattanDistance(player.position, position);
-                var offset = player.position - position;
+                var distOK = weaponRange >= RoomMath.GetManhattanDistance(player.position, position);
+                
+                //Debug.Log("Within range " + distOK + "( " + weaponRange + " <= " + RoomMath.GetManhattanDistance(player.position, position));
                 return distOK && RoomSearch.IsClearStraightPath(room, position, player.position);
             }
         }

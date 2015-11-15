@@ -67,6 +67,11 @@ namespace ProcRoom
             }
         }
 
+        public override string ToString()
+        {
+            return string.Format("<{0},{1}>", x, y);
+        }
+
         public static Coordinate FromPosition(int index, int width)
         {
             return new Coordinate(index % width, index / width);
@@ -514,6 +519,7 @@ namespace ProcRoom
         public static bool IsClearStraightPath(Room room, Coordinate source, Coordinate target)
         {
             var offset = (target - source).asDirection;
+            Debug.Log(string.Format("{0} -> {1} using {2}", source, target, offset));
             while (true)
             {
                 source += offset;
