@@ -3,8 +3,12 @@ using System.Collections.Generic;
 
 namespace ProcRoom
 {
+    public delegate void NewActiveAgent(Agent agent);
+
     public class Tower : MonoBehaviour
     {
+
+        public static event NewActiveAgent OnNewActiveAgent;
 
         static Tower _instance;
 
@@ -136,6 +140,8 @@ namespace ProcRoom
                     if (activeAgent >= agents.Count)
                         activeAgent = 0;
                 } while (!agents[activeAgent].alive);
+                if (OnNewActiveAgent != null)
+                    OnNewActiveAgent(agents[activeAgent]);
                 agents[activeAgent].Enact();
 
             }
