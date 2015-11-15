@@ -6,13 +6,6 @@ namespace ProcRoom.AI.Abilities
     public class GetInRange : AimedWalk
     {
 
-        public override void NewTurn()
-        {
-            base.NewTurn();
-            pathPosition = -1;
-            path = new Coordinate[0];
-        }
-
         public override bool Allowed
         {
             get
@@ -32,6 +25,8 @@ namespace ProcRoom.AI.Abilities
         public override bool Enact()
         {
             pathTruncation = monster.trackingPlayer ? 1 : 0;
+            if (monster.trackingPlayer && PathPosition(monster.player.position) == -1)
+                SetNewAim();
             return base.Enact();
         }
     }

@@ -413,7 +413,7 @@ namespace ProcRoom
         static int[,] GetDistanceMapInit(int width, int height)
         {
             int[,] distances = new int[width, height];
-            var maxDistance = width * height;
+            var maxDistance = width + height;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -445,14 +445,16 @@ namespace ProcRoom
                 if (neighbours.Count > 0)
                     pathPosition = neighbours[Random.Range(0, neighbours.Count)];
                 else
+                {
+                    Debug.LogWarning(string.Format("Error in path no valid step from {0}, {1}, value {2}", pathPosition.x, pathPosition.y, map[pathPosition.x, pathPosition.y]));
                     return new Coordinate[0];
-
+                }
                 neighbours.Clear();
             }
             return path;
         }
 
-        public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target)
+        public static int[,] GetDistanceMap(Room room, Coordinate source)
         {
             int height = room.Height;
             int width = room.Width;
@@ -471,16 +473,28 @@ namespace ProcRoom
                 foreach (Coordinate neighbour in current.Neighbours())
                 {
                     
-                    if ((neighbour == target || room.PassableTile(neighbour)) && distances[neighbour.x, neighbour.y] > nextDist)
+                    if (room.PassableTile(neighbour) && distances[neighbour.x, neighbour.y] > nextDist)
                     {
                         distances[neighbour.x, neighbour.y] = nextDist;
-                        if (!queue.Contains(neighbour) && nextDist < distances[target.x, target.y] && neighbour.Inside(width, height))
+                        if (!queue.Contains(neighbour) && neighbour.Inside(width, height))
                             queue.Enqueue(neighbour);
                     }
 
                 }
             }
 
+            return distances;
+        }
+
+        public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target)
+        {
+            var distances = GetDistanceMap(room, source);
+            foreach (Coordinate neighbour in target.Neighbours())
+            {
+                if (neighbour.Inside(distances))
+                    distances[target.x, target.y] = Mathf.Min(distances[neighbour.x, neighbour.y] + 1, distances[target.x, target.y]);                    
+            }
+            
             return PathFromDistanceMap(distances, target);
         }
     }

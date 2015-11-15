@@ -15,6 +15,9 @@ namespace ProcRoom
         bool queuedMove = false;
         Coordinate moveTarget;
 
+        [SerializeField, Range(1, 20)]
+        int minSpawnDistanceToPlayer = 7;
+
         public bool trackingPlayer
         {
             get
@@ -88,6 +91,7 @@ namespace ProcRoom
                 abilities[i].enabled = true;
         }
 
+        
         protected override void Death()
         {
             enabled = false;
@@ -96,7 +100,13 @@ namespace ProcRoom
         protected override void HandleNewRoom(Room room, RoomData data)
         {
             base.HandleNewRoom(room, data);
-            UpdatePosition(_stats.position);
+            int minDistance = minSpawnDistanceToPlayer;
+            Coordinate pos = Coordinate.InvalidPlacement;
+            do {
+                pos = room.GetRandomFreeTileCoordinate(player.position, minDistance);
+                minDistance--;
+            } while (pos == Coordinate.InvalidPlacement);
+            UpdatePosition(pos);
 
         }
 
@@ -114,6 +124,9 @@ namespace ProcRoom
             {
                 moveTarget = target;
                 queuedMove = true;
+            } else
+            {
+                Debug.LogWarning(name + string.Format(" tried invalid move to {0},{1}", target.x, target.y));
             }
         }
 

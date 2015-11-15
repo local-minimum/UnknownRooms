@@ -446,6 +446,40 @@ namespace ProcRoom
 
         public Coordinate GetRandomFreeTileCoordinate(Coordinate referencePosition, int minDistance)
         {
+            var distances = RoomSearch.GetDistanceMap(this, referencePosition);
+
+            //Count all valid positions and set them to value 1
+            var validPositions = 0;
+            var invalidDistance = Height + Width;
+            for (int x=0, lX = distances.GetLength(0); x<lX;x++)
+            {
+                for (int y=0, lY = distances.GetLength(1); y<lY;y++)
+                {
+                    if (distances[x, y] >= minDistance && distances[x, y] < invalidDistance)
+                    {
+                        distances[x, y] = 1;
+                        validPositions++;
+                    }
+                    else
+                        distances[x, y] = 0;
+                }
+            }
+
+            //Select position based on count and iterate until found it
+            int selectedPosition = Random.Range(0, validPositions);
+            for (int x = 0, lX = distances.GetLength(0); x < lX; x++)
+            {
+                for (int y = 0, lY = distances.GetLength(1); y < lY; y++)
+                {
+                    if (distances[x, y] == 1)
+                    {
+                        if (selectedPosition < 1)
+                            return new Coordinate(x, y);
+                        else
+                            selectedPosition--;
+                    }
+                }
+            }
             return Coordinate.InvalidPlacement;
         }
 
