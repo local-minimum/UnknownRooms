@@ -33,6 +33,19 @@ namespace ProcRoom
             }
         }
 
+        public static void Spawn()
+        {
+            if (_instance == null)
+            {
+                var tower = FindObjectOfType<Tower>();
+                if (tower)
+                    tower.enabled = true;
+            }
+            else
+                _instance.enabled = true;
+
+        }
+
         void Awake() {
             if (_instance == null)
             {

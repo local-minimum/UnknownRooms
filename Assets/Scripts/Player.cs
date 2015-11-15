@@ -18,7 +18,7 @@ namespace ProcRoom
 
         void Start()
         {
-            NewGame();
+            alive = false;
         
         }
 
@@ -130,6 +130,7 @@ namespace ProcRoom
             steps = 0;
             shots = 0;
             _stats.ammo = _stats.maxAmmo;
+            Tower.Spawn();
         }
 
         protected override void Death()
