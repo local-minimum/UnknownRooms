@@ -25,7 +25,7 @@ namespace ProcRoom
     [RequireComponent(typeof(Trapper))]
     public class Room : MonoBehaviour
     {
-        
+
         public static event RoomEvent OnRoomGeneration;
 
         [SerializeField, Tooltip("Size includes wall perimeter"), Range(3, 30)]
@@ -81,6 +81,16 @@ namespace ProcRoom
         [SerializeField]
         int spikeTrapClusterSize = 3;
 
+        bool roomGenerating = false;
+        
+        [SerializeField, Range(0, 2)]
+        float roomStartDelay = 1f;
+
+        public bool isGenerating
+        {
+            get { return roomGenerating; }
+        }
+
         void Awake()
         {
             for (int i=0; i<transform.childCount; i++)
@@ -103,6 +113,7 @@ namespace ProcRoom
 
         public void Generate()
         {
+            roomGenerating = true;
             GenerateBlank();
             var islands = GenerateWallIsands();
             var growthIterations = Random.Range(minWallGrowthIterations, maxWallGrowthIterations);
@@ -116,6 +127,14 @@ namespace ProcRoom
             StartCoroutine(Enact());
             if (OnRoomGeneration != null)
                 OnRoomGeneration(this, GetData());
+
+            StartCoroutine(delayRoomStart());
+        }
+
+        IEnumerator<WaitForSeconds> delayRoomStart()
+        {
+            yield return new WaitForSeconds(roomStartDelay);
+            roomGenerating = false;
         }
 
         public RoomData GetData()

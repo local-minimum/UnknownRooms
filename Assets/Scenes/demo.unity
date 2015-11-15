@@ -218,6 +218,7 @@ MonoBehaviour:
   playerInSight: 0
   playerTracking: 1
   priority: 70
+  minDistanceToNewAim: 6
 --- !u!4 &130402374
 Transform:
   m_ObjectHideFlags: 0
@@ -259,6 +260,7 @@ MonoBehaviour:
       y: 0
   weapon: {fileID: 130402376}
   actionSpeed: .300000012
+  minSpawnDistanceToPlayer: 7
 --- !u!114 &130402376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,7 +304,7 @@ MonoBehaviour:
   allowancePerTurn: 1
   playerInSight: 0
   playerTracking: 2
-  priority: 80
+  priority: 100
   awarenessRange: 5
 --- !u!114 &130402379
 MonoBehaviour:
@@ -328,15 +330,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 130402372}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f3e567f2136d1249a85c11ad49d7cd4, type: 3}
+  m_Script: {fileID: 11500000, guid: 84e0e6e1fe96fed4b96dbbd901cae558, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildCost: 5
-  allowancePerTurn: 7
-  playerInSight: 2
+  buildCost: 3
+  allowancePerTurn: 10
+  playerInSight: 0
   playerTracking: 2
-  priority: 4
-  eagerness: .899999976
+  priority: 30
+  minDistanceToNewAim: 6
 --- !u!1 &212562600
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +552,7 @@ GameObject:
   - 4: {fileID: 1332188266}
   - 114: {fileID: 1332188265}
   - 114: {fileID: 1332188267}
+  - 114: {fileID: 1332188268}
   m_Layer: 0
   m_Name: AI Abilities
   m_TagString: Untagged
@@ -602,6 +605,23 @@ MonoBehaviour:
   playerTracking: 2
   priority: 1
   awarenessRange: 3
+--- !u!114 &1332188268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1332188264}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f3e567f2136d1249a85c11ad49d7cd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 5
+  allowancePerTurn: 7
+  playerInSight: 2
+  playerTracking: 2
+  priority: 4
+  eagerness: .899999976
 --- !u!1 &1338904141
 GameObject:
   m_ObjectHideFlags: 0

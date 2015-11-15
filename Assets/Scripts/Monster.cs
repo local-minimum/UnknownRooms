@@ -95,6 +95,8 @@ namespace ProcRoom
         protected override void Death()
         {
             enabled = false;
+            foreach(var rend in GetComponentsInChildren<SpriteRenderer>())
+                rend.enabled = false;
         }
 
         protected override void HandleNewRoom(Room room, RoomData data)
@@ -135,7 +137,7 @@ namespace ProcRoom
             if (!myTurn || !actionAllowed)
                 return;
 
-            if (queuedMove)
+            if (queuedMove && room.PassableTile(moveTarget))
             {
                 UpdatePosition(moveTarget);
                 actionPoints--;

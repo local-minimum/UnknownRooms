@@ -110,7 +110,7 @@ namespace ProcRoom
         {
             var tileType = room.GetTileTypeAt(newPosition);
 
-            if (tileType == TileType.Walkable || tileType == TileType.SpikeTrap || tileType == TileType.StairsUp) { 
+            if (room.PassableTile(newPosition) || tileType == TileType.StairsUp) { 
                 
                 UpdatePosition(newPosition);
                 if (OnPlayerEnterNewPosition != null)

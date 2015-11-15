@@ -144,7 +144,7 @@ namespace ProcRoom
         {
             get
             {
-                return !weapon.isShooting && actionPoints > 0;
+                return !room.isGenerating && !weapon.isShooting && actionPoints > 0;
             }
         }
 
