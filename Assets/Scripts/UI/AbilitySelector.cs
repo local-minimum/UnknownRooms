@@ -10,30 +10,33 @@ namespace ProcRoom.UI
         AbilityStat[] selectors;
         AbilityStat selected;
 
-        CharacterCreation characterCreation;
+        [SerializeField]
+        Physical.Ability ability;
 
-        protected virtual void OnEnable()
+        CharacterCreation characterCreation;
+        
+        void OnEnable()
         {
             if (characterCreation)
                 CharacterCreation.OnNewPoints += OnNewPointsAvailable;
         }
 
-        protected virtual void OnDisable()
+        void OnDisable()
         {
             if (characterCreation)
                 CharacterCreation.OnNewPoints -= OnNewPointsAvailable;
         }
 
-        protected virtual void OnNewPointsAvailable(int points)
+        void OnNewPointsAvailable(int points)
         {
             for (int i=0; i<selectors.Length; i++)
             {
                 if (!selectors[i].selected)
                 {
-                    if (selectors[i].cost <= points)
+                    if (i < ability.Length && ability[i].cost <= points)
                     {
                         selectors[i].allowed = true;
-                        points -= selectors[i].cost;
+                        points -= ability[i].cost;
                     } else
                     {
                         selectors[i].allowed = false;
@@ -43,8 +46,12 @@ namespace ProcRoom.UI
             }
         }
 
-        void Start() {
+        void Awake()
+        {
             characterCreation = GetComponentInParent<CharacterCreation>();
+        }
+
+        void Start() {            
             var selectors = new AbilityStat[transform.childCount];
             int nextIndex = 0;
             for (int i = 0; i < selectors.Length; i++)
@@ -53,6 +60,7 @@ namespace ProcRoom.UI
                 if (sel)
                 {
                     selectors[nextIndex] = sel;
+                    selectors[nextIndex].SetIndex(nextIndex);
                     nextIndex++;
                 }
             }
@@ -73,17 +81,18 @@ namespace ProcRoom.UI
             int culmulativeCost = 0;
             for (int i=0; i<selectors.Length;i++)
             {
-                if (!selectors[i].allowed)
+                if (!selectors[i].allowed && i < ability.Length)
                     shouldBeSelected = false;
 
                 if (shouldBeSelected && !selectors[i].selected)
                 {
                     selectors[i].selected = true;
-                    culmulativeCost += selectors[i].cost;
+                    culmulativeCost += ability[i].cost;
                 } else if (!shouldBeSelected && selectors[i].selected)
                 {
                     selectors[i].selected = false;
-                    culmulativeCost -= selectors[i].cost;
+                    if (i < ability.Length)
+                        culmulativeCost -= ability[i].cost;
                 }
 
                 //All coming should be not selected
@@ -130,7 +139,7 @@ namespace ProcRoom.UI
         {
             get
             {
-                return selected == null ? 0 : selected.value;
+                return selected == null ? 0 : ability[selected.Index].value;
             }
 
             set
@@ -144,13 +153,29 @@ namespace ProcRoom.UI
                         selectors[i].allowed = doSelect;
                     selectors[i].selected = doSelect;
 
-                    if (selectors[i].value == value)
+                    if (i >= ability.Length || ability[i].value == value)
                     {
                         doSelect = false;
                         selected = selectors[i];
                     }
                 }
             }
+        }
+
+        public int CostForNext
+        {
+            get
+            {
+                if (selectors == null)
+                    return -1;
+                
+                var nextIndex = selected == null ? 1 : selected.Index + 1;
+
+                if (ability.Length > nextIndex)
+                    return ability[nextIndex].cost;
+                return -1;
+            }
+
         }
     }
 }
