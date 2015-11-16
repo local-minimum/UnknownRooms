@@ -50,11 +50,14 @@ namespace ProcRoom.UI
             
             transform.position = position;
             float scale = 2f;
+            float targetScale = 6f;
             transform.localScale = Vector3.one * scale;
             rend.enabled = true;
-            while (scale < 5f)
+            yield return new WaitForSeconds(0.1f);
+
+            while (scale < targetScale)
             {
-                scale = Mathf.Lerp(scale, 5.1f, 0.5f);
+                scale = Mathf.Lerp(scale, targetScale * 1.1f, 0.5f);
                 transform.localScale = Vector3.one * scale;
                 yield return new WaitForSeconds(0.01f);
             }

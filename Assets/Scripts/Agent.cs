@@ -224,8 +224,16 @@ namespace ProcRoom
         {
             if (position.Equals(_stats.position))
             {
-                UI.Hurt.Place(_stats.position);
-                Hurt();
+                var power = projectile.power;
+                while (power > 0)
+                {
+                    if (power > _stats.defence && alive)
+                    {
+                        UI.Hurt.Place(_stats.position);
+                        Hurt();
+                    }
+                    power -= 80 + Random.Range(0, 100);
+                }
             }
         }
 

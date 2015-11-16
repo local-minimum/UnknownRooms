@@ -13,7 +13,7 @@ namespace ProcRoom
         public static event ProjectileLaunch OnProjectileLaunch;
 
         int accuracyLossPerDistance;
-        int range;
+        int _range;
         int speed;
         int attack;
         Coordinate direction;
@@ -26,6 +26,14 @@ namespace ProcRoom
         Vector3 tail;
         [SerializeField]
         Vector3 offset;
+        
+        public int power
+        {
+            get
+            {
+                return attack;
+            }
+        }
 
         void Awake()
         {
@@ -39,7 +47,7 @@ namespace ProcRoom
             if (shooting)
                 return false;
             this.accuracyLossPerDistance = accuracyLossPerDistance;
-            this.range = range;
+            this._range = range;
             this.attack = attack;
             speed = range;
             this.direction = direction;
@@ -70,7 +78,7 @@ namespace ProcRoom
         void UpdateStats()
         {
             position += direction;
-            range--;
+            _range--;
             attack = Mathf.Max(0, attack - accuracyLossPerDistance);
         }
 
@@ -91,7 +99,7 @@ namespace ProcRoom
             rend.enabled = true;
             yield return new WaitForSeconds(animationSpeed);
             bool lastTile = false;
-            while (range >= 0)
+            while (_range >= 0)
             {
 
                 if (SetHead(ref progress))
