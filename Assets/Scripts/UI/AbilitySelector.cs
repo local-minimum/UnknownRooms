@@ -10,17 +10,21 @@ namespace ProcRoom.UI
         AbilityStat[] selectors;
         AbilityStat selected;
 
-        void OnEnable()
+        CharacterCreation characterCreation;
+
+        protected virtual void OnEnable()
         {
-            CharacterCreation.OnNewPoints += OnNewPointsAvailable;
+            if (characterCreation)
+                CharacterCreation.OnNewPoints += OnNewPointsAvailable;
         }
 
-        void OnDisable()
+        protected virtual void OnDisable()
         {
-            CharacterCreation.OnNewPoints -= OnNewPointsAvailable;
+            if (characterCreation)
+                CharacterCreation.OnNewPoints -= OnNewPointsAvailable;
         }
 
-        private void OnNewPointsAvailable(int points)
+        protected virtual void OnNewPointsAvailable(int points)
         {
             for (int i=0; i<selectors.Length; i++)
             {
@@ -40,7 +44,7 @@ namespace ProcRoom.UI
         }
 
         void Start() {
-
+            characterCreation = GetComponentInParent<CharacterCreation>();
             var selectors = new AbilityStat[transform.childCount];
             int nextIndex = 0;
             for (int i = 0; i < selectors.Length; i++)
@@ -54,7 +58,8 @@ namespace ProcRoom.UI
             }
             this.selectors = new AbilityStat[nextIndex];
             System.Array.Copy(selectors, this.selectors, nextIndex);
-            OnNewPointsAvailable(CharacterCreation.Points);
+            if (characterCreation)
+                OnNewPointsAvailable(CharacterCreation.Points);
             for (int i=0; i<this.selectors.Length; i++)
             {
                 if (this.selectors[i].selected)
@@ -85,8 +90,8 @@ namespace ProcRoom.UI
                 if (selector == selectors[i])
                     shouldBeSelected = false;
             }
-
-            CharacterCreation.NewTransaction(culmulativeCost);
+            if (characterCreation)
+                CharacterCreation.NewTransaction(culmulativeCost);
         }
 
         public void FreeEmulatedSelection()
