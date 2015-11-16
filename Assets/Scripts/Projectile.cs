@@ -18,12 +18,18 @@ namespace ProcRoom
         int attack;
         Coordinate direction;
         Coordinate position;
-        Renderer rend;
+        LineRenderer rend;
         bool shooting;
+        Vector3 headTarget;
+        Vector3 headSource;
+        Vector3 head;
+        Vector3 tail;
+        [SerializeField]
+        Vector3 offset;
 
         void Awake()
         {
-            rend = GetComponent<Renderer>();
+            rend = GetComponent<LineRenderer>();
             rend.enabled = false;
         }
 
@@ -45,29 +51,61 @@ namespace ProcRoom
             return true;
         }
 
-        void PositionShot()
+        bool SetHead(ref float progress)
         {
-            transform.position = Tower.ActiveRoom.GetTileCentre(position);
-            transform.rotation = Quaternion.Euler(0f, 0f, direction.y * -90 + Mathf.Min(direction.x, 0) * -180);
+            bool newStep = false;
+            if (progress >= 1)
+            {
+                progress %= 1f;
+                headSource = headTarget;
+                UpdateStats();
+                headTarget = Tower.ActiveRoom.GetTileCentre(position) + offset;
+                newStep = true;
+            }
+            head = Vector3.Lerp(headSource, headTarget, progress);
+            rend.SetPosition(0, head);
+            return newStep;
+        }
+
+        void UpdateStats()
+        {
+            position += direction;
+            range--;
+            attack = Mathf.Max(0, attack - accuracyLossPerDistance);
+        }
+
+        void SetTail()
+        {
+            rend.SetPosition(1, Vector3.Lerp(tail, head, 0.8f));
         }
 
         IEnumerator<WaitForSeconds> _shoot()
         {
-            //TODO: Add transition animations
-            float animationSpeed = 0.25f;
-            PositionShot();
+            tail = Tower.ActiveRoom.GetTileCentre(position) + offset;
+            headTarget = tail;
+            float progress = 1.05f;            
+            SetHead(ref progress);
+            SetTail();
+            float animationSpeed = 0.01f;
+            //transform.rotation = Quaternion.Euler(0f, 0f, direction.y * -90 + Mathf.Min(direction.x, 0) * -180);
             rend.enabled = true;
             yield return new WaitForSeconds(animationSpeed);
-            while (range > 0)
+            bool lastTile = false;
+            while (range >= 0)
             {
-                position += direction;
-                PositionShot();
-                range--;
-                attack = Mathf.Max(0, attack - accuracyLossPerDistance);
-                if (!Tower.ActiveRoom.PassableTile(position))
+
+                if (SetHead(ref progress))
+                {
+                    lastTile = true;
+                }
+                SetTail();
+                progress += 0.4f;
+                if (progress > 1f && (!Tower.ActiveRoom.PassableTile(position) || attack == 0))
                     break;
+
                 yield return new WaitForSeconds(animationSpeed);
             }
+            yield return new WaitForSeconds(0.3f);
             rend.enabled = false;
             shooting = false;
             if (OnProjectileHit != null)

@@ -431,7 +431,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!114 &3047394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2655,8 +2655,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 212562602}
-  - 212: {fileID: 212562601}
   - 114: {fileID: 212562603}
+  - 120: {fileID: 212562601}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -2664,8 +2664,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!212 &212562601
-SpriteRenderer:
+--- !u!120 &212562601
+LineRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -2677,8 +2677,8 @@ SpriteRenderer:
   - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 0
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
@@ -2686,10 +2686,21 @@ SpriteRenderer:
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -676780079
-  m_SortingOrder: 100
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: .263786763, g: .875, b: .799125314, a: 1}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    startWidth: .100000001
+    endWidth: .100000001
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 3254798353
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 3254798353
+  m_UseWorldSpace: 1
 --- !u!4 &212562602
 Transform:
   m_ObjectHideFlags: 0
@@ -2713,6 +2724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16f6749a91ae814ba8077443916be7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0, z: -9}
 --- !u!1 &223915698
 GameObject:
   m_ObjectHideFlags: 0
@@ -4846,8 +4858,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 359340508}
-  - 212: {fileID: 359340510}
   - 114: {fileID: 359340509}
+  - 120: {fileID: 359340510}
   m_Layer: 0
   m_Name: EnemyBullet
   m_TagString: Untagged
@@ -4878,8 +4890,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16f6749a91ae814ba8077443916be7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &359340510
-SpriteRenderer:
+  offset: {x: 0, y: 0, z: -9}
+--- !u!120 &359340510
+LineRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -4891,8 +4904,8 @@ SpriteRenderer:
   - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 0
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
@@ -4900,10 +4913,21 @@ SpriteRenderer:
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -676780079
-  m_SortingOrder: 100
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: .898039281, g: .117647067, b: .117647067, a: 1}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    startWidth: .100000001
+    endWidth: .100000001
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 3254798353
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 3254798353
+  m_UseWorldSpace: 1
 --- !u!1 &382699084
 GameObject:
   m_ObjectHideFlags: 0
@@ -7136,7 +7160,7 @@ Transform:
   - {fileID: 421574152}
   - {fileID: 1582537510}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 3
 --- !u!1 &521504159
 GameObject:
   m_ObjectHideFlags: 0
@@ -19200,7 +19224,7 @@ Transform:
   - {fileID: 1332188266}
   - {fileID: 1516415088}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
 --- !u!114 &1358969311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19512,7 +19536,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
 --- !u!1 &1379535729
 GameObject:
   m_ObjectHideFlags: 0
@@ -22144,8 +22168,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1582537510}
-  - 212: {fileID: 1582537512}
   - 114: {fileID: 1582537511}
+  - 120: {fileID: 1582537512}
   m_Layer: 0
   m_Name: EnemyBullet
   m_TagString: Untagged
@@ -22176,8 +22200,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16f6749a91ae814ba8077443916be7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &1582537512
-SpriteRenderer:
+  offset: {x: 0, y: 0, z: -9}
+--- !u!120 &1582537512
+LineRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -22189,8 +22214,8 @@ SpriteRenderer:
   - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 0
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
@@ -22198,10 +22223,21 @@ SpriteRenderer:
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -676780079
-  m_SortingOrder: 100
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: .898039281, g: .117647067, b: .117647067, a: 1}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    startWidth: .100000001
+    endWidth: .100000001
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 3254798353
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 3254798353
+  m_UseWorldSpace: 1
 --- !u!1 &1588915899
 GameObject:
   m_ObjectHideFlags: 0
@@ -26443,8 +26479,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1941777104}
-  - 212: {fileID: 1941777106}
   - 114: {fileID: 1941777105}
+  - 120: {fileID: 1941777106}
   m_Layer: 0
   m_Name: EnemyBullet
   m_TagString: Untagged
@@ -26475,8 +26511,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16f6749a91ae814ba8077443916be7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &1941777106
-SpriteRenderer:
+  offset: {x: 0, y: 0, z: -9}
+--- !u!120 &1941777106
+LineRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -26488,8 +26525,8 @@ SpriteRenderer:
   - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_ReflectionProbeUsage: 0
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
@@ -26497,10 +26534,21 @@ SpriteRenderer:
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -676780079
-  m_SortingOrder: 100
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: .898039281, g: .117647067, b: .117647067, a: 1}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    startWidth: .100000001
+    endWidth: .100000001
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 3254798353
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 3254798353
+  m_UseWorldSpace: 1
 --- !u!1 &1943415194
 GameObject:
   m_ObjectHideFlags: 0
