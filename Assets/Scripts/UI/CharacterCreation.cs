@@ -85,7 +85,8 @@ namespace ProcRoom.UI
                 player.NewGame();
             }
             transform.GetChild(0).gameObject.SetActive(false);
-            WeaponSelect.Show(new WeaponStats(80, 2, 55));
+            Tower.Player.Weapon.SetStats(Physical.WeaponSmith.Smith(points));
+            WeaponSelect.Show(Physical.WeaponSmith.Smith(points));
         }
 
         void OnEnable()
