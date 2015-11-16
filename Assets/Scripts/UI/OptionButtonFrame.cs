@@ -19,8 +19,12 @@ namespace ProcRoom.UI
         [SerializeField]
         int value;
 
-        void Awake() {
-            frame.enabled = value == 0;
+        void Start() {
+            frame.enabled = false;
+            if (value == 0)
+                ClickAction();
+            
+                
         }
 
         void OnEnable()

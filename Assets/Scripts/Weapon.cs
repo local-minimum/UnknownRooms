@@ -29,6 +29,11 @@ namespace ProcRoom
                 return stats;
             }
         }
+
+        public WeaponStats copy()
+        {
+            return new WeaponStats(attack, maxRange, accuracyLossPerTile);
+        }
     }
 
     public class Weapon : MonoBehaviour
@@ -42,11 +47,11 @@ namespace ProcRoom
 
         bool _isShooting = false;
 
-        public WeaponStats stats
+        public WeaponStats Stats
         {
-            set
+            get
             {
-                _stats = value;
+                return _stats.copy();
             }
         }
 
@@ -90,6 +95,11 @@ namespace ProcRoom
         {
             if (projectile == bullet)
                 _isShooting = false;
+        }
+
+        public void SetStats(WeaponStats stats)
+        {
+            _stats = stats;
         }
 
     }

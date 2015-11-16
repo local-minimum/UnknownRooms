@@ -64,6 +64,12 @@ namespace ProcRoom
             
         }
 
+        public Weapon Weapon {
+            get {
+                return weapon;
+            }
+        }
+
         protected bool actionTick()
         {
             if (actionAllowed)

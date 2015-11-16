@@ -177,6 +177,7 @@ namespace ProcRoom
                 return true;
             }
         }
+
         public static Coordinate GetAgentPosition(int agentIndex)
         {
             var agent = _instance.agents[agentIndex];
@@ -185,6 +186,14 @@ namespace ProcRoom
                 return agent.position;
             else
                 return Coordinate.InvalidPlacement;
+        }
+
+        public static Player Player
+        {
+            get
+            {
+                return _instance.player;
+            }
         }
 
         public static void Reset()

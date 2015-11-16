@@ -85,6 +85,7 @@ namespace ProcRoom.UI
                 player.NewGame();
             }
             transform.GetChild(0).gameObject.SetActive(false);
+            WeaponSelect.Show(new WeaponStats(80, 2, 60));
         }
 
         void OnEnable()

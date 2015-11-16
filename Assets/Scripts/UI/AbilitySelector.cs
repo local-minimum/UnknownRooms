@@ -132,6 +132,25 @@ namespace ProcRoom.UI
             {
                 return selected == null ? 0 : selected.value;
             }
+
+            set
+            {
+                if (selectors == null)
+                    return;
+                bool doSelect = true;
+                for (int i=0; i<selectors.Length; i++)
+                {
+                    if (doSelect)
+                        selectors[i].allowed = doSelect;
+                    selectors[i].selected = doSelect;
+
+                    if (selectors[i].value == value)
+                    {
+                        doSelect = false;
+                        selected = selectors[i];
+                    }
+                }
+            }
         }
     }
 }
