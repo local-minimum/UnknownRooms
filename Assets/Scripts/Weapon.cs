@@ -34,6 +34,16 @@ namespace ProcRoom
         {
             return new WeaponStats(attack, maxRange, accuracyLossPerTile);
         }
+
+        public static bool operator ==(WeaponStats A, WeaponStats B)
+        {
+            return Object.ReferenceEquals(A, B) || A.attack == B.attack && A.accuracyLossPerTile == B.accuracyLossPerTile && A.maxRange == B.maxRange;
+        }
+
+        public static bool operator !=(WeaponStats A, WeaponStats B)
+        {
+            return A.attack != B.attack || A.accuracyLossPerTile != B.accuracyLossPerTile || A.maxRange != B.maxRange;
+        }
     }
 
     public class Weapon : MonoBehaviour

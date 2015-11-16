@@ -9,7 +9,7 @@ namespace ProcRoom.UI
     public class CharacterCreation : MonoBehaviour
     {
 
-        [SerializeField, Range(1, 100)]
+        [SerializeField, Range(0, 100)]
         int points;
 
         [SerializeField]
@@ -85,8 +85,20 @@ namespace ProcRoom.UI
                 player.NewGame();
             }
             transform.GetChild(0).gameObject.SetActive(false);
-            Tower.Player.Weapon.SetStats(Physical.WeaponSmith.Smith(points));
-            WeaponSelect.Show(Physical.WeaponSmith.Smith(points));
+            var weapon1 = Physical.WeaponSmith.Smith(points);
+            Tower.Player.Weapon.SetStats(weapon1);
+            if (points > 0)
+            {
+                WeaponStats weapon2 = WeaponStats.DefaultWeapon;
+                for (int i=0; i<5; i++)
+                {
+                    weapon2 = Physical.WeaponSmith.Smith(points);
+                    if (weapon1 != weapon2)
+                        break;
+
+                }
+                WeaponSelect.Show(weapon2);
+            }
         }
 
         void OnEnable()

@@ -910,7 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 5
   _translatedStatsValue: 7
 --- !u!1 &83829971
 GameObject:
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 3
+  _cost: 1
   _translatedStatsValue: 45
 --- !u!1 &130402372
 GameObject:
@@ -1768,7 +1768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 6
+  _cost: 5
   _translatedStatsValue: 210
 --- !u!1 &152260566
 GameObject:
@@ -2598,13 +2598,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonMessages:
+  - $1 lazer pointer
   - I'll take a rusty rod
   - Give a plain gun
   - Something with persuasive power
   - Serious heat packing blaster
   - Fancy and deadly cannon
   - Kaboomalishous mega-mortar
-  pointsThresholds: 050000000a0000000f000000140000001e000000
+  pointsThresholds: 01000000050000000a0000000f000000140000001e000000
 --- !u!1 &207479995
 GameObject:
   m_ObjectHideFlags: 0
@@ -2751,7 +2752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 5
+  _cost: 3
   _translatedStatsValue: 25
 --- !u!1 &230377369
 GameObject:
@@ -3236,7 +3237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 2
+  _cost: 1
   _translatedStatsValue: 55
 --- !u!1 &258628986
 GameObject:
@@ -4151,7 +4152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 5
+  _cost: 3
   _translatedStatsValue: 160
 --- !u!1 &328503673
 GameObject:
@@ -5756,7 +5757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 4
   _translatedStatsValue: 5
 --- !u!1 &441754465
 GameObject:
@@ -6172,7 +6173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 9
+  _cost: 4
   _translatedStatsValue: 4
 --- !u!1 &477003660
 GameObject:
@@ -8926,7 +8927,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 2
+  _cost: 1
   _translatedStatsValue: 90
 --- !u!1 &627509910
 GameObject:
@@ -10735,7 +10736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 8
   _translatedStatsValue: 270
 --- !u!1 &714686336
 GameObject:
@@ -11227,7 +11228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 5
+  _cost: 3
   _translatedStatsValue: 140
 --- !u!1 &737759836
 GameObject:
@@ -12077,7 +12078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: .39199999}
+  m_Color: {r: .742834985, g: .796999991, b: .564864039, a: .947000027}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -13459,7 +13460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 3
+  _cost: 2
   _translatedStatsValue: 100
 --- !u!1 &941142110
 GameObject:
@@ -13568,7 +13569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 4
+  _cost: 2
   _translatedStatsValue: 30
 --- !u!1 &956227115
 GameObject:
@@ -14437,7 +14438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 7
+  _cost: 6
   _translatedStatsValue: 11
 --- !u!1 &1014774469
 GameObject:
@@ -15004,7 +15005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 5
   _translatedStatsValue: 6
 --- !u!1 &1066960843
 GameObject:
@@ -16391,7 +16392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 3
+  _cost: 2
   _translatedStatsValue: 120
 --- !u!1 &1175432910
 GameObject:
@@ -18028,7 +18029,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 7
+  _cost: 3
   _translatedStatsValue: 2
 --- !u!1 &1278723765
 GameObject:
@@ -18272,7 +18273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 8
+  _cost: 6
   _translatedStatsValue: 230
 --- !u!1 &1311920174
 GameObject:
@@ -18660,7 +18661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 5
+  _cost: 3
   _translatedStatsValue: 20
 --- !u!1 &1336811988
 GameObject:
@@ -19753,7 +19754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 8
+  _cost: 3
   _translatedStatsValue: 3
 --- !u!1 &1419765738
 GameObject:
@@ -19862,7 +19863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 6
+  _cost: 4
   _translatedStatsValue: 190
 --- !u!1 &1436526271
 GameObject:
@@ -20482,7 +20483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 7
+  _cost: 4
   _translatedStatsValue: 15
 --- !u!1 &1485410620
 GameObject:
@@ -21056,6 +21057,7 @@ MonoBehaviour:
   WeaponsRange: {fileID: 1073158490}
   WeaponsPrecision: {fileID: 1865859414}
   WeaponsPower: {fileID: 848379950}
+  likelihoodToBias: .699999988
 --- !u!1 &1522379366
 GameObject:
   m_ObjectHideFlags: 0
@@ -21095,7 +21097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 7
   _translatedStatsValue: 250
 --- !u!1 &1523718646
 GameObject:
@@ -23451,7 +23453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 3
+  _cost: 2
   _translatedStatsValue: 40
 --- !u!1 &1707413707
 GameObject:
@@ -26294,7 +26296,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 4
+  _cost: 2
   _translatedStatsValue: 35
 --- !u!1 &1938830536
 GameObject:
@@ -27109,7 +27111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 5
+  _cost: 3
   _translatedStatsValue: 17
 --- !u!1 &2017837631
 GameObject:
@@ -28238,7 +28240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173486050e991f2428ffe01459db2f89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 7
+  _cost: 5
   _translatedStatsValue: 13
 --- !u!1 &2137384080
 GameObject:
