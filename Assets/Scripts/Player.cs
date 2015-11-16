@@ -102,7 +102,7 @@ namespace ProcRoom
 
         void Reload()
         {
-            _stats.ammo = _stats.maxAmmo;
+            _stats.ammo = _stats.clipSize;
             actionPoints--;
         }
 
@@ -129,7 +129,7 @@ namespace ProcRoom
             _stats.health = _stats.maxHealth;
             steps = 0;
             shots = 0;
-            _stats.ammo = _stats.maxAmmo;
+            _stats.ammo = _stats.clipSize;
             Tower.Spawn();
         }
 

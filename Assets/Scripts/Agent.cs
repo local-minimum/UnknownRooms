@@ -9,16 +9,18 @@ namespace ProcRoom
     [System.Serializable]
     public class AgentStats
     {
+
+        public string name;
         public int actionPointsPerTurn = 3;
         public int actionPoints = -1;
 
         public int maxHealth = 7;
         public int health;
 
-        public int maxAmmo = 11;
+        public int clipSize = 11;
         public int ammo = 0;
 
-        public int evasion = 10;
+        public int defence = 10;
 
         public Coordinate position;
         public Coordinate lookDirection = Coordinate.Right;
@@ -27,7 +29,7 @@ namespace ProcRoom
         {
             get
             {
-                return maxAmmo < 1 || ammo > 0;
+                return clipSize < 1 || ammo > 0;
             }
         }
     }
@@ -55,6 +57,11 @@ namespace ProcRoom
         float actionSpeed = 0.3f;
 
         float lastAction;
+
+        public void SetStats(AgentStats stats)
+        {
+            _stats = stats;
+        }
 
         protected bool actionTick()
         {

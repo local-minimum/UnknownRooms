@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 namespace ProcRoom.UI
 {
@@ -11,6 +11,21 @@ namespace ProcRoom.UI
 
         [SerializeField, Range(1, 100)]
         int points;
+
+        [SerializeField]
+        AbilitySelector health;
+
+        [SerializeField]
+        AbilitySelector actionPoints;
+
+        [SerializeField]
+        AbilitySelector defence;
+
+        [SerializeField]
+        AbilitySelector clipSize;
+
+        [SerializeField]
+        PlayerNamer namer;
 
         static CharacterCreation _instance;
 
@@ -40,6 +55,21 @@ namespace ProcRoom.UI
             {
                 return instance.points;
             }
+        }
+
+        public void CommitStats()
+        {
+            var stats = new AgentStats();
+            stats.actionPointsPerTurn = actionPoints.Value;
+            stats.maxHealth = health.Value;
+            stats.clipSize = clipSize.Value;
+            stats.defence = defence.Value;
+            stats.name = namer.Name;
+
+            var player = FindObjectOfType<Player>();
+            if (player)
+                player.SetStats(stats);
+            gameObject.SetActive(false);
         }
     }
 }
