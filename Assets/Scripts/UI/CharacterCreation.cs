@@ -68,7 +68,10 @@ namespace ProcRoom.UI
 
             var player = FindObjectOfType<Player>();
             if (player)
+            {
                 player.SetStats(stats);
+                player.NewGame();
+            }
             gameObject.SetActive(false);
         }
     }

@@ -131,6 +131,7 @@ namespace ProcRoom
             shots = 0;
             _stats.ammo = _stats.clipSize;
             Tower.Spawn();
+            alive = true;
         }
 
         protected override void Death()

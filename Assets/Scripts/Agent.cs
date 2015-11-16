@@ -61,6 +61,7 @@ namespace ProcRoom
         public void SetStats(AgentStats stats)
         {
             _stats = stats;
+            
         }
 
         protected bool actionTick()
@@ -168,10 +169,7 @@ namespace ProcRoom
                 _stats.health = value ? _stats.maxHealth : 0;
                 if (anim)
                 {
-                    if (value)
-                        anim.StartPlayback();
-                    else
-                        anim.Stop();
+                    anim.enabled = value;
                 }
                 foreach (var rend in GetComponentsInChildren<SpriteRenderer>())
                     rend.enabled = value;
