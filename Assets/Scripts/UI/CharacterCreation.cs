@@ -44,6 +44,13 @@ namespace ProcRoom.UI
             }
         }
 
+        public static void Show()
+        {
+            var ui = instance.transform.GetChild(0);
+            ui.gameObject.SetActive(true);
+            ui.GetComponent<Image>().enabled = true;
+        }
+
         public static event NewPoints OnNewPoints;
 
 
@@ -77,11 +84,11 @@ namespace ProcRoom.UI
                 player.SetStats(stats);
                 player.NewGame();
             }
-            gameObject.SetActive(false);
+            transform.GetChild(0).gameObject.SetActive(false);
         }
 
         void OnEnable()
-        {
+        {            
             OptionButtonFrame.OnSelectAction += HandleNewSpriteSelect;
         }
 
