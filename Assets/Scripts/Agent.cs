@@ -223,7 +223,10 @@ namespace ProcRoom
         protected virtual void HandleProjectileHit(Projectile projectile, Coordinate position)
         {
             if (position.Equals(_stats.position))
+            {
+                UI.Hurt.Place(_stats.position);
                 Hurt();
+            }
         }
 
         public void Hurt()
