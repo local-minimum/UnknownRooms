@@ -27,6 +27,11 @@ namespace ProcRoom.UI
         [SerializeField]
         PlayerNamer namer;
 
+        [SerializeField]
+        OptionButtonFrame spriteGroup;
+
+        int selectedSprite = 0;
+
         static CharacterCreation _instance;
 
         static CharacterCreation instance
@@ -73,6 +78,22 @@ namespace ProcRoom.UI
                 player.NewGame();
             }
             gameObject.SetActive(false);
+        }
+
+        void OnEnable()
+        {
+            OptionButtonFrame.OnSelectAction += HandleNewSpriteSelect;
+        }
+
+        void OnDisable()
+        {
+            OptionButtonFrame.OnSelectAction -= HandleNewSpriteSelect;                
+        }
+        
+        private void HandleNewSpriteSelect(OptionButtonFrame group, int selected)
+        {
+            if (group == spriteGroup)
+                selectedSprite = selected;
         }
     }
 }

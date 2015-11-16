@@ -2972,6 +2972,7 @@ GameObject:
   - 222: {fileID: 345530034}
   - 114: {fileID: 345530033}
   - 114: {fileID: 345530032}
+  - 114: {fileID: 345530035}
   m_Layer: 5
   m_Name: Portrait0 (1)
   m_TagString: Untagged
@@ -3036,7 +3037,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 345530033}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 345530035}
+        m_MethodName: ClickAction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &345530033
@@ -3072,6 +3084,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 345530030}
+--- !u!114 &345530035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 345530030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d208c847beae6a4094e4910ee865bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frame: {fileID: 1596385078}
+  group: {fileID: 345530035}
+  value: 0
 --- !u!1 &345671011
 GameObject:
   m_ObjectHideFlags: 0
@@ -5531,6 +5557,7 @@ MonoBehaviour:
   defence: {fileID: 1564228146}
   clipSize: {fileID: 131560656}
   namer: {fileID: 1485410625}
+  spriteGroup: {fileID: 345530035}
 --- !u!1 &620352206
 GameObject:
   m_ObjectHideFlags: 0
@@ -11498,6 +11525,7 @@ GameObject:
   - 222: {fileID: 1357736805}
   - 114: {fileID: 1357736804}
   - 114: {fileID: 1357736803}
+  - 114: {fileID: 1357736806}
   m_Layer: 5
   m_Name: Portrait0
   m_TagString: Untagged
@@ -11562,7 +11590,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1357736804}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1357736806}
+        m_MethodName: ClickAction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1357736804
@@ -11598,6 +11637,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1357736801}
+--- !u!114 &1357736806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1357736801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d208c847beae6a4094e4910ee865bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frame: {fileID: 1542809429}
+  group: {fileID: 345530035}
+  value: 1
 --- !u!1 &1358969309
 GameObject:
   m_ObjectHideFlags: 0
@@ -15512,6 +15565,7 @@ GameObject:
   - 222: {fileID: 1938830540}
   - 114: {fileID: 1938830539}
   - 114: {fileID: 1938830538}
+  - 114: {fileID: 1938830541}
   m_Layer: 5
   m_Name: Portrait0 (2)
   m_TagString: Untagged
@@ -15576,7 +15630,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1938830539}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1938830541}
+        m_MethodName: ClickAction
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1938830539
@@ -15612,6 +15677,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1938830536}
+--- !u!114 &1938830541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1938830536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d208c847beae6a4094e4910ee865bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frame: {fileID: 1526754141}
+  group: {fileID: 345530035}
+  value: 2
 --- !u!1 &1941777103
 GameObject:
   m_ObjectHideFlags: 0
