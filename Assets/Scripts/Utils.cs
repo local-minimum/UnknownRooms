@@ -25,6 +25,46 @@ namespace ProcRoom
             noUpperBound = true;
         }
     }
+    
+
+    [System.Serializable]
+    public struct FloatRange
+    {
+        [SerializeField, HideInInspector]
+        float _min;
+
+        [SerializeField, HideInInspector]
+        float _max;
+
+        public float min
+        {
+            get { return _min; }
+            set { _min = Mathf.Min(_max, value); }
+        }
+
+        public float max
+        {
+            get { return _max; }
+            set { _max = Mathf.Max(_min, value); }
+        }
+        public FloatRange(float min, float max)
+        {
+            _min = min;
+            _max = Mathf.Max(min, max);
+        }
+
+        public float RandomValue
+        {
+            get
+            {
+                if (_min == _max)
+                    return _min;
+                return Random.Range(_min, _max);
+            }
+
+        }
+
+    }
 
     [System.Serializable]
     public struct Coordinate
