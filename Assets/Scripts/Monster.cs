@@ -17,7 +17,7 @@ namespace ProcRoom
 
         [SerializeField, Range(1, 20)]
         int minSpawnDistanceToPlayer = 7;
-
+       
         public bool trackingPlayer
         {
             get
@@ -127,7 +127,7 @@ namespace ProcRoom
                 pos = room.GetRandomFreeTileCoordinate(player.position, minDistance);
                 minDistance--;
             } while (pos == Coordinate.InvalidPlacement);
-            Debug.Log(name + string.Format(" will start level at {0},{1}", pos.x, pos.y));
+            //Debug.Log(name + string.Format(" will start level at {0},{1}", pos.x, pos.y));
             UpdatePosition(pos);
             alive = true;
 

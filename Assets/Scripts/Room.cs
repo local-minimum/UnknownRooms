@@ -18,7 +18,7 @@ namespace ProcRoom
         public float biasTowardsGrowingIslands;
         public int minDistanceBetweenStairs;
         public int spikeTrapClusters;
-        public int spikeTrapClusterSize;
+        public Range spikeTrapClusterSize;
 
     }
 
@@ -76,10 +76,11 @@ namespace ProcRoom
         int minDistanceBetweenStairs = 6;
 
         [SerializeField]
-        int spikeTrapClusters = 2;
+        Range spikeTrapClusters;
+        int _spikeTrapClusters;
 
         [SerializeField]
-        int spikeTrapClusterSize = 3;
+        Range spikeTrapClusterSize;        
 
         bool roomGenerating = true;
         
@@ -147,7 +148,7 @@ namespace ProcRoom
             data.wallGrowthIterations = new Range(minWallGrowthIterations, maxWallGrowthIterations);
             data.minDistanceBetweenStairs = minDistanceBetweenStairs;
             data.tileTypeMap = tileTypeMap;
-            data.spikeTrapClusters = spikeTrapClusters;
+            data.spikeTrapClusters = spikeTrapClusters.RandomValue;
             data.spikeTrapClusterSize = spikeTrapClusterSize;
             return data;
         }
@@ -352,8 +353,10 @@ namespace ProcRoom
 
         void RigTraps()
         {
-            for (int i = 0; i < spikeTrapClusters; i++)
-                Trapper.LaySpikeTraps(this, this.GetData(), spikeTrapClusterSize);
+            _spikeTrapClusters = spikeTrapClusters.RandomValue;
+            Debug.Log("Laying spike clusters: " + _spikeTrapClusters);
+            for (int i = 0; i < _spikeTrapClusters; i++)
+                Trapper.LaySpikeTraps(this, this.GetData(), spikeTrapClusterSize.RandomValue);
         }
 
         public void SetTileType(int index, TileType type)

@@ -24,6 +24,22 @@ namespace ProcRoom
             this.max = min;
             noUpperBound = true;
         }
+
+        public int RandomValue
+        {
+            get
+            {
+                if (!noUpperBound)
+                {
+                    if (min == max)
+                        return min;
+                    else
+                        return Random.Range(min, max);
+                }
+                else
+                    return -1;
+            }
+        }
     }
     
 
@@ -480,7 +496,7 @@ namespace ProcRoom
         static Coordinate[] PathFromDistanceMap(int[,] map, Coordinate pathPosition)
         {
             var path = new Coordinate[map[pathPosition.x, pathPosition.y]];
-            Debug.Log("Valid path at " + path.Length);
+            //Debug.Log("Valid path at " + path.Length);
             var neighbours = new List<Coordinate>();
             for (int index=path.Length - 1; index >=0; index--)
             {
@@ -559,7 +575,7 @@ namespace ProcRoom
         public static bool IsClearStraightPath(Room room, Coordinate source, Coordinate target)
         {
             var offset = (target - source).asDirection;
-            Debug.Log(string.Format("{0} -> {1} using {2}", source, target, offset));
+            //Debug.Log(string.Format("{0} -> {1} using {2}", source, target, offset));
             while (true)
             {
                 source += offset;

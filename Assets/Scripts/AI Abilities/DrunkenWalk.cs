@@ -27,7 +27,7 @@ namespace ProcRoom.AI.Abilities
 
         public override bool Enact()
         {
-            Debug.Log(name + " enacting drunken walk");
+            //Debug.Log(name + " enacting drunken walk");
             if (AttemptMove(monster.lookDirection)) {
                 if (Random.value < 0.5f) {
                     if (AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated180())) ;

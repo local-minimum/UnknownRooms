@@ -12,6 +12,8 @@ namespace ProcRoom.Physical
 
         List<Monster> pool = new List<Monster>();
 
+        List<bool> smithed = new List<bool>();
+
         [SerializeField]
         Ability Health;
 
@@ -57,17 +59,34 @@ namespace ProcRoom.Physical
             }
         }
 
+        public static int Worth(Agent agent, bool includeWeapon)
+        {
+            int worth = 0;
+            var stats = agent.stats;
+            worth += instance.Health.Cost(stats.maxHealth);
+            worth += instance.ActionPoints.Cost(stats.actionPointsPerTurn);
+            worth += instance.ClipSize.Cost(stats.clipSize);
+            worth += instance.Defence.Cost(stats.defence);
+            Debug.Log(string.Format("{0} has worth {1} (weapon not included)", agent.name, worth));
+            if (includeWeapon)
+                worth += WeaponSmith.Worth(agent.Weapon);
+            return worth;
+        }
+
         public static Monster Smith(int points)
         {
+            
             var monster = instance.GetFreeMonster();
             var abilityState = instance.blankState;
             Ability fancy = new List<Ability>(abilityState.Keys)[Random.Range(0, abilityState.Count)];
             if (Random.value > instance.likelihoodToBias)
                 fancy = null;
             int weaponPoints = instance.GetWeaponPoints(ref points);
+            Debug.Log(string.Format("Smitting monster worth maximum {0} plus minimum {1} weapon points.", points, weaponPoints));
             while (Upgrade(ref abilityState, ref points, fancy)) ;
             monster.SetStats(instance.createMonster(abilityState));
             monster.Weapon.SetStats(WeaponSmith.Smith(weaponPoints + points));
+
             return monster;
         }
 
@@ -92,6 +111,7 @@ namespace ProcRoom.Physical
             for (int i = 0; i < monsters.Length; i++)
             {
                 ParentMonster(monsters[i].transform);
+                smithed.Add(false);
             }
             pool.AddRange(monsters);
         }
@@ -110,8 +130,11 @@ namespace ProcRoom.Physical
         {
             for (int i=0, l=pool.Count; i< l; i++)
             {
-                if (!pool[i].alive)
+                if (!smithed[i])
+                {
+                    smithed[i] = true;
                     return pool[i];
+                }
             }
 
             return InstantiateNewMonster();
@@ -123,6 +146,7 @@ namespace ProcRoom.Physical
             GO.transform.SetParent(transform);
             var monster = GO.GetComponentInChildren<Monster>();
             pool.Add(monster);
+            smithed.Add(true);
             return monster;
         }
 
@@ -136,7 +160,7 @@ namespace ProcRoom.Physical
                 var cost = kvp.Key.Length > kvp.Value + 1 ? kvp.Key[kvp.Value + 1].cost : -1;
                 if (cost >= 0 && cost <= points)
                 {
-                    Debug.Log(string.Format("Possible upgrade on {0} to lvl {1} at cost {2} ({3})", kvp.Key.name, kvp.Value + 1, cost, points));
+                    //Debug.Log(string.Format("Possible upgrade on {0} to lvl {1} at cost {2} ({3})", kvp.Key.name, kvp.Value + 1, cost, points));
                     availables[totalAvailable] = kvp.Key;
                     totalAvailable++;
                     if (kvp.Key == fancy)
@@ -152,7 +176,7 @@ namespace ProcRoom.Physical
 
             var upgradeAbility = availables[Random.Range(0, totalAvailable)];
             state[upgradeAbility]++;
-            Debug.Log(string.Format("Upgrading {0} of {1} available", upgradeAbility.name, totalAvailable));
+            //Debug.Log(string.Format("Upgrading {0} of {1} available", upgradeAbility.name, totalAvailable));
             points -= upgradeAbility[state[upgradeAbility]].cost;
             return true;
         }
@@ -161,10 +185,22 @@ namespace ProcRoom.Physical
         {
             var stats = new AgentStats();
             stats.maxHealth = Health[state[Health]].value;
-            stats.actionPoints = ActionPoints[state[ActionPoints]].value;
+            stats.actionPointsPerTurn = ActionPoints[state[ActionPoints]].value;
             stats.defence = Defence[state[Defence]].value;
             stats.clipSize = ClipSize[state[ClipSize]].value;
             return stats;
         }
+
+        public static void KillAllMonsters()
+        {
+            for (int i = 0, l = instance.pool.Count; i < l; i++)
+            {
+
+                instance.pool[i].alive = false;
+                instance.pool[i].enabled = false;
+               
+            }
+        }
+
     }
 }

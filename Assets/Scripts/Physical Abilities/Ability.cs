@@ -27,6 +27,20 @@ namespace ProcRoom.Physical
             }
         }
 
+        public int Cost(int value)
+        {
+            int cost = 0;
+            for (int i=0, l=Length; i< l; i++)
+            {
+                if (i > 0)
+                    cost += this[i].cost;
+
+                if (this[i].value == value)
+                    break;
+            }
+            return cost;
+        }
+
         void CollectStages()
         {
             var stats = new List<AbilityStat>();

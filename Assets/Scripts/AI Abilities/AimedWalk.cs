@@ -56,7 +56,7 @@ namespace ProcRoom.AI.Abilities
 
         public override bool Enact()
         {
-            Debug.Log(name + " enacting aimed walk");
+            //Debug.Log(name + " enacting aimed walk");
 
             if (!ValidatePath)
             {

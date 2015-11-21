@@ -16,9 +16,20 @@ namespace ProcRoom
         List<Agent> agents = new List<Agent>();
         int activeAgent = 0;
         int activeLevel = -1;
+        [SerializeField]
+        int points = 0;
+        [SerializeField, Range(1, 100)]
+        int basePointsPerLevel = 10;
+        [SerializeField, Range(0, 20)]
+        int extraPointsPerLevelMultiplier = 1;
+        [SerializeField]
+        Range monstersPerLevel;
+        [SerializeField]
+        FloatRange monsterRelativePlayerWorth;
 
         Room room;
         Player player;
+
         Projectile activeShot;
         bool switchAgent = false;
         bool queueRoom = false;
@@ -56,7 +67,7 @@ namespace ProcRoom
                     if (agents[i] is Player)
                         player = agents[i] as Player;
                 }
-                
+
             } else if (_instance != this)
             {
                 Destroy(gameObject);
@@ -115,14 +126,22 @@ namespace ProcRoom
         private void HandleRoomGenerated(Room room, RoomData data)
         {
             this.room = room;
-            roomHistory.Add(data);
+            if (!roomHistory.Contains(data))
+            {
+                roomHistory.Add(data);
+                activeLevel = roomHistory.Count - 1;
+            }
 
         }
 
         private void HandleNewPlayerPosition(Player player, Coordinate position, TileType tileType)
         {
             if (tileType == TileType.StairsUp)
+            {
+                Physical.MonsterSmith.KillAllMonsters();
+                SmithMonstersForRoom();
                 room.Generate();
+            }
         }
 
         public static void RoomDone()
@@ -199,6 +218,9 @@ namespace ProcRoom
         public static void Reset()
         {
             _instance.roomHistory.Clear();
+            _instance.activeLevel = 0;
+            _instance.points = 0;
+            _instance.SmithMonstersForRoom();
             _instance.room.Generate();
             _instance.player.NewGame();
         }
@@ -213,7 +235,31 @@ namespace ProcRoom
             if (activeLevel < 0 && AllAgentsReady && Time.timeSinceLevelLoad > 1f)
             {
                 activeLevel = 0;
+                SmithMonstersForRoom();
                 ActiveRoom.Generate();
+            }
+        }
+
+        void SmithMonstersForRoom()
+        {
+            var playerWorth = Physical.MonsterSmith.Worth(player, true);
+            points += playerWorth + basePointsPerLevel + (1 + activeLevel) * extraPointsPerLevelMultiplier;
+            var nMonsters = monstersPerLevel.RandomValue;
+            Debug.Log(string.Format("Attempting to smith up to {0} monsters from {1} points.", nMonsters, points));
+            while (nMonsters > 0)
+            {
+                int monsterWorth = Mathf.Min(Mathf.RoundToInt(monsterRelativePlayerWorth.RandomValue * playerWorth), points);
+                if (monsterWorth < playerWorth * monsterRelativePlayerWorth.min)     
+                    break;
+
+                var monster = Physical.MonsterSmith.Smith(monsterWorth);
+                if (!agents.Contains(monster))
+                    agents.Add(monster);
+                monster.alive = false;
+                monster.enabled = true;
+                nMonsters--;
+                points -= Physical.MonsterSmith.Worth(monster, true);
+
             }
         }
 

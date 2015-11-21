@@ -64,6 +64,14 @@ namespace ProcRoom
             
         }
 
+        public AgentStats stats
+        {
+            get
+            {
+                return _stats;
+            }
+        }
+
         public Weapon Weapon {
             get {
                 return weapon;
@@ -170,9 +178,10 @@ namespace ProcRoom
                 return _stats.health > 0;
             }
 
-            protected set
+            set
             {
                 _stats.health = value ? _stats.maxHealth : 0;
+                _stats.ammo = value ? _stats.clipSize : 0;
                 if (anim)
                 {
                     anim.enabled = value;

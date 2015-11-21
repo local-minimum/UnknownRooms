@@ -18,7 +18,7 @@ namespace ProcRoom.AI.Abilities
         public override bool Enact()
         {
             
-            Debug.Log("Enacting Attack");
+            //Debug.Log("Enacting Attack");
             monster.lookDirection = (monster.player.position - monster.position).asDirection;
             SendMessage("Attack", SendMessageOptions.RequireReceiver);
 
