@@ -29,7 +29,7 @@ namespace ProcRoom
         {
             get
             {
-                return clipSize < 1 || ammo > 0;
+                return ammo > 0;
             }
         }
     }
@@ -192,7 +192,7 @@ namespace ProcRoom
 
         }
 
-        void OnEnable()
+        virtual protected void OnEnable()
         {
             if (anim == null)
                 anim = GetComponent<Animator>();
@@ -201,7 +201,7 @@ namespace ProcRoom
             Projectile.OnProjectileHit += HandleProjectileHit;
         }
 
-        void OnDisable()
+        virtual protected void OnDisable()
         {
             Room.OnRoomGeneration -= HandleNewRoom;
             Tile.OnTileAction -= HandleTileAction;
