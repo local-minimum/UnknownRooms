@@ -53,7 +53,7 @@ namespace ProcRoom
         void Update()
         {
             ActOnInput(InputAsAction());
-            if (Input.GetButton("cancel"))
+            if (Input.GetKey(KeyCode.Escape))
             {
                 if (Time.realtimeSinceStartup - cancelRequest < 1f)
                     Application.Quit();

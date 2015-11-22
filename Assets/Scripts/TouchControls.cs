@@ -10,8 +10,8 @@ namespace ProcRoom
     {
         public static event TouchEvent OnTouchEvent;
 
-        [SerializeField]
-        float sqMagnitudeSwipeMin = 0.5f;
+        [SerializeField, Range(0, 0.01f)]
+        float minSqSwipeFractionMagnitude = 0.003f;
 
         [SerializeField]
         float dimensionDifferenceMin = 0.9f;
@@ -23,6 +23,16 @@ namespace ProcRoom
         Vector2 _touchDestination;
         
         bool tapping = false;
+
+        static TouchControls _instance;
+
+        void Awake()
+        {
+            if (_instance == null)
+                _instance = this;
+            else if (_instance != this)
+                Destroy(this);
+        }
 
         void Update()
         {
@@ -42,7 +52,7 @@ namespace ProcRoom
         {
             _touchDestination = new Vector2(touch.position.x, touch.position.y);
             var swipe = _touchDestination - _touchOrigin;
-            if (swipe.sqrMagnitude < sqMagnitudeSwipeMin)
+            if (Mathf.Pow(swipe.x / Screen.width, 2f) + Mathf.Pow(swipe.y / Screen.height, 2f) < minSqSwipeFractionMagnitude)
             {
                 if (tapping)
                 {
@@ -50,7 +60,7 @@ namespace ProcRoom
                     EmitTouch(TouchAction.DoubleTap);
                 }
                 else
-                    delayTap();
+                    StartCoroutine(delayTap());
             } else
             {
                 tapping = false;
