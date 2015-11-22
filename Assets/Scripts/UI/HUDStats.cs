@@ -10,7 +10,11 @@ namespace ProcRoom.UI
         bool setUp = false;
 
         List<Image> images = new List<Image>();
+
+        [SerializeField]
         Color32 activeColor;
+        [SerializeField]
+        Color32 inactiveColor;
 
         public int maxValue
         {
@@ -36,7 +40,7 @@ namespace ProcRoom.UI
                 for (int i = 0, l = images.Count; i < l; i++)
                 {
                     if (images[i].enabled)
-                        images[i].color = i < value ? activeColor : (Color32) Color.gray;
+                        images[i].color = i < value ? activeColor : inactiveColor;
                 }
 
             }
@@ -58,7 +62,7 @@ namespace ProcRoom.UI
                 if (img)
                     images.Add(img);
             }
-            activeColor = images[0].color;
+         
             setUp = true;
         }
     }
