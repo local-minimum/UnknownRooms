@@ -10,17 +10,11 @@ namespace ProcRoom.UI
 
         AbilitySelector selector;
         int index = -1;
-        Toggle _toggle;
-
-        Toggle toggle
-        {
-            get
-            {
-                if (_toggle == null)
-                    _toggle = GetComponentInChildren<Toggle>();
-                return _toggle;
-            }
-        }
+        
+        [SerializeField]
+        Image selectionImage;
+        [SerializeField]
+        Image backgroundImage;
 
         public int Index
         {
@@ -34,13 +28,20 @@ namespace ProcRoom.UI
         {
             get
             {
-                return toggle.interactable;
+                if (selectionImage == null)
+                    SetupComponents();
+
+                return backgroundImage.color == Color.white;
             }
 
             set
             {
-                toggle.interactable = value;
-                toggle.image.color = value ? Color.white : Color.black;
+                if (selectionImage == null)
+                    SetupComponents();
+
+                backgroundImage.color = value ? Color.white : Color.black;
+                if (selectionImage.enabled && !value)
+                    selectionImage.enabled = false; 
             }
         }
 
@@ -48,13 +49,24 @@ namespace ProcRoom.UI
         {
             get
             {
-                return toggle.isOn;
+                if (selectionImage == null)
+                    SetupComponents();
+
+                return selectionImage.enabled; //toggle.isOn;
             }
 
             set
             {
-                toggle.isOn = value;
+                if (selectionImage == null)
+                    SetupComponents();
+                if (allowed)
+                    selectionImage.enabled = value;
             }
+        }
+
+        void Awake()
+        {
+            SetupComponents();
         }
 
         void Start()
@@ -70,9 +82,16 @@ namespace ProcRoom.UI
                 Debug.LogWarning("Refused re-indexing");
         }
 
-        void Click()
+        public void Click()
         {
             selector.Select(this);
+        }
+
+        void SetupComponents()
+        {
+            //_toggle = GetComponentInChildren<Toggle>();
+            backgroundImage = GetComponentInChildren<Image>();
+            selectionImage = GetComponentsInChildren<Image>()[1];
         }
     }
 }

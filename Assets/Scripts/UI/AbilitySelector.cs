@@ -14,9 +14,12 @@ namespace ProcRoom.UI
         Physical.Ability ability;
 
         CharacterCreation characterCreation;
-        
+        int visibleSelectors = 0;
+
         void OnEnable()
         {
+            characterCreation = GetComponentInParent<CharacterCreation>();
+            Debug.Log("Had CC" + characterCreation);
             if (characterCreation)
                 CharacterCreation.OnNewPoints += OnNewPointsAvailable;
         }
@@ -29,7 +32,7 @@ namespace ProcRoom.UI
 
         void OnNewPointsAvailable(int points)
         {
-            for (int i=0; i<selectors.Length; i++)
+            for (int i=0; i<visibleSelectors; i++)
             {
                 if (!selectors[i].selected)
                 {
@@ -46,53 +49,58 @@ namespace ProcRoom.UI
             }
         }
 
-        void Awake()
-        {
-            characterCreation = GetComponentInParent<CharacterCreation>();
-        }
+        void Start() {
+             
+            selectors = new AbilityStat[ability.Length];
+            var foundSelectors = GetComponentsInChildren<AbilityStat>();
+            visibleSelectors = Mathf.Min(selectors.Length, foundSelectors.Length);
 
-        void Start() {            
-            var selectors = new AbilityStat[transform.childCount];
-            int nextIndex = 0;
-            for (int i = 0; i < selectors.Length; i++)
+            for (int i = 0, l=foundSelectors.Length; i < l; i++)
             {
-                var sel = transform.GetChild(i).GetComponent<AbilityStat>();
-                if (sel)
+
+                if (i < visibleSelectors)
                 {
-                    selectors[nextIndex] = sel;
-                    selectors[nextIndex].SetIndex(nextIndex);
-                    nextIndex++;
+                    selectors[i] = foundSelectors[i];
+                    selectors[i].SetIndex(i);
+                    selectors[i].allowed = false;
                 }
+                else
+                    foundSelectors[i].gameObject.SetActive(false);
             }
-            this.selectors = new AbilityStat[nextIndex];
-            System.Array.Copy(selectors, this.selectors, nextIndex);
-            if (characterCreation)
-                OnNewPointsAvailable(CharacterCreation.Points);
-            for (int i=0; i<this.selectors.Length; i++)
+
+            for (int i=0; i<visibleSelectors; i++)
             {
                 if (this.selectors[i].selected)
                     selected = this.selectors[i];
             }
+
+            Debug.Log("Visible selectors " + visibleSelectors);
+
+            if (characterCreation)
+                OnNewPointsAvailable(CharacterCreation.Points);
+
+            Select(selectors[0]);
+
         }
-                
+
         public void EmulateSelect(AbilityStat selector)
         {
             bool shouldBeSelected = selector != null;
             int culmulativeCost = 0;
-            for (int i=0; i<selectors.Length;i++)
+            for (int i=0; i<visibleSelectors;i++)
             {
-                if (!selectors[i].allowed && i < ability.Length)
+                if (!selectors[i].allowed)
                     shouldBeSelected = false;
 
                 if (shouldBeSelected && !selectors[i].selected)
                 {
                     selectors[i].selected = true;
                     culmulativeCost += ability[i].cost;
-                } else if (!shouldBeSelected && selectors[i].selected)
+                } else if (!shouldBeSelected)
                 {
-                    selectors[i].selected = false;
-                    if (i < ability.Length)
+                    if (selectors[i].selected)
                         culmulativeCost -= ability[i].cost;
+                    selectors[i].selected = false;
                 }
 
                 //All coming should be not selected
@@ -110,9 +118,9 @@ namespace ProcRoom.UI
 
         public void Select(AbilityStat selector)
         {
+           
             selected = selector;
-            selected.selected = true;
-            
+            EmulateSelect(selected);
         }
 
         public void Increase()
@@ -123,7 +131,7 @@ namespace ProcRoom.UI
                     selected = selectors[0];
             } else
             {
-                for (int i=0; i<selectors.Length - 1; i++)
+                for (int i=0; i<visibleSelectors - 1; i++)
                 {
                     if (selectors[i] == selected)
                     {
@@ -147,7 +155,7 @@ namespace ProcRoom.UI
                 if (selectors == null)
                     return;
                 bool doSelect = true;
-                for (int i=0; i<selectors.Length; i++)
+                for (int i=0; i<visibleSelectors; i++)
                 {
                     if (doSelect)
                         selectors[i].allowed = doSelect;
