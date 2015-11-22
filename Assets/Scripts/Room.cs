@@ -114,6 +114,7 @@ namespace ProcRoom
 
         public void Generate()
         {
+            Debug.Log("Generating room");
             roomGenerating = true;
             GenerateBlank();
             var islands = GenerateWallIsands();
@@ -125,11 +126,13 @@ namespace ProcRoom
             AddStairs();
             RigTraps();
 
+            
             StartCoroutine(Enact());
             if (OnRoomGeneration != null)
                 OnRoomGeneration(this, GetData());
-
-            StartCoroutine(delayRoomStart());
+                
+            StartCoroutine(delayRoomStart()); 
+            Debug.Log("Room generated");
         }
 
         IEnumerator<WaitForSeconds> delayRoomStart()

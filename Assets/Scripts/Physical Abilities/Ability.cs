@@ -41,6 +41,17 @@ namespace ProcRoom.Physical
             return cost;
         }
 
+        public int GetLevel(int value)
+        {
+            for (int i=0, l=Length; i< l; i++)
+            {
+                if (this[i].value == value)
+                    return i;
+            }
+            return -1;
+
+        }
+
         void CollectStages()
         {
             var stats = new List<AbilityStat>();

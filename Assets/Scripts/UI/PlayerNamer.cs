@@ -26,7 +26,7 @@ namespace ProcRoom.UI
 
             get
             {
-                if (enteredText.text != null && enteredText.enabled)
+                if (enteredText.text != null && enteredText.text != "" && enteredText.enabled)
                     return enteredText.text;
                 return defaultText.text;
             }

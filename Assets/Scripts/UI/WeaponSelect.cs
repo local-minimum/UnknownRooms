@@ -42,7 +42,7 @@ namespace ProcRoom.UI
 
         void ShowOptions(WeaponStats optionalWeapon)
         {
-            this.currentWeapon = Tower.Player.Weapon.Stats;
+            currentWeapon = Tower.Player.Weapon.Stats;
             this.optionalWeapon = optionalWeapon;
             Time.timeScale = 0;
             transform.GetChild(0).gameObject.SetActive(true);

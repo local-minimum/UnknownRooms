@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace ProcRoom
 {
     public delegate void NewActiveAgent(Agent agent);
+    public delegate void NewGame(Player player);
 
     public class Tower : MonoBehaviour
     {
 
         public static event NewActiveAgent OnNewActiveAgent;
+        public static event NewGame OnNewGame;
 
         static Tower _instance;
 
@@ -59,18 +61,24 @@ namespace ProcRoom
 
         void Awake() {
             if (_instance == null)
-            {
-                _instance = this;                
-                agents.AddRange(FindObjectsOfType<Agent>());
-                for (int i=0;i<agents.Count;i++)
-                {
-                    if (agents[i] is Player)
-                        player = agents[i] as Player;
-                }
+                _instance = this;
 
-            } else if (_instance != this)
+            if (_instance == this)
+                SetupAgents();
+            else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        void SetupAgents()
+        {
+            agents.Clear();
+            agents.AddRange(FindObjectsOfType<Agent>());
+            for (int i = 0; i < agents.Count; i++)
+            {
+                if (agents[i] is Player)
+                    player = agents[i] as Player;
             }
         }
 
@@ -166,11 +174,15 @@ namespace ProcRoom
             else
             {
                 //TODO: This is a bit dangerous and should prob test if anyone is still alive.
+                int i = 0;
                 do
                 {
                     activeAgent++;
+                    i++;
                     if (activeAgent >= agents.Count)
                         activeAgent = 0;
+                    if (i > agents.Count)
+                        return;
                 } while (!agents[activeAgent].alive);
                 if (OnNewActiveAgent != null)
                     OnNewActiveAgent(agents[activeAgent]);
@@ -221,8 +233,10 @@ namespace ProcRoom
             _instance.activeLevel = 0;
             _instance.points = 0;
             _instance.SmithMonstersForRoom();
-            _instance.room.Generate();
-            _instance.player.NewGame();
+            ActiveRoom.Generate();
+            
+            if (OnNewGame != null)
+                OnNewGame(_instance.player);
         }
 
         public void animateRoom()
@@ -233,11 +247,8 @@ namespace ProcRoom
         void Update()
         {
             if (activeLevel < 0 && AllAgentsReady && Time.timeSinceLevelLoad > 1f)
-            {
-                activeLevel = 0;
-                SmithMonstersForRoom();
-                ActiveRoom.Generate();
-            }
+                Reset();
+            
         }
 
         void SmithMonstersForRoom()
@@ -267,7 +278,7 @@ namespace ProcRoom
 
         void OnGUI()
         {
-            GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Level:\t{0}\nAgents:\t{1}\nActive:\t{2}", roomHistory.Count, agents.Count, activeAgent));
+            GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Agents:\t{0}\nActive:\t{1}", agents.Count, activeAgent));
         }
 #endif
     }

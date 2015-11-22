@@ -19,7 +19,6 @@ namespace ProcRoom.UI
         void OnEnable()
         {
             characterCreation = GetComponentInParent<CharacterCreation>();
-            Debug.Log("Had CC" + characterCreation);
             if (characterCreation)
                 CharacterCreation.OnNewPoints += OnNewPointsAvailable;
         }
@@ -73,8 +72,6 @@ namespace ProcRoom.UI
                 if (this.selectors[i].selected)
                     selected = this.selectors[i];
             }
-
-            Debug.Log("Visible selectors " + visibleSelectors);
 
             if (characterCreation)
                 OnNewPointsAvailable(CharacterCreation.Points);

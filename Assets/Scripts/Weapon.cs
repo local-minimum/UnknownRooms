@@ -53,7 +53,7 @@ namespace ProcRoom
         WeaponStats _stats = WeaponStats.DefaultWeapon;
 
         [SerializeField]
-        Projectile bullet;
+        Projectile _bullet;
 
         bool _isShooting = false;
 
@@ -81,9 +81,17 @@ namespace ProcRoom
 
         }
 
+        public Projectile bullet
+        {
+            get
+            {
+                return _bullet;
+            }
+        }
+
         public bool Shoot(Coordinate position, Coordinate lookDirection)
         {
-            if (!_isShooting && bullet.Shoot(position, lookDirection, _stats.attack, _stats.maxRange, _stats.accuracyLossPerTile))
+            if (!_isShooting && _bullet.Shoot(position, lookDirection, _stats.attack, _stats.maxRange, _stats.accuracyLossPerTile))
             {
                 _isShooting = true;
                 return true;
@@ -103,7 +111,7 @@ namespace ProcRoom
 
         private void HandleShotHit(Projectile projectile, Coordinate position)
         {
-            if (projectile == bullet)
+            if (projectile == _bullet)
                 _isShooting = false;
         }
 

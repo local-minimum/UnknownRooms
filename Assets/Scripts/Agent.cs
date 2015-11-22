@@ -34,12 +34,21 @@ namespace ProcRoom
         }
     }
 
+    public delegate void AgentActions(int actionPoints);
+    public delegate void AgentAmmo(int remainingAmmo);
+    public delegate void AgentHealth(int health);
+    public delegate void AgentUpgrade(AgentStats stats);
+
     public abstract class Agent : MonoBehaviour
     {
 
         [SerializeField]
         protected AgentStats _stats;
 
+        public event AgentActions OnAgentActionChange;
+        public event AgentAmmo OnAgentAmmoChange;
+        public event AgentHealth OnAgentHealthChange;
+        public event AgentUpgrade OnAgentUpgrade;
 
         [SerializeField]
         protected Weapon weapon;
@@ -156,9 +165,52 @@ namespace ProcRoom
 
             protected set
             {
-                _stats.actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
+                var actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
+                if (_stats.actionPoints != actionPoints)
+                {
+                    _stats.actionPoints = actionPoints;
+                    if (OnAgentActionChange != null)
+                        OnAgentActionChange(_stats.actionPoints);
+                }
                 if (_stats.actionPoints == 0)
-                    EndTurn();
+                    Tower.AgentDone(this);
+            }
+        }
+
+        public int ammo
+        {
+            get
+            {
+                return _stats.ammo;
+            }
+
+            protected set
+            {
+                var ammo = Mathf.Clamp(value, 0, _stats.clipSize);
+                if (_stats.ammo != ammo) {
+                    _stats.ammo = ammo;
+                    if (OnAgentAmmoChange != null)
+                        OnAgentAmmoChange(_stats.ammo);
+                }
+            }
+        }
+
+        public int health
+        {
+            get
+            {
+                return _stats.health;
+            }
+
+            protected set
+            {
+                var health = Mathf.Clamp(value, 0, _stats.maxHealth);
+                if (_stats.health != health)
+                {
+                    _stats.health = health;
+                    if (OnAgentHealthChange != null)
+                        OnAgentHealthChange(_stats.health);
+                }
             }
         }
 
@@ -180,8 +232,10 @@ namespace ProcRoom
 
             set
             {
-                _stats.health = value ? _stats.maxHealth : 0;
-                _stats.ammo = value ? _stats.clipSize : 0;
+                
+                health = value ? _stats.maxHealth : 0;
+                ammo = value ? _stats.clipSize : 0;
+                
                 if (anim)
                 {
                     anim.enabled = value;
@@ -190,6 +244,12 @@ namespace ProcRoom
                     rend.enabled = value;
             }
 
+        }
+
+        protected virtual void Reload()
+        {
+            ammo = _stats.clipSize;
+            actionPoints--;
         }
 
         virtual protected void OnEnable()
@@ -248,20 +308,13 @@ namespace ProcRoom
 
         public void Hurt()
         {
-            _stats.health--;
-
+            health--;
+             
             if (_stats.health < 1)
             {
                 actionPoints = 0;
                 Death();
             }
-        }
-
-        public void EndTurn()
-        {
-            Debug.Log(name + " turn ended.");
-            _stats.actionPoints = 0;
-            Tower.AgentDone(this);
         }
 
         abstract protected void Death();
@@ -270,7 +323,7 @@ namespace ProcRoom
         {
             if (_stats.hasAmmo && weapon.Shoot(_stats.position, _stats.lookDirection))
             {
-                _stats.ammo--;
+                ammo--;
                 shots++;
                 actionPoints--;
             }

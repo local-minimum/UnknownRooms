@@ -170,7 +170,7 @@ namespace ProcRoom
             var usables = GetUsableAbilities();
 
             if (usables.Count == 0)
-                EndTurn();
+                actionPoints = 0;
             else
             {
                 var ability = SelectAbility(usables);

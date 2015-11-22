@@ -77,7 +77,6 @@ namespace ProcRoom.UI
             stats.clipSize = clipSize.Value;
             stats.defence = defence.Value;
             stats.name = namer.Name;
-
             var player = FindObjectOfType<Player>();
             if (player)
             {

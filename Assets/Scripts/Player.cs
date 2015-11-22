@@ -126,17 +126,11 @@ namespace ProcRoom
             }
 
             else if (action == PlayerActions.EndTurn)
-                EndTurn();
+                actionPoints = 0;
             else if (action == PlayerActions.Reload)
                 Reload();
             else if (action == PlayerActions.Shoot)
                 Attack();
-        }
-
-        void Reload()
-        {
-            _stats.ammo = _stats.clipSize;
-            actionPoints--;
         }
 
         void AttemptMoveTo(Coordinate newPosition)
@@ -149,7 +143,7 @@ namespace ProcRoom
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
                 if (tileType == TileType.StairsUp)
-                    EndTurn();
+                    actionPoints = 0;
                 else
                     actionPoints--;
                 steps++;
@@ -159,12 +153,14 @@ namespace ProcRoom
 
         public void NewGame()
         {
-            _stats.health = _stats.maxHealth;
+            health = _stats.maxHealth;
             steps = 0;
             shots = 0;
-            _stats.ammo = _stats.clipSize;
-            Tower.Spawn();
+            ammo = _stats.clipSize;
             alive = true;
+            Debug.Log("Ready for tower");
+            Tower.Spawn();
+            
         }
 
         protected override void Death()
