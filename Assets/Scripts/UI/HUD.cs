@@ -29,6 +29,9 @@ namespace ProcRoom.UI
         Text PlayerName;
 
         [SerializeField]
+        Text Points;
+
+        [SerializeField]
         Image PlayerIcon;
 
         Player player;
@@ -123,6 +126,7 @@ namespace ProcRoom.UI
             Ammo.currentValue = stats.ammo;
 
             PlayerName.text = stats.name;
+            Points.text = "Points: " + stats.xp;
             
             //PlayerIcon.image = ??            
 
