@@ -53,6 +53,7 @@ namespace ProcRoom.UI
 
         void OnEnable() {
             Tower.OnNewGame += HandleNewGame;
+            Tower.OnNewLevel += HandleNewLevel;
             if (player)
                 ConnectPlayerEvents(player);
         }
@@ -60,6 +61,7 @@ namespace ProcRoom.UI
         void OnDisable()
         {
             Tower.OnNewGame -= HandleNewGame;
+            Tower.OnNewLevel -= HandleNewLevel;
             if (player)
                 DisconnectPlayerEvents();
         }
@@ -73,6 +75,12 @@ namespace ProcRoom.UI
             player.OnAgentAmmoChange += HandlePlayerAmmo;
             player.OnAgentHealthChange += HandlePlayerHealth;
         }
+
+        private void HandleNewLevel(int level)
+        {
+            LevelText.text = "Level " + level;
+        }
+
 
         void DisconnectPlayerEvents() {
             player.OnAgentActionChange -= HandlePlayerActionPoints;

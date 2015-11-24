@@ -5,12 +5,14 @@ namespace ProcRoom
 {
     public delegate void NewActiveAgent(Agent agent);
     public delegate void NewGame(Player player);
+    public delegate void NewLevel(int level);
 
     public class Tower : MonoBehaviour
     {
 
         public static event NewActiveAgent OnNewActiveAgent;
         public static event NewGame OnNewGame;
+        public static event NewLevel OnNewLevel;
 
         static Tower _instance;
 
@@ -149,6 +151,8 @@ namespace ProcRoom
                 Physical.MonsterSmith.KillAllMonsters();
                 SmithMonstersForRoom();
                 room.Generate();
+                if (OnNewLevel != null)
+                    OnNewLevel(activeLevel + 1);
             }
         }
 
