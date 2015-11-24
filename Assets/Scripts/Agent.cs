@@ -169,7 +169,7 @@ namespace ProcRoom
                 return _stats.actionPoints;
             }
 
-            protected set
+            set
             {
                 var actionPoints = Mathf.Clamp(value, 0, _stats.actionPointsPerTurn);
                 if (_stats.actionPoints != actionPoints)
@@ -270,7 +270,7 @@ namespace ProcRoom
             return false;
         }
 
-        protected virtual void Reload()
+        public virtual void Reload()
         {
             ammo = _stats.clipSize;
             actionPoints--;
