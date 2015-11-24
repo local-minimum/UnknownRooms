@@ -20,7 +20,11 @@ namespace ProcRoom
         public int clipSize = 11;
         public int ammo = 0;
 
+        public int xp = 0;
+
         public int defence = 10;
+
+        public bool hasKey = false;
 
         public Coordinate position;
         public Coordinate lookDirection = Coordinate.Right;
@@ -38,6 +42,7 @@ namespace ProcRoom
     public delegate void AgentAmmo(int remainingAmmo);
     public delegate void AgentHealth(int health);
     public delegate void AgentUpgrade(AgentStats stats);
+    public delegate void AgentDeath(Agent agent);
 
     public abstract class Agent : MonoBehaviour
     {
@@ -45,6 +50,7 @@ namespace ProcRoom
         [SerializeField]
         protected AgentStats _stats;
 
+        public static event AgentDeath OnAgentDeath;
         public event AgentActions OnAgentActionChange;
         public event AgentAmmo OnAgentAmmoChange;
         public event AgentHealth OnAgentHealthChange;
@@ -202,7 +208,7 @@ namespace ProcRoom
                 return _stats.health;
             }
 
-            protected set
+            set
             {
                 var health = Mathf.Clamp(value, 0, _stats.maxHealth);
                 if (_stats.health != health)
@@ -210,9 +216,12 @@ namespace ProcRoom
                     _stats.health = health;
                     if (OnAgentHealthChange != null)
                         OnAgentHealthChange(_stats.health);
+
+                    if (_stats.health == 0 && Tower.playingRoom && OnAgentDeath != null)
+                        OnAgentDeath(this);
                 }
             }
-        }
+        }        
 
         protected bool myTurn
         {
@@ -244,6 +253,21 @@ namespace ProcRoom
                     rend.enabled = value;
             }
 
+        }
+
+        public void AwardKey()
+        {
+            _stats.hasKey = true;
+        }
+
+        public bool ConsumeKey()
+        {
+            if (_stats.hasKey)
+            {
+                _stats.hasKey = false;
+                return true;
+            }
+            return false;
         }
 
         protected virtual void Reload()

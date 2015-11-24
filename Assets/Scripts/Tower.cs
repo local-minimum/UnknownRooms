@@ -37,6 +37,7 @@ namespace ProcRoom
         Projectile activeShot;
         bool switchAgent = false;
         bool queueRoom = false;
+        bool betweenRooms = true;
 
         public static Room ActiveRoom
         {
@@ -121,6 +122,35 @@ namespace ProcRoom
             Projectile.OnProjectileLaunch -= HandleProjectileLaunch;
         }
 
+        public static bool playingRoom
+        {
+            get
+            {
+                return !ActiveRoom.isGenerating && !_instance.betweenRooms;
+            }
+        }
+
+        public static bool AnyMonsterAlive
+        {
+            get
+            {
+                return _instance.anyMonsterAlive;
+            }
+        }
+
+        public bool anyMonsterAlive
+        {
+            get
+            {
+                for (int i=0, l=agents.Count; i< l; i++)
+                {
+                    if (agents[i] != player && agents[i].alive)
+                        return true;
+                }
+                return false;
+            }
+        }
+
         private void HandleProjectileHit(Projectile projectile, Coordinate position)
         {
             activeShot = null;
@@ -148,9 +178,11 @@ namespace ProcRoom
         {
             if (tileType == TileType.StairsUp)
             {
+                betweenRooms = true;
                 Physical.MonsterSmith.KillAllMonsters();
                 SmithMonstersForRoom();
                 room.Generate();
+                betweenRooms = false;
                 if (OnNewLevel != null)
                     OnNewLevel(activeLevel + 1);
             }
@@ -233,12 +265,13 @@ namespace ProcRoom
 
         public static void Reset()
         {
+            _instance.betweenRooms = true;
             _instance.roomHistory.Clear();
             _instance.activeLevel = 0;
             _instance.points = 0;
             _instance.SmithMonstersForRoom();
             ActiveRoom.Generate();
-            
+            _instance.betweenRooms = false;
             if (OnNewGame != null)
                 OnNewGame(_instance.player);
         }

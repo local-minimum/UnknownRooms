@@ -156,6 +156,15 @@ namespace ProcRoom
             return data;
         }
 
+        public bool HasDoor
+        {
+            get
+            {
+                //TODO: Add actual test;
+                return false;
+            }
+        }
+
         public int Width
         {
             get
