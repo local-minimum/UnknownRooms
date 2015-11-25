@@ -46,6 +46,14 @@ namespace ProcRoom
 
         }
 
+        public static int ActiveLevel
+        {
+            get
+            {
+                return _instance.activeLevel + 1;
+            }
+        }
+
         public static Room ActiveRoom
         {
             get

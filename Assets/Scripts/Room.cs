@@ -125,7 +125,8 @@ namespace ProcRoom
             JoinWalkableAreas();
             AddStairs();
             RigTraps();
-
+            if (Tower.ActiveLevel > 1)
+                RigDoorAndTreasure();            
             
             StartCoroutine(Enact());
             if (OnRoomGeneration != null)
@@ -160,8 +161,8 @@ namespace ProcRoom
         {
             get
             {
-                //TODO: Add actual test;
-                return false;
+                return RoomSearch.HasAnyOfType(TileType.Door, tileTypeMap);
+                
             }
         }
 
@@ -363,6 +364,63 @@ namespace ProcRoom
             return GO.GetComponent<Tile>();
         }
 
+        void RigDoorAndTreasure()
+        {
+            var candidates = RoomSearch.GetTileIndicesWithType(TileType.Walkable, tileTypeMap).ToArray();
+            if (candidates.Length > 1)
+                candidates = ShuffleArray<int>.Shuffle(candidates);
+
+            var upStairs = Coordinate.FromPosition(RoomSearch.GetFirstOccurance(tileTypeMap, TileType.StairsUp), width);
+            var downStairs = Coordinate.FromPosition(RoomSearch.GetFirstOccurance(tileTypeMap, TileType.StairsDown), width);
+
+            for (int i=0; i<candidates.Length; i++)
+            {
+                var coord = Coordinate.FromPosition(candidates[i], width);
+                if (PermissableDoorPosition(coord))
+                {
+                    var path = RoomSearch.FindShortestPath(this, upStairs, downStairs);
+                    if (path.Length > 0 && !System.Array.Exists<Coordinate>(path, e => e == coord)) {
+                        SetTileType(candidates[i], TileType.Door);
+                        if (CountPathsToTargets(coord, upStairs, downStairs) == 1)
+                            return;
+                    }
+                }
+            }
+            
+        }
+
+        int CountPathsToTargets(Coordinate origin, params Coordinate[] targets)
+        {
+            int paths = 0;
+            foreach (var neighbour in origin.Neighbours())
+            {
+                if (!PassableTile(neighbour, false, TileType.Walkable, TileType.SpikeTrap))
+                    continue;
+                for (int i = 0; i < targets.Length; i++)
+                {
+                    if (RoomSearch.FindShortestPath(this, neighbour, targets[i], false, TileType.SpikeTrap, TileType.Walkable).Length > 1)
+                    {
+                        paths++;
+                        break;
+                    }
+                }
+            }
+            return paths;
+        }
+
+        bool PermissableDoorPosition(Coordinate coord)
+        {
+            bool up = PassableTileAccordingToDoor(coord.UpSide());
+            bool vertical = up == PassableTileAccordingToDoor(coord.DownSide());
+            bool left = PassableTileAccordingToDoor(coord.LeftSide());
+            
+            bool val = vertical && up != left && left == PassableTileAccordingToDoor(coord.RightSide());
+            if (val)
+                Debug.Log(string.Format("{0} UP {1} DOWN {2} -> {3} LEFT {4} RIGHT {5} -> {6} --> DoorPosition",
+                    coord, up, PassableTileAccordingToDoor(coord.DownSide()), vertical, left, PassableTileAccordingToDoor(coord.RightSide()), left == PassableTileAccordingToDoor(coord.RightSide())));
+            return val;
+        }
+
         void RigTraps()
         {
             _spikeTrapClusters = spikeTrapClusters.RandomValue;
@@ -463,14 +521,28 @@ namespace ProcRoom
             return TileType.None;
         }
 
+        public bool PassableTileAccordingToDoor(Coordinate position)
+        {
+            return PassableTile(position, false, TileType.Walkable, TileType.StairsDown, TileType.SpikeTrap, TileType.StairsUp);
+        }
+
         public bool PassableTile(Coordinate position)
+        {
+            return PassableTile(position, true, TileType.Walkable, TileType.SpikeTrap);
+        }
+
+        public bool PassableTile(Coordinate position, bool checkAgents, params TileType[] permissibles)
         {
             if (!position.Inside(width, height))
                 return false;
-            
-            var tileType = GetTileTypeAt(position);
-            if (!(tileType == TileType.Walkable || tileType == TileType.SpikeTrap))
+
+            var typeAtPos = GetTileTypeAt(position);
+            if (!System.Array.Exists<TileType>(permissibles, e => e == typeAtPos))
                 return false;
+
+            if (!checkAgents)
+                return true;
+
             for (int i = 0, l = Tower.Agents; i < l; i++) {
                 if (Tower.GetAgentPosition(i) == position)
                     return false;

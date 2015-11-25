@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace ProcRoom
 {
-    public enum TileType { None, Wall, Walkable, StairsUp, StairsDown, SpikeTrap };
+    public enum TileType { None, Wall, Walkable, StairsUp, StairsDown, SpikeTrap, Door };
 
     public delegate void TileAction(Tile tile, TileType typeOfTile, Coordinate position);
 
@@ -83,10 +83,11 @@ namespace ProcRoom
 
                 if (this.cycleStep < 0 && cycleStep == 0)
                     this.cycleStep = 0;
-               
+
                 if (this.cycleStep >= 0)
                     StepSpikesCycle();
-            } else if (typeOfTile == TileType.StairsDown)
+            }
+            else if (typeOfTile == TileType.StairsDown)
                 anim.SetTrigger("StairsDown");
             else if (typeOfTile == TileType.StairsUp)
                 anim.SetTrigger("StairsUp");
@@ -94,6 +95,8 @@ namespace ProcRoom
                 anim.SetTrigger("WalkableArea");
             else if (typeOfTile == TileType.Wall)
                 anim.SetTrigger("Wall");
+            else if (typeOfTile == TileType.Door)
+                anim.SetTrigger("DoorClosed");
             else if (typeOfTile != TileType.None)
                 anim.SetTrigger("UnknownTile");
         }

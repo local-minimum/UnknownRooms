@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace ProcRoom
@@ -266,6 +267,32 @@ namespace ProcRoom
         {
             return range.min <= value && (range.noUpperBound || value <= range.max);
         }
+
+    }
+
+    public static class ShuffleArray<T>
+    {
+        static System.Random _random = new System.Random();
+
+        public static T[] Shuffle(T[] array)
+        {
+            List<KeyValuePair<int, T>> list = new List<KeyValuePair<int, T>>();
+            foreach (var element in array)
+                list.Add(new KeyValuePair<int, T>(_random.Next(), element));
+
+            var sorted = from item in list orderby item.Key select item;
+
+            T[] result = new T[array.Length];
+            int index = 0;
+            foreach(KeyValuePair<int, T> pair in sorted)
+            {
+                result[index] = pair.Value;
+                index++;
+            }
+
+            return result;
+        }
+
     }
 
     public static class RoomMath {
@@ -527,6 +554,11 @@ namespace ProcRoom
 
         public static int[,] GetDistanceMap(Room room, Coordinate source)
         {
+            return GetDistanceMap(room, source, true, TileType.Walkable, TileType.SpikeTrap);
+        }
+
+        public static int[,] GetDistanceMap(Room room, Coordinate source, bool regardAgents, params TileType[] passables)
+        {
             int height = room.Height;
             int width = room.Width;
 
@@ -544,7 +576,7 @@ namespace ProcRoom
                 foreach (Coordinate neighbour in current.Neighbours())
                 {
                     
-                    if (room.PassableTile(neighbour) && distances[neighbour.x, neighbour.y] > nextDist)
+                    if (room.PassableTile(neighbour, regardAgents, passables) && distances[neighbour.x, neighbour.y] > nextDist)
                     {
                         distances[neighbour.x, neighbour.y] = nextDist;
                         if (!queue.Contains(neighbour) && neighbour.Inside(width, height))
@@ -559,10 +591,15 @@ namespace ProcRoom
 
         public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target)
         {
+            return FindShortestPath(room, source, target, true, TileType.Walkable, TileType.SpikeTrap);
+        }
+
+        public static Coordinate[] FindShortestPath(Room room, Coordinate source, Coordinate target, bool regardAgents, params TileType[] passables)
+        {
             if (source == Coordinate.InvalidPlacement || target == Coordinate.InvalidPlacement)
                 return new Coordinate[0];
 
-            var distances = GetDistanceMap(room, source);
+            var distances = GetDistanceMap(room, source, regardAgents,passables);
             foreach (Coordinate neighbour in target.Neighbours())
             {
                 if (neighbour.Inside(distances))
