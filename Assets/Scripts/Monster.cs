@@ -117,6 +117,30 @@ namespace ProcRoom
             StartCoroutine(delayMonsterSpawn());
         }
 
+        protected override void MoveOutOfTurn()
+        {
+            var spikeTiles = new List<Coordinate>();
+            foreach (var pos in position.Neighbours())
+            {
+                if (room.PassableTile(pos))
+                {
+                    if (room.GetTileTypeAt(pos) == TileType.SpikeTrap)
+                        spikeTiles.Add(pos);
+                    else
+                    {
+                        UpdatePosition(pos);
+                        return;
+                    }
+                }
+            }
+            if (spikeTiles.Count > 0)
+            {
+                UpdatePosition(spikeTiles[Random.Range(0, spikeTiles.Count)]);
+            }
+
+            
+        }
+
         IEnumerator<WaitForSeconds> delayMonsterSpawn()
         {
             yield return new WaitForSeconds(0.5f);

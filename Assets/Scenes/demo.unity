@@ -17816,6 +17816,10 @@ Prefab:
       propertyPath: _bullet
       value: 
       objectReference: {fileID: 212562603}
+    - target: {fileID: 11454252, guid: 502ee4a3738e82f439caf3647de229d3, type: 2}
+      propertyPath: HUDtransform
+      value: 
+      objectReference: {fileID: 275091282}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 502ee4a3738e82f439caf3647de229d3, type: 2}
   m_IsPrefabParent: 0

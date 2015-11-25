@@ -39,6 +39,13 @@ namespace ProcRoom
         bool queueRoom = false;
         bool betweenRooms = true;
 
+        public static bool Alive {
+            get {
+                return _instance != null && _instance.enabled;
+            }
+
+        }
+
         public static Room ActiveRoom
         {
             get

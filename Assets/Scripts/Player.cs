@@ -18,6 +18,9 @@ namespace ProcRoom
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
 
+        [SerializeField]
+        RectTransform HUDtransform;
+
         float cancelRequest = 0;
 
         void Start()
@@ -184,6 +187,9 @@ namespace ProcRoom
 
         private void HandleTouch(TouchAction action, Vector2 position)
         {
+            if (!Tower.Alive || RectTransformUtility.RectangleContainsScreenPoint(HUDtransform, position))
+                return;
+            
             if (action == TouchAction.SwipeDown)
                 ActOnInput(PlayerActions.MoveUp);
             else if (action == TouchAction.SwipeUp)

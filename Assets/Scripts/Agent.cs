@@ -310,7 +310,13 @@ namespace ProcRoom
             {
                 tile.Maim();
                 Hurt();
+                MoveOutOfTurn();
             }
+        }
+
+        protected virtual void MoveOutOfTurn()
+        {
+
         }
 
         protected virtual void HandleProjectileHit(Projectile projectile, Coordinate position)
