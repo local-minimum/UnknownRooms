@@ -62,6 +62,18 @@ namespace ProcRoom
             {
                 cycleStep = -1;
                 typeOfTile = value;
+                if (typeOfTile == TileType.StairsDown)
+                    anim.SetTrigger("StairsDown");
+                else if (typeOfTile == TileType.StairsUp)
+                    anim.SetTrigger("StairsUp");
+                else if (typeOfTile == TileType.Walkable)
+                    anim.SetTrigger("WalkableArea");
+                else if (typeOfTile == TileType.Wall)
+                    anim.SetTrigger("Wall");
+                else if (typeOfTile == TileType.Door)
+                    anim.SetTrigger("DoorClosed");
+                else if (typeOfTile != TileType.None)
+                    anim.SetTrigger("UnknownTile");
             }
         }
 
@@ -87,18 +99,7 @@ namespace ProcRoom
                 if (this.cycleStep >= 0)
                     StepSpikesCycle();
             }
-            else if (typeOfTile == TileType.StairsDown)
-                anim.SetTrigger("StairsDown");
-            else if (typeOfTile == TileType.StairsUp)
-                anim.SetTrigger("StairsUp");
-            else if (typeOfTile == TileType.Walkable)
-                anim.SetTrigger("WalkableArea");
-            else if (typeOfTile == TileType.Wall)
-                anim.SetTrigger("Wall");
-            else if (typeOfTile == TileType.Door)
-                anim.SetTrigger("DoorClosed");
-            else if (typeOfTile != TileType.None)
-                anim.SetTrigger("UnknownTile");
+
         }
 
         public bool Unlock()
