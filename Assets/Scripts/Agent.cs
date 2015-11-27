@@ -350,7 +350,8 @@ namespace ProcRoom
              
             if (_stats.health < 1)
             {
-                actionPoints = 0;
+                if (myTurn)
+                    actionPoints = 0;
                 Death();
             }
         }
