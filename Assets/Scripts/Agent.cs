@@ -398,7 +398,7 @@ namespace ProcRoom
 
         void OnGUI()
         {
-            if (Selection.activeObject == gameObject)
+            if (Selection.activeObject == gameObject || gameObject.transform.parent == Selection.activeObject)
             {
                 GUI.TextArea(new Rect(110, 2, 140, 70), string.Format("Health:\t{0}\nAmmo:\t{1}\nAP:\t{2}\nLookDir\t{3}", _stats.health, _stats.ammo, actionPoints, LookDirectionText));
                 if (alive && GUI.Button(new Rect(2, 33, 80, 30), "Hurt")) {
