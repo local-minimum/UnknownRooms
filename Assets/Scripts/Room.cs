@@ -343,17 +343,12 @@ namespace ProcRoom
 
         void FloodFillAs(int floodOrigin, TileType selector, TileType fillType)
         {
-            var fillingIndex = 0;
-            var filling = new List<int>();
-            filling.Add(floodOrigin);
 
-            while (fillingIndex < filling.Count)
+            var filling = RoomSearch.FloodSearch(tileTypeMap, width, floodOrigin, selector);
+
+            for (int i=0, l=filling.Count; i<l; i++)
             {
-                SetTileType(filling[fillingIndex], TileType.Walkable);
-                var neighbourUndecided = RoomSearch.GetNeighbourIndices(filling[fillingIndex], TileType.None, tileTypeMap, width);
-                SetTileType(neighbourUndecided, TileType.Walkable);
-                filling.AddRange(neighbourUndecided);
-                fillingIndex++;
+                SetTileType(filling[i], fillType);
             }
         }
 
@@ -381,17 +376,27 @@ namespace ProcRoom
                     var path = RoomSearch.FindShortestPath(this, upStairs, downStairs);
                     if (path.Length > 0 && !System.Array.Exists<Coordinate>(path, e => e == coord)) {
                         SetTileType(candidates[i], TileType.Door);
-                        if (CountPathsToTargets(coord, upStairs, downStairs) == 1)
+                        Coordinate deadEnd;
+                        if (CountPathsToTargets(coord, out deadEnd, upStairs, downStairs) == 1)
+                        {
+                            PlaceCoins(deadEnd);
                             return;
+                        }
+                            
                     }
                 }
             }
             
         }
 
-        int CountPathsToTargets(Coordinate origin, params Coordinate[] targets)
+        void PlaceCoins(Coordinate deadEnd) {
+            var treasurePositions = RoomSearch.FloodSearch(tileTypeMap, width, deadEnd.ToPosition(width, height), TileType.Walkable, TileType.SpikeTrap);
+        }
+
+        int CountPathsToTargets(Coordinate origin, out Coordinate lastDeadEnd, params Coordinate[] targets)
         {
             int paths = 0;
+            lastDeadEnd = origin;
             foreach (var neighbour in origin.Neighbours())
             {
                 if (!PassableTile(neighbour, false, TileType.Walkable, TileType.SpikeTrap))
@@ -402,6 +407,9 @@ namespace ProcRoom
                     {
                         paths++;
                         break;
+                    } else if (i == targets.Length)
+                    {
+                        lastDeadEnd = neighbour;
                     }
                 }
             }
@@ -444,7 +452,7 @@ namespace ProcRoom
         List<int> GetNeighbourIndices(int index, TileType neighbourType, int[] selector, int selectionValue)
         {
             var neighbours = new List<int>();
-            var tileNeighbours = RoomSearch.GetNeighbourIndices(index, neighbourType, tileTypeMap, width);
+            var tileNeighbours = RoomSearch.GetNeighbourIndices(tileTypeMap, width, index, neighbourType);
             for (int i = 0, l = tileNeighbours.Count; i < l; i++)
             {
                 if (selector[tileNeighbours[i]] == selectionValue)
@@ -459,7 +467,7 @@ namespace ProcRoom
             var neighbours = new HashSet<int>();
             for (int i=0, j=indices.Count; i<j; i++)
             {
-                var tileNeighbours = RoomSearch.GetNeighbourIndices(indices[i], neighbourType, tileTypeMap, width);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(tileTypeMap, width, indices[i], neighbourType);
                 for (int k=0, l=tileNeighbours.Count; k<l; k++)
                     neighbours.Add(tileNeighbours[k]);
                     
@@ -473,7 +481,7 @@ namespace ProcRoom
             var neighbours = new HashSet<int>();
             for (int i = 0, j = indices.Count; i < j; i++)
             {
-                var tileNeighbours = RoomSearch.GetNeighbourIndices(indices[i], neighbourType, tileTypeMap, width);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(tileTypeMap, width, indices[i], neighbourType);
                 for (int k = 0, l = tileNeighbours.Count; k < l; k++)
                 {
                     if (selector[tileNeighbours[k]] == selectionValue && !RoomMath.IndexOnPerimeter(tileNeighbours[k], width, height))
@@ -491,7 +499,7 @@ namespace ProcRoom
             var edge = new List<int>();
             for (int i=0,l=matchingByType.Count; i< l; i++)
             {
-                var tileNeighbours = RoomSearch.GetNeighbourIndices(matchingByType[i], TileType.Wall, tileTypeMap, width);
+                var tileNeighbours = RoomSearch.GetNeighbourIndices(tileTypeMap, width, matchingByType[i], TileType.Wall);
                 if (tileNeighbours.Count > 0)
                     edge.Add(matchingByType[i]);
             }

@@ -428,39 +428,58 @@ namespace ProcRoom
             return matchingIndices;
         }
 
+        public static List<int> FloodSearch(int[] tileTypeMap, int width, int source, params TileType[] selectors)
+        {
+            var fillingIndex = 0;
+            var filling = new List<int>();
+            filling.Add(source);
 
-        public static List<int> GetNeighbourIndices(int index, TileType neighbourType, int[] tileTypeMap, int width)
+            while (fillingIndex < filling.Count)
+            {
+                var neighbourUndecided = RoomSearch.GetNeighbourIndices(tileTypeMap, width, filling[fillingIndex], selectors);
+                for (int i=0, l=neighbourUndecided.Count; i< l; i++)
+                {
+                    if (!filling.Contains(neighbourUndecided[i]))
+                        filling.AddRange(neighbourUndecided);
+                }
+                fillingIndex++;
+
+            }
+            return filling;
+        }
+
+        public static List<int> GetNeighbourIndices(int[] tileTypeMap, int width, int index, params TileType[] neighbourType)
         {
             var neighbours = new List<int>();
 
             var x = index % width;
             var y = index / width;
             var height = tileTypeMap.Length / width;
-            var typeInt = (int)neighbourType;
+           
 
             if (x > 0)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x - 1, y, width);
-                if (tileTypeMap[neighbourIndex] == typeInt)
+                if (System.Array.Exists(neighbourType, t => (int) t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
             }
             if (x < width - 1)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x + 1, y, width);
-                if (tileTypeMap[neighbourIndex] == typeInt)
+                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
             }
             if (y > 0)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x, y - 1, width);
-                if (tileTypeMap[neighbourIndex] == typeInt)
+                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
 
             }
             if (y < height - 1)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x, y + 1, width);
-                if (tileTypeMap[neighbourIndex] == typeInt)
+                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
 
             }
@@ -502,7 +521,7 @@ namespace ProcRoom
             int height = tileTypeMap.Length / width;
             for (int i = 0, l = candidates.Count; i < l; i++)
             {
-                if (GetNeighbourIndices(candidates[i], borderType, tileTypeMap, width).Count > 0 && !RoomMath.IndexOnPerimeter(candidates[i], width, height))
+                if (GetNeighbourIndices(tileTypeMap, width, candidates[i], borderType).Count > 0 && !RoomMath.IndexOnPerimeter(candidates[i], width, height))
                     borderingTiles.Add(candidates[i]);
             }
             return borderingTiles;
