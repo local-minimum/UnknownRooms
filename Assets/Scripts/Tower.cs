@@ -6,6 +6,7 @@ namespace ProcRoom
     public delegate void NewActiveAgent(Agent agent);
     public delegate void NewGame(Player player);
     public delegate void NewLevel(int level);
+    public delegate void LevelEnd();
 
     public class Tower : MonoBehaviour
     {
@@ -13,6 +14,7 @@ namespace ProcRoom
         public static event NewActiveAgent OnNewActiveAgent;
         public static event NewGame OnNewGame;
         public static event NewLevel OnNewLevel;
+        public static event LevelEnd OnLevelEnd;
 
         static Tower _instance;
 
@@ -193,6 +195,8 @@ namespace ProcRoom
         {
             if (tileType == TileType.StairsUp)
             {
+                if (OnLevelEnd != null)
+                    OnLevelEnd();
                 betweenRooms = true;
                 Physical.MonsterSmith.KillAllMonsters();
                 SmithMonstersForRoom();
@@ -281,6 +285,8 @@ namespace ProcRoom
 
         public static void Reset()
         {
+            if (OnLevelEnd != null)
+                OnLevelEnd();
             _instance.betweenRooms = true;
             _instance.roomHistory.Clear();
             _instance.activeLevel = 0;

@@ -391,6 +391,7 @@ namespace ProcRoom
 
         void PlaceCoins(Coordinate deadEnd) {
             var treasurePositions = RoomSearch.FloodSearch(tileTypeMap, width, deadEnd.ToPosition(width, height), TileType.Walkable, TileType.SpikeTrap);
+            TreasureChest.Spawn(treasurePositions, width);
         }
 
         int CountPathsToTargets(Coordinate origin, out Coordinate lastDeadEnd, params Coordinate[] targets)

@@ -81,6 +81,12 @@ namespace ProcRoom.UI
             player.OnAgentAmmoChange += HandlePlayerAmmo;
             player.OnAgentHealthChange += HandlePlayerHealth;
             player.OnAgentHasKeyChange += HandleKeyChange;
+            player.OnAgentXPChange += HandleXPChange;
+        }
+
+        private void HandleXPChange(int xp)
+        {
+            Points.text = "Points: " + xp;
         }
 
         private void HandleKeyChange(bool hasKey)
@@ -99,6 +105,7 @@ namespace ProcRoom.UI
             player.OnAgentHealthChange -= HandlePlayerHealth;
             player.OnAgentAmmoChange -= HandlePlayerAmmo;
             player.OnAgentHasKeyChange -= HandleKeyChange;
+            player.OnAgentXPChange -= HandleXPChange;
         }
 
         private void HandlePlayerAmmo(int remainingAmmo)
@@ -139,7 +146,7 @@ namespace ProcRoom.UI
             Corruption.currentValue = stats.hasKey ? 1 : 0;
 
             PlayerName.text = stats.name;
-            Points.text = "Points: " + stats.xp;
+            HandleXPChange(stats.xp);
 
             //PlayerIcon.image = ??            
 

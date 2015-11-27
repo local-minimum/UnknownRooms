@@ -44,6 +44,7 @@ namespace ProcRoom
     public delegate void AgentUpgrade(AgentStats stats);
     public delegate void AgentDeath(Agent agent);
     public delegate void AgentKeyChange(bool hasKey);
+    public delegate void AgentXPChange(int xp);
 
     public abstract class Agent : MonoBehaviour
     {
@@ -57,6 +58,7 @@ namespace ProcRoom
         public event AgentHealth OnAgentHealthChange;
         public event AgentUpgrade OnAgentUpgrade;
         public event AgentKeyChange OnAgentHasKeyChange;
+        public event AgentXPChange OnAgentXPChange;
 
         [SerializeField]
         protected Weapon weapon;
@@ -274,6 +276,12 @@ namespace ProcRoom
                 return true;
             }
             return false;
+        }
+
+        public void AwardPoints(int points) {
+            _stats.xp += Mathf.Max(0, points);
+            if (OnAgentXPChange != null)
+                OnAgentXPChange(_stats.xp);
         }
 
         public virtual void Reload()

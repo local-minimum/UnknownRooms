@@ -29410,6 +29410,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4143ff3cd5d45d24780858dbc66d4d06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  treasurePrefabs:
+  - {fileID: 117826, guid: 315bdc122ae748d45841cfabf6c7ba11, type: 2}
+  - {fileID: 138330, guid: deb1cc49fd5510f4cb9578f2fb96abc6, type: 2}
 --- !u!1 &1855052689
 GameObject:
   m_ObjectHideFlags: 0
