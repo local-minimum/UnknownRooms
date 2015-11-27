@@ -90,6 +90,7 @@ namespace ProcRoom.Physical
             return monster;
         }
 
+
         void Awake()
         {
             if (_instance == null)
@@ -97,7 +98,25 @@ namespace ProcRoom.Physical
 
             SetupMonsterPool();
         }
-        
+
+        void OnEnable() {
+            Agent.OnAgentDeath += HandleDeath;
+        }
+
+        void OnDisable()
+        {
+            Agent.OnAgentDeath -= HandleDeath;
+        }
+
+        private void HandleDeath(Agent agent)
+        {
+            for (int i=0, l=pool.Count; i< l; i++)
+            {
+                if (pool[i] == agent)
+                    smithed[i] = false;
+            }
+        }
+
         int GetWeaponPoints(ref int points)
         {
             int weaponPoints = Mathf.RoundToInt(points * weaponsSavings.RandomValue);
