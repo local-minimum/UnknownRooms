@@ -150,6 +150,10 @@ namespace ProcRoom
                 else
                     actionPoints--;
                 steps++;
+            } else if (_stats.hasKey && room.PassableTile(newPosition, false, TileType.Door) && room.GetTile(newPosition).Unlock())
+            {
+                ConsumeKey();
+
             }
 
         }

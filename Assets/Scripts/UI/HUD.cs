@@ -23,6 +23,9 @@ namespace ProcRoom.UI
         HUDStats Ammo;
 
         [SerializeField]
+        HUDStats Corruption;
+
+        [SerializeField]
         Text LevelText;
 
         [SerializeField]
@@ -77,6 +80,12 @@ namespace ProcRoom.UI
             player.OnAgentActionChange += HandlePlayerActionPoints;
             player.OnAgentAmmoChange += HandlePlayerAmmo;
             player.OnAgentHealthChange += HandlePlayerHealth;
+            player.OnAgentHasKeyChange += HandleKeyChange;
+        }
+
+        private void HandleKeyChange(bool hasKey)
+        {
+            Corruption.currentValue = hasKey ? 1 : 0;
         }
 
         private void HandleNewLevel(int level)
@@ -89,6 +98,7 @@ namespace ProcRoom.UI
             player.OnAgentActionChange -= HandlePlayerActionPoints;
             player.OnAgentHealthChange -= HandlePlayerHealth;
             player.OnAgentAmmoChange -= HandlePlayerAmmo;
+            player.OnAgentHasKeyChange -= HandleKeyChange;
         }
 
         private void HandlePlayerAmmo(int remainingAmmo)
@@ -125,11 +135,15 @@ namespace ProcRoom.UI
             Ammo.maxValue = stats.clipSize;
             Ammo.currentValue = stats.ammo;
 
+            Corruption.maxValue = 1;
+            Corruption.currentValue = stats.hasKey ? 1 : 0;
+
             PlayerName.text = stats.name;
             Points.text = "Points: " + stats.xp;
-            
+
             //PlayerIcon.image = ??            
 
+            HandleNewLevel(Tower.ActiveLevel);
             Showing = true;
             Debug.Log("Set new game UI");
         }

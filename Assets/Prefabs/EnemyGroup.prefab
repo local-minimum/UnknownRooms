@@ -46,6 +46,8 @@ GameObject:
   - 114: {fileID: 11466744}
   - 114: {fileID: 11487028}
   - 114: {fileID: 11469578}
+  - 114: {fileID: 11473248}
+  - 114: {fileID: 11432636}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -197,7 +199,9 @@ MonoBehaviour:
     health: 3
     clipSize: 11
     ammo: 100
+    xp: 0
     defence: 10
+    hasKey: 0
     position:
       x: 5
       y: 5
@@ -207,6 +211,23 @@ MonoBehaviour:
   weapon: {fileID: 11422494}
   actionSpeed: .300000012
   minSpawnDistanceToPlayer: 7
+--- !u!114 &11432636
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131290}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f3e567f2136d1249a85c11ad49d7cd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 0
+  allowancePerTurn: 0
+  playerInSight: 0
+  playerTracking: 2
+  priority: 10
+  eagerness: .699999988
 --- !u!114 &11464628
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -257,6 +278,22 @@ MonoBehaviour:
   playerTracking: 2
   priority: 30
   minDistanceToNewAim: 6
+--- !u!114 &11473248
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131290}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f11da5394a2ebd489193e094b4b31bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCost: 0
+  allowancePerTurn: 3
+  playerInSight: 0
+  playerTracking: 0
+  priority: 100
 --- !u!114 &11479106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -390,6 +427,22 @@ Prefab:
       propertyPath: _bullet
       value: 
       objectReference: {fileID: 11402004}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: allowancePerTurn
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: priority
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: playerTracking
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 103698}

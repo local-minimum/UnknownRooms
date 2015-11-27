@@ -167,6 +167,30 @@ namespace ProcRoom.UI
             }
         }
 
+        public int MaxValue
+        {
+            get
+            {
+                for (int i=0; i<visibleSelectors; i++)
+                {
+                    if (!selectors[i].allowed)
+                        return i - 1;
+                }
+                return visibleSelectors - 1;
+            }
+
+            set
+            {
+                bool isAllowed = true;
+                for (int i=0; i<visibleSelectors; i++)
+                {                    
+                    selectors[i].allowed = isAllowed;
+                    if (ability[i].value == value)
+                        isAllowed = false;
+                }
+            }
+        }
+
         public int CostForNext
         {
             get

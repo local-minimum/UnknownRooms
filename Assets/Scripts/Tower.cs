@@ -41,7 +41,7 @@ namespace ProcRoom
 
         public static bool Alive {
             get {
-                return _instance != null && _instance.enabled;
+                return _instance != null && _instance.enabled && Time.timeScale > 0;
             }
 
         }
@@ -197,6 +197,7 @@ namespace ProcRoom
                 Physical.MonsterSmith.KillAllMonsters();
                 SmithMonstersForRoom();
                 room.Generate();
+                
                 betweenRooms = false;
                 if (OnNewLevel != null)
                     OnNewLevel(activeLevel + 1);
@@ -289,6 +290,9 @@ namespace ProcRoom
             _instance.betweenRooms = false;
             if (OnNewGame != null)
                 OnNewGame(_instance.player);
+
+            if (OnNewLevel != null)
+                OnNewLevel(ActiveLevel);
         }
 
         public void animateRoom()

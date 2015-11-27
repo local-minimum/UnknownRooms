@@ -24,6 +24,8 @@ namespace ProcRoom.UI
             }
         }
 
+        bool _allowed = false;
+
         public bool allowed
         {
             get
@@ -31,7 +33,7 @@ namespace ProcRoom.UI
                 if (selectionImage == null)
                     SetupComponents();
 
-                return backgroundImage.color == Color.white;
+                return _allowed;
             }
 
             set
@@ -41,7 +43,8 @@ namespace ProcRoom.UI
 
                 backgroundImage.color = value ? Color.white : Color.black;
                 if (selectionImage.enabled && !value)
-                    selectionImage.enabled = false; 
+                    selectionImage.enabled = false;
+                _allowed = value;
             }
         }
 
@@ -52,7 +55,7 @@ namespace ProcRoom.UI
                 if (selectionImage == null)
                     SetupComponents();
 
-                return selectionImage.enabled; //toggle.isOn;
+                return selectionImage.enabled; 
             }
 
             set
@@ -89,7 +92,7 @@ namespace ProcRoom.UI
 
         void SetupComponents()
         {
-            //_toggle = GetComponentInChildren<Toggle>();
+          
             backgroundImage = GetComponentInChildren<Image>();
             selectionImage = GetComponentsInChildren<Image>()[1];
         }

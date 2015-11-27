@@ -101,7 +101,7 @@ namespace ProcRoom
             {
                 float p = 0;
                 for (int i = 0; i < lootTypes.Length; i++)
-                    p += lootTypes[i].effect != LootType.Key || !Tower.ActiveRoom.HasDoor ? lootTypes[i].probablility : 0;
+                    p += lootTypes[i].probablility; // lootTypes[i].effect != LootType.Key || !Tower.ActiveRoom.HasDoor ? lootTypes[i].probablility : 0;
                 return p;
             }
         }
@@ -111,13 +111,13 @@ namespace ProcRoom
             var p = Random.Range(0, totalProbability);
             for (int i=0; i<lootTypes.Length; i++)
             {
-                if (lootTypes[i].effect == LootType.Key && Tower.ActiveRoom.HasDoor)
+                /*if (lootTypes[i].effect == LootType.Key && Tower.ActiveRoom.HasDoor)
                 {
                     if (i == lootTypes.Length - 1)
                         return lootTypes[i - 1];
                     else
                         continue;
-                }
+                }*/
 
                 if (p < lootTypes[i].probablility)
                     return lootTypes[i];

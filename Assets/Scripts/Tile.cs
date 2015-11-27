@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ProcRoom
 {
@@ -99,6 +99,23 @@ namespace ProcRoom
                 anim.SetTrigger("DoorClosed");
             else if (typeOfTile != TileType.None)
                 anim.SetTrigger("UnknownTile");
+        }
+
+        public bool Unlock()
+        {
+            if (typeOfTile == TileType.Door)
+            {
+                StartCoroutine(animateUnlock());
+                return true;
+            }
+            return false;
+        }
+
+        IEnumerator<WaitForSeconds> animateUnlock()
+        {
+            anim.SetTrigger("DoorOpen");
+            yield return new WaitForSeconds(1f);
+            Tower.ActiveRoom.SetTileType(_position.ToPosition(Tower.ActiveRoom.Width, Tower.ActiveRoom.Height), TileType.Walkable);
         }
 
         void StepSpikesCycle()

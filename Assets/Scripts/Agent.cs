@@ -43,6 +43,7 @@ namespace ProcRoom
     public delegate void AgentHealth(int health);
     public delegate void AgentUpgrade(AgentStats stats);
     public delegate void AgentDeath(Agent agent);
+    public delegate void AgentKeyChange(bool hasKey);
 
     public abstract class Agent : MonoBehaviour
     {
@@ -55,6 +56,7 @@ namespace ProcRoom
         public event AgentAmmo OnAgentAmmoChange;
         public event AgentHealth OnAgentHealthChange;
         public event AgentUpgrade OnAgentUpgrade;
+        public event AgentKeyChange OnAgentHasKeyChange;
 
         [SerializeField]
         protected Weapon weapon;
@@ -258,6 +260,8 @@ namespace ProcRoom
         public void AwardKey()
         {
             _stats.hasKey = true;
+            if (OnAgentHasKeyChange != null)
+                OnAgentHasKeyChange(true);
         }
 
         public bool ConsumeKey()
@@ -265,6 +269,8 @@ namespace ProcRoom
             if (_stats.hasKey)
             {
                 _stats.hasKey = false;
+                if (OnAgentHasKeyChange != null)
+                    OnAgentHasKeyChange(false);
                 return true;
             }
             return false;
@@ -296,6 +302,8 @@ namespace ProcRoom
         {
             roomWidth = data.width;
             roomHeight = data.height;
+            if (this == Tower.Player)
+                ammo = _stats.clipSize;
             this.room = room;
         
         }

@@ -521,6 +521,11 @@ namespace ProcRoom
             return TileType.None;
         }
 
+        public Tile GetTile(Coordinate position)
+        {
+            return tiles[position.ToPosition(width, height)];
+        }
+
         public bool PassableTileAccordingToDoor(Coordinate position)
         {
             return PassableTile(position, false, TileType.Walkable, TileType.StairsDown, TileType.SpikeTrap, TileType.StairsUp);
