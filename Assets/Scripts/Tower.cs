@@ -72,7 +72,10 @@ namespace ProcRoom
             {
                 var tower = FindObjectOfType<Tower>();
                 if (tower)
+                {
                     tower.enabled = true;
+                    
+                }
             }
             else
                 _instance.enabled = true;

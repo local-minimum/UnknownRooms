@@ -45,5 +45,10 @@ namespace ProcRoom.UI
         public void EndTurn() {
             Tower.Player.actionPoints = 0;
         }
+
+        public void UpgradeCharacter()
+        {
+            CharacterCreation.UpgradePlayer();
+        }
     }
 }

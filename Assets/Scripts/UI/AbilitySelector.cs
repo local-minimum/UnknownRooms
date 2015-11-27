@@ -82,9 +82,11 @@ namespace ProcRoom.UI
 
         public void EmulateSelect(AbilityStat selector)
         {
+            if (selector.Index < minIndex)
+                return;
             bool shouldBeSelected = selector != null;
             int culmulativeCost = 0;
-            for (int i=0; i<visibleSelectors;i++)
+            for (int i=minIndex; i<visibleSelectors;i++)
             {
                 if (!selectors[i].allowed)
                     shouldBeSelected = false;
@@ -115,29 +117,10 @@ namespace ProcRoom.UI
 
         public void Select(AbilityStat selector)
         {
-           
+            if (selector.Index < minIndex)
+                return;           
             selected = selector;
             EmulateSelect(selected);
-        }
-
-        public void Increase()
-        {
-            if (selected == null)
-            {
-                if (selectors.Length > 0)
-                    selected = selectors[0];
-            } else
-            {
-                for (int i=0; i<visibleSelectors - 1; i++)
-                {
-                    if (selectors[i] == selected)
-                    {
-                        if (selectors[i + 1].allowed)
-                            Select(selectors[i + 1]);
-                    }
-                }
-            }
-
         }
 
         public int Value
@@ -158,7 +141,7 @@ namespace ProcRoom.UI
                         selectors[i].allowed = doSelect;
                     selectors[i].selected = doSelect;
 
-                    if (i >= ability.Length || ability[i].value == value)
+                    if (i>= ability.Length || ability[i].value == value)
                     {
                         doSelect = false;
                         selected = selectors[i];
@@ -167,11 +150,39 @@ namespace ProcRoom.UI
             }
         }
 
+        int minIndex = 0;
+
+        public int MinValue
+        {
+            get
+            {
+                return ability[minIndex].value;
+            }
+
+            set
+            {
+                for (int i=0; i<visibleSelectors; i++)
+                {
+                    if (ability[i].value == value)
+                    {
+                        minIndex = value;
+                        if (selected && selected.Index > minIndex)
+                        {
+                            Value = value;
+                        }
+                            
+                        return;
+                    }
+                }
+                Debug.LogWarning("Unable to set min value for " + name);
+            }
+        }
+
         public int MaxValue
         {
             get
             {
-                for (int i=0; i<visibleSelectors; i++)
+                for (int i=minIndex; i<visibleSelectors; i++)
                 {
                     if (!selectors[i].allowed)
                         return i - 1;
@@ -182,7 +193,7 @@ namespace ProcRoom.UI
             set
             {
                 bool isAllowed = true;
-                for (int i=0; i<visibleSelectors; i++)
+                for (int i=minIndex; i<visibleSelectors; i++)
                 {                    
                     selectors[i].allowed = isAllowed;
                     if (ability[i].value == value)

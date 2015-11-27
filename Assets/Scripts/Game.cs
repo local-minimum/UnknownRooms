@@ -9,7 +9,7 @@ namespace ProcRoom
         void Start()
         {
             if (PlayerPrefs.GetInt("Game.NewGame", 1) == 1)
-                UI.CharacterCreation.Show();
+                UI.CharacterCreation.CreatNewPlayer();
         }
 
 

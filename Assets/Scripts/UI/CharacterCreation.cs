@@ -43,16 +43,47 @@ namespace ProcRoom.UI
                 return _instance;
             }
         }
-
-        public static void Show()
+       
+        static void Show()
         {
             var ui = instance.transform.GetChild(0);
             ui.gameObject.SetActive(true);
             ui.GetComponent<Image>().enabled = true;
+            var uiTop = instance.transform.GetChild(1);
+            uiTop.gameObject.SetActive(!instance.upgrading);
         }
 
         public static event NewPoints OnNewPoints;
 
+        AgentStats playerStats;
+        bool upgrading = false;
+
+        public static void CreatNewPlayer()
+        {
+            Time.timeScale = 0;
+            instance.upgrading = false;
+            Show();
+        }
+
+        public static void UpgradePlayer()
+        {
+            var stats = Tower.Player.stats;
+            if (stats.xp <= 0)
+                return;
+            Time.timeScale = 0;
+            instance.playerStats = stats;
+            instance.upgrading = true;
+            instance.health.MinValue = stats.maxHealth;
+            instance.actionPoints.MinValue = stats.actionPointsPerTurn;
+            instance.clipSize.MinValue = stats.clipSize;
+            instance.defence.MinValue = stats.defence;            
+            instance.points = stats.xp;
+
+            Show();
+
+            if (OnNewPoints != null)
+                OnNewPoints(instance.points);
+        }
 
         public static void NewTransaction(int cost)
         {
@@ -76,10 +107,10 @@ namespace ProcRoom.UI
             stats.maxHealth = health.Value;
             stats.clipSize = clipSize.Value;
             stats.defence = defence.Value;
-            stats.name = namer.Name;
-            Tower.Player.SetStats(stats);
-            if (!Tower.Player.isPlaying)
+            if (!upgrading)
             {
+                stats.name = namer.Name;
+                Tower.Player.SetStats(stats);
                 Tower.Player.NewGame();
                 var weapon1 = Physical.WeaponSmith.Smith(points);
                 Tower.Player.Weapon.SetStats(weapon1);
@@ -95,8 +126,24 @@ namespace ProcRoom.UI
                     }
                     WeaponSelect.Show(weapon2);
                 }
+                else
+                    Time.timeScale = 1;
+
+            } else
+            {
+                stats.name = playerStats.name;
+                stats.xp = Mathf.Max(0, instance.points);
+                stats.health = playerStats.health;
+                stats.ammo = playerStats.ammo;
+                stats.actionPoints = playerStats.actionPoints;
+                stats.hasKey = playerStats.hasKey;
+                stats.position = playerStats.position;
+                
+                Tower.Player.SetStats(stats);
+                Time.timeScale = 1;
             }
             transform.GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(1).gameObject.SetActive(false);
         }
 
         void OnEnable()

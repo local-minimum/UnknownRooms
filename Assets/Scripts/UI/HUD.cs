@@ -82,6 +82,7 @@ namespace ProcRoom.UI
             player.OnAgentHealthChange += HandlePlayerHealth;
             player.OnAgentHasKeyChange += HandleKeyChange;
             player.OnAgentXPChange += HandleXPChange;
+            player.OnAgentUpgrade += HandleNewStats;
         }
 
         private void HandleXPChange(int xp)
@@ -106,6 +107,7 @@ namespace ProcRoom.UI
             player.OnAgentAmmoChange -= HandlePlayerAmmo;
             player.OnAgentHasKeyChange -= HandleKeyChange;
             player.OnAgentXPChange -= HandleXPChange;
+            player.OnAgentUpgrade -= HandleNewStats;
         }
 
         private void HandlePlayerAmmo(int remainingAmmo)
@@ -126,9 +128,13 @@ namespace ProcRoom.UI
         private void HandleNewGame(Player player)
         {
             ConnectPlayerEvents(player);
-            var stats = player.stats;          
-            
+            var stats = player.stats;
+            HandleNewStats(stats);
+        }
 
+        void HandleNewStats(AgentStats stats) {
+
+            Debug.Log("New stats");
             ActionPoints.maxValue = stats.actionPointsPerTurn;
             ActionPoints.currentValue = stats.actionPoints;
 
@@ -152,7 +158,7 @@ namespace ProcRoom.UI
 
             HandleNewLevel(Tower.ActiveLevel);
             Showing = true;
-            Debug.Log("Set new game UI");
+            
         }
 
     }

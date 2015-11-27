@@ -22,10 +22,6 @@ namespace ProcRoom
         RectTransform HUDtransform;
 
         float cancelRequest = 0;
-
-        [HideInInspector]
-        public bool isPlaying = false;
-
         
         void Start()
         {

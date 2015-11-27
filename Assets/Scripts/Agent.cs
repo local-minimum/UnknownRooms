@@ -80,7 +80,8 @@ namespace ProcRoom
         public void SetStats(AgentStats stats)
         {
             _stats = stats;
-            
+            if (OnAgentUpgrade != null)
+                OnAgentUpgrade(stats);
         }
 
         public AgentStats stats
