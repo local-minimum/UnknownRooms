@@ -39,7 +39,7 @@ namespace ProcRoom
 
         void Spawn(Coordinate pos)
         {
-            var treasure = GetInactiveTreasure(Random.Range(1, treasurePrefabs.Length));
+            var treasure = GetInactiveTreasure(Random.Range(1, treasurePrefabs.Length + 1));
             treasure.position = pos;
             treasure.Showing = true;
         }
@@ -55,7 +55,7 @@ namespace ProcRoom
 
         Treasure CreateNewFromPrefab(int value)
         {
-            var GO = Instantiate(treasurePrefabs[Random.Range(0, Mathf.Min(treasurePrefabs.Length, value) - 1)]);
+            var GO = Instantiate(treasurePrefabs[Random.Range(0, Mathf.Min(treasurePrefabs.Length, value))]);
             GO.transform.SetParent(transform);
             var treasure = GO.GetComponent<Treasure>();
             treasures.Add(treasure);

@@ -77,27 +77,26 @@ namespace ProcRoom.UI
             stats.clipSize = clipSize.Value;
             stats.defence = defence.Value;
             stats.name = namer.Name;
-            var player = FindObjectOfType<Player>();
-            if (player)
+            Tower.Player.SetStats(stats);
+            if (!Tower.Player.isPlaying)
             {
-                player.SetStats(stats);
-                player.NewGame();
+                Tower.Player.NewGame();
+                var weapon1 = Physical.WeaponSmith.Smith(points);
+                Tower.Player.Weapon.SetStats(weapon1);
+                if (points > 0)
+                {
+                    WeaponStats weapon2 = WeaponStats.DefaultWeapon;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        weapon2 = Physical.WeaponSmith.Smith(points);
+                        if (weapon1 != weapon2)
+                            break;
+
+                    }
+                    WeaponSelect.Show(weapon2);
+                }
             }
             transform.GetChild(0).gameObject.SetActive(false);
-            var weapon1 = Physical.WeaponSmith.Smith(points);
-            Tower.Player.Weapon.SetStats(weapon1);
-            if (points > 0)
-            {
-                WeaponStats weapon2 = WeaponStats.DefaultWeapon;
-                for (int i=0; i<5; i++)
-                {
-                    weapon2 = Physical.WeaponSmith.Smith(points);
-                    if (weapon1 != weapon2)
-                        break;
-
-                }
-                WeaponSelect.Show(weapon2);
-            }
         }
 
         void OnEnable()

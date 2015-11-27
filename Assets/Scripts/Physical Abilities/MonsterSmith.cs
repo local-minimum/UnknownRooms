@@ -216,7 +216,7 @@ namespace ProcRoom.Physical
             {
 
                 instance.pool[i].alive = false;
-                instance.pool[i].enabled = false;
+                instance.smithed[i] = false;        
                
             }
         }

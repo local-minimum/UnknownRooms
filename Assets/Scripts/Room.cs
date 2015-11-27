@@ -375,11 +375,12 @@ namespace ProcRoom
                 {
                     var path = RoomSearch.FindShortestPath(this, upStairs, downStairs);
                     if (path.Length > 0 && !System.Array.Exists<Coordinate>(path, e => e == coord)) {
-                        SetTileType(candidates[i], TileType.Door);
+                        SetTileType(coord, TileType.Door);
                         Coordinate deadEnd;
                         if (CountPathsToTargets(coord, out deadEnd, upStairs, downStairs) == 1)
-                        {
-                            PlaceCoins(deadEnd);
+                        { 
+                            if (deadEnd != coord)
+                                PlaceCoins(deadEnd);
                             return;
                         }
                             
@@ -404,14 +405,14 @@ namespace ProcRoom
                     continue;
                 for (int i = 0; i < targets.Length; i++)
                 {
+                    var pathsBefore = paths;
                     if (RoomSearch.FindShortestPath(this, neighbour, targets[i], false, TileType.SpikeTrap, TileType.Walkable).Length > 1)
                     {
                         paths++;
                         break;
-                    } else if (i == targets.Length)
-                    {
-                        lastDeadEnd = neighbour;
                     }
+                    if (pathsBefore == paths)
+                        lastDeadEnd = neighbour; 
                 }
             }
             return paths;
@@ -436,6 +437,10 @@ namespace ProcRoom
             Debug.Log("Laying spike clusters: " + _spikeTrapClusters);
             for (int i = 0; i < _spikeTrapClusters; i++)
                 Trapper.LaySpikeTraps(this, this.GetData(), spikeTrapClusterSize.RandomValue);
+        }
+
+        public void SetTileType(Coordinate coordinate, TileType type) {
+            SetTileType(coordinate.ToPosition(width, height), type);
         }
 
         public void SetTileType(int index, TileType type)
@@ -620,7 +625,7 @@ namespace ProcRoom
         {
             if (runOnRealTime)
             {
-                Tower.RoomDone();
+                Tower.RoomEnactDone();
                 yield break;
             }
 
@@ -629,7 +634,7 @@ namespace ProcRoom
             yield return StartCoroutine(PropagateWave());
 
             wavePeak++;
-            Tower.RoomDone();
+            Tower.RoomEnactDone();
         }
 
         IEnumerator InfiniWave()
@@ -672,14 +677,6 @@ namespace ProcRoom
             }
         }
 
-#if UNITY_EDITOR
-
-        void OnGUI() {
-            if (GUI.Button(new Rect(2, 2, 80, 30), "Next Lvl"))
-                Generate();
-        }
-
-#endif
     }
 
 }

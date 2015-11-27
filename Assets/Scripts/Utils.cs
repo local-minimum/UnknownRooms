@@ -448,38 +448,37 @@ namespace ProcRoom
             return filling;
         }
 
-        public static List<int> GetNeighbourIndices(int[] tileTypeMap, int width, int index, params TileType[] neighbourType)
+        public static List<int> GetNeighbourIndices(int[] tileTypeMap, int width, int index, params TileType[] neighbourTypes)
         {
             var neighbours = new List<int>();
 
             var x = index % width;
             var y = index / width;
             var height = tileTypeMap.Length / width;
-           
 
             if (x > 0)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x - 1, y, width);
-                if (System.Array.Exists(neighbourType, t => (int) t == tileTypeMap[neighbourIndex]))
+                if (System.Array.Exists(neighbourTypes, t => (int) t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
             }
             if (x < width - 1)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x + 1, y, width);
-                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
+                if (System.Array.Exists(neighbourTypes, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
             }
             if (y > 0)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x, y - 1, width);
-                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
+                if (System.Array.Exists(neighbourTypes, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
 
             }
             if (y < height - 1)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x, y + 1, width);
-                if (System.Array.Exists(neighbourType, t => (int)t == tileTypeMap[neighbourIndex]))
+                if (System.Array.Exists(neighbourTypes, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
 
             }

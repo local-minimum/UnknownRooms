@@ -195,20 +195,26 @@ namespace ProcRoom
         {
             if (tileType == TileType.StairsUp)
             {
-                if (OnLevelEnd != null)
-                    OnLevelEnd();
-                betweenRooms = true;
-                Physical.MonsterSmith.KillAllMonsters();
-                SmithMonstersForRoom();
-                room.Generate();
-                
-                betweenRooms = false;
-                if (OnNewLevel != null)
-                    OnNewLevel(activeLevel + 1);
+                EndLevel();
             }
         }
 
-        public static void RoomDone()
+        void EndLevel()
+        {
+            if (OnLevelEnd != null)
+                OnLevelEnd();
+            betweenRooms = true;
+            Physical.MonsterSmith.KillAllMonsters();
+            SmithMonstersForRoom();
+            room.Generate();
+
+            betweenRooms = false;
+            if (OnNewLevel != null)
+                OnNewLevel(activeLevel + 1);
+
+        }
+
+        public static void RoomEnactDone()
         {
             _instance.queueRoom = false;
             _instance.NextAgent();
@@ -341,6 +347,10 @@ namespace ProcRoom
         void OnGUI()
         {
             GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Agents:\t{0}\nActive:\t{1}", agents.Count, activeAgent));
+
+            if (GUI.Button(new Rect(2, 2, 80, 30), "Next Lvl"))
+                EndLevel();
+
         }
 #endif
     }

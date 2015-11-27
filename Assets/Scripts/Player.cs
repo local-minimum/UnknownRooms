@@ -23,6 +23,10 @@ namespace ProcRoom
 
         float cancelRequest = 0;
 
+        [HideInInspector]
+        public bool isPlaying = false;
+
+        
         void Start()
         {
             alive = false;
