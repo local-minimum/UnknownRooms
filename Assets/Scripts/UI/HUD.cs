@@ -53,7 +53,8 @@ namespace ProcRoom.UI
 
             set
             {
-                transform.GetChild(0).gameObject.SetActive(value);
+                for (int i=0, l=transform.childCount; i< l; i++)
+                    transform.GetChild(i).gameObject.SetActive(value);
             }
         }
 

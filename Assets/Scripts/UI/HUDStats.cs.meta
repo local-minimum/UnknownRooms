@@ -1,10 +1,15 @@
 fileFormatVersion: 2
 guid: 8c5bcb47158d128469da5643a11880bf
-timeCreated: 1448203640
+timeCreated: 1451934533
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - labelSprite: {instanceID: 0}
+  - barSprite: {fileID: 21300000, guid: 3ab87cf75e301fd4683e82799b381faf, type: 3}
+  - barFrameSprit: {fileID: 21300004, guid: 359093099e985064eacd7c85b849194e, type: 3}
+  - endCapSprite: {fileID: 21300002, guid: 359093099e985064eacd7c85b849194e, type: 3}
+  - alignTo: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
