@@ -45,6 +45,7 @@ namespace ProcRoom
     public delegate void AgentDeath(Agent agent);
     public delegate void AgentKeyChange(bool hasKey);
     public delegate void AgentXPChange(int xp);
+    public delegate void AgentMove(Agent agent);
 
     public abstract class Agent : MonoBehaviour
     {
@@ -53,6 +54,8 @@ namespace ProcRoom
         protected AgentStats _stats;
 
         public static event AgentDeath OnAgentDeath;
+        public static event AgentMove OnAgentMove;
+
         public event AgentActions OnAgentActionChange;
         public event AgentAmmo OnAgentAmmoChange;
         public event AgentHealth OnAgentHealthChange;
@@ -383,6 +386,8 @@ namespace ProcRoom
         {
             _stats.position = newPosition;
             transform.position = room.GetTileCentre(_stats.position.ToPosition(roomWidth, roomHeight));
+            if (OnAgentMove != null)
+                OnAgentMove(this);
         }
 
 #if UNITY_EDITOR
