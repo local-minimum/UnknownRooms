@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace ProcRoom.UI
 {
+    public enum HurtEffects {Sprite, Particles};
+
     public class Hurt : MonoBehaviour
     {
 
@@ -26,6 +28,10 @@ namespace ProcRoom.UI
 
 
         SpriteRenderer rend;
+        ParticleSystem effect;
+
+        [SerializeField]
+        HurtEffects hurtEffect;    
 
         void Awake()
         {
@@ -40,7 +46,18 @@ namespace ProcRoom.UI
                 rend = GetComponent<SpriteRenderer>();
                 rend.enabled = false;
             }
-            StartCoroutine(animate(position));
+            if (effect == null)
+            {
+                effect = GetComponent<ParticleSystem>();
+            }
+
+            if (hurtEffect == HurtEffects.Sprite)
+                StartCoroutine(animate(position));
+            else if (hurtEffect == HurtEffects.Particles)
+            {
+                transform.position = position;
+                effect.Play();
+            }
         }
 
         IEnumerator<WaitForSeconds> animate(Vector3 position)

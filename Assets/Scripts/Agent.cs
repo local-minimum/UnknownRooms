@@ -70,6 +70,8 @@ namespace ProcRoom
 
         protected Room room;
 
+        public bool rotateAsDirection = false;
+
         Animator anim;
 
         [SerializeField, Range(0, 2)]
@@ -152,7 +154,7 @@ namespace ProcRoom
                             anim.SetTrigger("Down");
                         else if (Coordinate.Up.Equals(value))
                             anim.SetTrigger("Up");
-                    } else
+                    } else if (rotateAsDirection)
                     {
                         if (Coordinate.Right.Equals(value))
                             transform.rotation = Quaternion.Euler(0, 0, 0);

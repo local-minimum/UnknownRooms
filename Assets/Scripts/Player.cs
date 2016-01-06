@@ -5,7 +5,7 @@ namespace ProcRoom
 {
     public delegate void PlayerEnterPosition(Player player, Coordinate position, TileType tileType);
 
-    public enum PlayerActions {None, MoveLeft, MoveRight, MoveUp, MoveDown, Shoot, Reload, EndTurn};
+    public enum PlayerActions {None, MoveLeft, MoveRight, MoveUp, MoveDown, Shoot, Reload, Shield, EndTurn};
 
     [RequireComponent(typeof(Animator))]
     public class Player : Agent

@@ -87,16 +87,10 @@ namespace ProcRoom.UI
             }
         }
 
-        void Awake()
-        {
-            if (!setUp)
-                SetUpComponents();
-
-        }
-
         void OnEnable()
         {
             OnNewBarShape += HUDStats_OnNewBarShape;
+
             if (alignTo)
                 HUDStats_OnNewBarShape(alignTo);
         }
@@ -112,11 +106,11 @@ namespace ProcRoom.UI
             {
                 if (!setUp)
                     SetUpComponents();
-                Debug.Log(name + ": " + bar.name);
+
 
                 var otherRT = alignTo.capImage.rectTransform;
                 var pos = alignTo.Right + Vector3.right * distance;
-                Debug.Log(alignTo.Right);
+
                 labelImage.rectTransform.position = pos;
 
                 if (OnNewBarShape != null)
@@ -145,14 +139,20 @@ namespace ProcRoom.UI
         {
             labelImage = gameObject.AddComponent<Image>();
             labelImage.sprite = labelSprite;
-            var t = labelImage.rectTransform;
-
+            var t = labelImage.rectTransform;        
             t.localScale = new Vector3(1, 1, 1);
 
-            t.anchorMax = new Vector2(0, 0.5f);
-            t.anchorMin = t.anchorMax;
-            t.pivot = t.anchorMax;
-            t.sizeDelta = new Vector2(labelSprite.bounds.extents.x * height / labelSprite.bounds.extents.y, height);
+            if (height < 0f)
+            {
+                SetAutoScale(t, labelImage);
+            }
+            else
+            {
+                t.anchorMax = new Vector2(0, 0.5f);
+                t.anchorMin = t.anchorMax;
+                t.pivot = t.anchorMax;
+                t.sizeDelta = new Vector2(labelSprite.bounds.extents.x * height / labelSprite.bounds.extents.y, height);
+            }
 
         }
 
@@ -188,11 +188,19 @@ namespace ProcRoom.UI
                 capImage = GO.AddComponent<Image>();
                 capImage.sprite = endCapSprite;
                 t = capImage.rectTransform;
-                t.anchorMax = new Vector2(0, 0.5f);
-                t.anchorMin = t.anchorMax;
-                t.pivot = t.anchorMax;
-                t.sizeDelta = new Vector2(endCapSprite.bounds.extents.x * height / endCapSprite.bounds.extents.y, height);
                 t.localScale = Vector3.one;
+                if (height < 0f)
+                {
+                    SetAutoScale(t, capImage);
+                }
+                else
+                {
+                    t.anchorMax = new Vector2(0, 0.5f);
+                    t.anchorMin = t.anchorMax;
+                    t.pivot = t.anchorMax;
+                    t.sizeDelta = new Vector2(endCapSprite.bounds.extents.x * height / endCapSprite.bounds.extents.y, height);
+                }
+                
             } else
                 t = capImage.rectTransform;
 
@@ -200,6 +208,21 @@ namespace ProcRoom.UI
                 t.position = HUDbars[HUDbars.Count - 1].RightEdge;
             else
                 t.position = labelImage.rectTransform.position + Vector3.right * labelImage.rectTransform.sizeDelta.x;
+        }
+
+        void SetAutoScale(RectTransform t, Image image)
+        {
+            var aspect = image.sprite.rect.size.x / image.sprite.rect.size.y;
+            image.preserveAspect = true;
+
+            t.anchorMin = new Vector2(0f, 0f);
+            t.anchorMax = new Vector2(0f, 1f);
+            t.pivot = new Vector2(0f, 0.5f);
+
+            t.offsetMin = new Vector2(t.offsetMin.x, 0f);
+            t.offsetMax = new Vector2(t.offsetMax.x, 0f);
+            t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.height * aspect);
+            
         }
 
         public Vector3 Right

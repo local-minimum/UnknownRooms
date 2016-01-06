@@ -18,6 +18,11 @@ namespace ProcRoom
 
         static Tower _instance;
 
+#if UNITY_EDITOR
+
+        bool debug = false;
+#endif
+
         List<RoomData> roomHistory = new List<RoomData>();
         List<Agent> agents = new List<Agent>();
         int activeAgent = 0;
@@ -349,11 +354,13 @@ namespace ProcRoom
 
         void OnGUI()
         {
-            GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Agents:\t{0}\nActive:\t{1}", agents.Count, activeAgent));
+            if (debug)
+            {
+                GUI.TextArea(new Rect(260, 2, 100, 50), string.Format("Agents:\t{0}\nActive:\t{1}", agents.Count, activeAgent));
 
-            if (GUI.Button(new Rect(2, 2, 80, 30), "Next Lvl"))
-                EndLevel();
-
+                if (GUI.Button(new Rect(2, 2, 80, 30), "Next Lvl"))
+                    EndLevel();
+            }
         }
 #endif
     }

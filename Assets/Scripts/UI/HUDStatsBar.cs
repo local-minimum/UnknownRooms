@@ -35,9 +35,41 @@ namespace ProcRoom.UI
         {
             set
             {
-                imageFrame.rectTransform.sizeDelta = new Vector2(imageFrame.sprite.bounds.extents.x * value / imageFrame.sprite.bounds.extents.y, value);
-                imageBar.rectTransform.sizeDelta = new Vector2(imageBar.sprite.bounds.extents.x * value / imageBar.sprite.bounds.extents.y / 2f, value /2f);
+                if (value < 0f)
+                {
+                    SetAutoScale(imageFrame.rectTransform, imageFrame, 1f, false);
+                    SetAutoScale(imageBar.rectTransform, imageBar, 7f/15f, true);
+                }
+                else
+                {
+                    imageFrame.rectTransform.sizeDelta = new Vector2(imageFrame.sprite.bounds.extents.x * value / imageFrame.sprite.bounds.extents.y, value);
+                    imageBar.rectTransform.sizeDelta = new Vector2(imageBar.sprite.bounds.extents.x * value / imageBar.sprite.bounds.extents.y * 7f / 15f, value * 7f / 15f);
+                }
             }
+        }
+
+
+        void SetAutoScale(RectTransform t, Image image, float factor, bool centerX)
+        {
+            var aspect = image.sprite.rect.size.x / image.sprite.rect.size.y;
+            image.preserveAspect = true;
+
+            if (centerX)
+            {
+                t.anchorMin = new Vector2(0.5f, 0.5f - factor / 2f);
+                t.anchorMax = new Vector2(0.5f, 0.5f + factor / 2f);
+                t.pivot = new Vector2(0.5f, 0.5f);
+
+            }
+            else { 
+                t.anchorMin = new Vector2(0f, 0.5f - factor / 2f);
+                t.anchorMax = new Vector2(0f, 0.5f + factor / 2f);
+                t.pivot = new Vector2(0f, 0.5f);
+            }
+            t.offsetMin = new Vector2(t.offsetMin.x, 0f);
+            t.offsetMax = new Vector2(t.offsetMax.x, 0f);
+            
+            t.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, t.rect.height * aspect);
         }
 
         [HideInInspector]

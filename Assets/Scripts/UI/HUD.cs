@@ -23,7 +23,7 @@ namespace ProcRoom.UI
         HUDStats Ammo;
 
         [SerializeField]
-        HUDStats Corruption;
+        HUDStats Keys;
 
         [SerializeField]
         Text LevelText;
@@ -88,17 +88,17 @@ namespace ProcRoom.UI
 
         private void HandleXPChange(int xp)
         {
-            Points.text = "Points: " + xp;
+            Points.text = "XP: " + xp;
         }
 
         private void HandleKeyChange(bool hasKey)
         {
-            Corruption.currentValue = hasKey ? 1 : 0;
+            Keys.currentValue = hasKey ? 1 : 0;
         }
 
         private void HandleNewLevel(int level)
         {
-            LevelText.text = "Level " + level;
+            LevelText.text = "LVL: " + level;
         }
 
 
@@ -149,8 +149,8 @@ namespace ProcRoom.UI
             Ammo.maxValue = stats.clipSize;
             Ammo.currentValue = stats.ammo;
 
-            Corruption.maxValue = 1;
-            Corruption.currentValue = stats.hasKey ? 1 : 0;
+            Keys.maxValue = 1;
+            Keys.currentValue = stats.hasKey ? 1 : 0;
 
             PlayerName.text = stats.name;
             HandleXPChange(stats.xp);
