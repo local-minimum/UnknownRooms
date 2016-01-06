@@ -97,6 +97,8 @@ namespace ProcRoom.UI
         void OnEnable()
         {
             OnNewBarShape += HUDStats_OnNewBarShape;
+            if (alignTo)
+                HUDStats_OnNewBarShape(alignTo);
         }
 
         void OnDisable()
@@ -113,7 +115,9 @@ namespace ProcRoom.UI
                 Debug.Log(name + ": " + bar.name);
 
                 var otherRT = alignTo.capImage.rectTransform;
-                labelImage.rectTransform.localPosition = new Vector3(otherRT.position.x + otherRT.sizeDelta.x + distance, labelImage.rectTransform.localPosition.y);
+                var pos = alignTo.Right + Vector3.right * distance;
+                Debug.Log(alignTo.Right);
+                labelImage.rectTransform.position = pos;
 
                 if (OnNewBarShape != null)
                     OnNewBarShape(this);
@@ -196,6 +200,15 @@ namespace ProcRoom.UI
                 t.position = HUDbars[HUDbars.Count - 1].RightEdge;
             else
                 t.position = labelImage.rectTransform.position + Vector3.right * labelImage.rectTransform.sizeDelta.x;
+        }
+
+        public Vector3 Right
+        {
+            get
+            {
+                var t = capImage.rectTransform;
+                return t.TransformPoint(Vector3.right * t.sizeDelta.x);
+            }
         }
 
     }
