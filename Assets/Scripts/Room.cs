@@ -562,11 +562,19 @@ namespace ProcRoom
             if (!checkAgents)
                 return true;
 
-            for (int i = 0, l = Tower.Agents; i < l; i++) {
+            return !HasAgent(position);
+
+        }
+
+        public bool HasAgent(Coordinate position)
+        {
+            for (int i = 0, l = Tower.Agents; i < l; i++)
+            {
                 if (Tower.GetAgentPosition(i) == position)
-                    return false;
+                    return true;
             }
-            return true;
+            return false;
+
         }
 
         public Coordinate GetRandomFreeTileCoordinate(Coordinate referencePosition, int minDistance)

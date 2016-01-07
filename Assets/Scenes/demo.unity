@@ -2544,6 +2544,7 @@ Transform:
   m_Children:
   - {fileID: 524470793}
   - {fileID: 212562602}
+  - {fileID: 99280230}
   m_Father: {fileID: 0}
   m_RootOrder: 3
 --- !u!1 &75609374
@@ -2695,6 +2696,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cost: 8
   _translatedStatsValue: 8
+--- !u!1 &99280229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 99280230}
+  - 114: {fileID: 99280231}
+  m_Layer: 0
+  m_Name: MouseGuide
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &99280230
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 99280229}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 66170793}
+  m_RootOrder: 2
+--- !u!114 &99280231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 99280229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b6a256302442dc41a7bb62f6f72cc68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathScan: {fileID: 21300000, guid: c2c28bf62849e0543a4a4524c98149db, type: 3}
+  shootScan: {fileID: 21300000, guid: 9aefeec16c267704497cdcbb3a19d795, type: 3}
+  layer: Actors
+  orderInLayer: 10
 --- !u!1 &104516227
 GameObject:
   m_ObjectHideFlags: 0

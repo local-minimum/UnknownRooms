@@ -617,7 +617,7 @@ namespace ProcRoom
             if (source == Coordinate.InvalidPlacement || target == Coordinate.InvalidPlacement)
                 return new Coordinate[0];
 
-            var distances = GetDistanceMap(room, source, regardAgents,passables);
+            var distances = GetDistanceMap(room, source, regardAgents, passables);
             foreach (Coordinate neighbour in target.Neighbours())
             {
                 if (neighbour.Inside(distances))

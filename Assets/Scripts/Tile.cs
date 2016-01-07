@@ -6,11 +6,13 @@ namespace ProcRoom
     public enum TileType { None, Wall, Walkable, StairsUp, StairsDown, SpikeTrap, Door };
 
     public delegate void TileAction(Tile tile, TileType typeOfTile, Coordinate position);
+    public delegate void TileHover(Tile tile);
 
     [RequireComponent(typeof(SpriteRenderer)), RequireComponent(typeof(Animator))]
     public class Tile : MonoBehaviour
     {
         public static event TileAction OnTileAction;
+        public static event TileHover OnTileHover;
 
         TileType typeOfTile;
 
@@ -79,6 +81,11 @@ namespace ProcRoom
 
         public Coordinate position
         {
+            get
+            {
+                return _position;
+            }
+
             set
             {
                 _position = value;
@@ -155,6 +162,11 @@ namespace ProcRoom
         public void Maim()
         {
             anim.SetTrigger("SpikesMaim");
+        }
+
+        void OnMouseEnter() {
+            if (Tower.Alive && OnTileHover != null)
+                OnTileHover(this);
         }
 
     }
