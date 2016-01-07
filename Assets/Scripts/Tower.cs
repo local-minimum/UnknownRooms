@@ -42,6 +42,9 @@ namespace ProcRoom
         [SerializeField, Range(0, 2)]
         float nextActorDelay = 0.5f;
 
+        [SerializeField, Range(0, 2)]
+        float initialMonsterDelay = 0.3f;
+
         Room room;
         Player player;
 
@@ -72,6 +75,14 @@ namespace ProcRoom
                 if (_instance.room == null)
                     _instance.room = FindObjectOfType<Room>();
                 return _instance.room;
+            }
+        }
+
+        public static float InialMonsterDelay
+        {
+            get
+            {
+                return _instance.initialMonsterDelay;
             }
         }
 

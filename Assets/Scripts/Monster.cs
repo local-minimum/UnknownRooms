@@ -17,6 +17,8 @@ namespace ProcRoom
 
         [SerializeField, Range(1, 20)]
         int minSpawnDistanceToPlayer = 7;
+
+        float initalDelayUntil;
        
         public bool trackingPlayer
         {
@@ -179,7 +181,7 @@ namespace ProcRoom
 
         void Update()
         {
-            if (!myTurn || !actionAllowed)
+            if (!myTurn || !actionAllowed || Time.timeSinceLevelLoad < initalDelayUntil)
                 return;
 
             if (queuedMove && room.PassableTile(moveTarget))
@@ -237,6 +239,7 @@ namespace ProcRoom
             trackingPlayer = false;
             for (int i = 0; i < abilities.Length; i++)
                 abilities[i].NewTurn();
+            initalDelayUntil = Tower.InialMonsterDelay + Time.timeSinceLevelLoad;
             base.Enact();
         }
 
