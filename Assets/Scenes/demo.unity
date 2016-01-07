@@ -2739,6 +2739,10 @@ MonoBehaviour:
   shootScan: {fileID: 21300000, guid: 9aefeec16c267704497cdcbb3a19d795, type: 3}
   layer: Actors
   orderInLayer: 10
+  truncateAtActionpoints: 1
+  truncationColor:
+    serializedVersion: 2
+    rgba: 1577058303
 --- !u!1 &104516227
 GameObject:
   m_ObjectHideFlags: 0

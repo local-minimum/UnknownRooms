@@ -18,11 +18,22 @@ namespace ProcRoom
         [SerializeField]
         int orderInLayer;
 
+        [SerializeField]
+        bool truncateAtActionpoints;
+
+        [SerializeField]
+        Color32 truncationColor;
+
         List<SpriteRenderer> trail = new List<SpriteRenderer>();
 
         Tile lastTile;
 
+        bool shootAim;
+
+        Coordinate[] path;
+
         static MouseControls _instance;
+
         public static MouseControls instance
         {
             get
@@ -57,12 +68,36 @@ namespace ProcRoom
         {
             Tower.OnNewLevel += Tower_OnNewLevel;
             Tile.OnTileHover += Tile_OnTileHover;
+            Agent.OnAgentMove += Agent_OnAgentMove;
         }
 
         void OnDisable()
         {
             Tower.OnNewLevel -= Tower_OnNewLevel;
             Tile.OnTileHover -= Tile_OnTileHover;
+            Agent.OnAgentMove -= Agent_OnAgentMove;
+        }
+
+        private void Agent_OnAgentMove(Agent agent)
+        {
+            if (agent != Tower.Player || lastTile == null)
+                return;
+            
+            if (path[0] == agent.position)
+            {
+                if (path.Length == 1)
+                {
+                    path = new Coordinate[0];
+                }
+                else
+                {
+                    var newPath = new Coordinate[path.Length - 1];
+                    System.Array.Copy(path, 1, newPath, 0, newPath.Length);
+                    path = newPath;
+                    FindPath();
+                }
+                UpdateTrail(path);
+            }
         }
 
         private void Tile_OnTileHover(Tile tile)
@@ -73,18 +108,22 @@ namespace ProcRoom
                 var tileType = room.GetTileTypeAt(tile.position);
                 if (tileType == TileType.None || tileType == TileType.Wall)
                     return;
-                bool shootAim = room.HasAgent(tile.position);
+                shootAim = room.HasAgent(tile.position);
                 lastTile = tile;
-
-                var path = RoomSearch.FindShortestPath(Tower.ActiveRoom, Tower.Player.position, tile.position, false, TileType.Door, TileType.Walkable, TileType.StairsUp, TileType.SpikeTrap);
-                GrowTrailWhileNeeded(path);
-                UpdateTrail(path, shootAim ? shootScan : pathScan);
+                FindPath();
             }
+        }
+
+        void FindPath()
+        {
+            path = RoomSearch.FindShortestPath(Tower.ActiveRoom, Tower.Player.position, lastTile.position, true, TileType.Door, TileType.Walkable, TileType.StairsUp, TileType.SpikeTrap);
+            GrowTrailWhileNeeded(path);
+            UpdateTrail(path);
         }
 
         private void Tower_OnNewLevel(int level)
         {
-            UpdateTrail(new Coordinate[0], pathScan);
+            UpdateTrail(new Coordinate[0]);
         }
 
         void GrowTrailWhileNeeded(Coordinate[] path)
@@ -101,7 +140,7 @@ namespace ProcRoom
             }
         }
 
-        void UpdateTrail(Coordinate[] path, Sprite sprite)
+        void UpdateTrail(Coordinate[] path)
         {
             var room = Tower.ActiveRoom;
             for (int i=0, l=trail.Count; i< l; i++)
@@ -109,8 +148,15 @@ namespace ProcRoom
                 bool enabledSprite = i < path.Length;
                 if (enabledSprite)
                 {
-                    trail[i].sprite = sprite;
+                    trail[i].sprite = shootAim ? shootScan : pathScan;
                     trail[i].transform.position = room.GetTileCentre(path[i]);
+                    if (truncateAtActionpoints)
+                    {
+                        trail[i].color = (shootAim ? true : i < Tower.Player.actionPoints) ? (Color32) Color.white : truncationColor;
+                    }
+                    else
+                        trail[i].color = Color.white;
+
                 }
                 trail[i].enabled = enabledSprite;
             }
@@ -121,7 +167,7 @@ namespace ProcRoom
             if (lastTile != null &&  !Tower.Player.myTurn)
             {
                 lastTile = null;
-                UpdateTrail(new Coordinate[0], pathScan);
+                UpdateTrail(new Coordinate[0]);
             }
                 
         }
