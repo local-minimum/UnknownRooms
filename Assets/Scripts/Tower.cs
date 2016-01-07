@@ -20,6 +20,7 @@ namespace ProcRoom
 
 #if UNITY_EDITOR
 
+        [SerializeField]
         bool debug = false;
 #endif
 

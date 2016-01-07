@@ -21807,6 +21807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57ce28d253c01884eacc7704f5d657f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   points: 0
   basePointsPerLevel: 40
   extraPointsPerLevelMultiplier: 10
