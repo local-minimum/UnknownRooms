@@ -39,7 +39,7 @@ namespace ProcRoom.AI.Abilities
 
             monster.lookDirection = offset;
             base.Enact();
-            return true;
+            return false;
         }
 
     }

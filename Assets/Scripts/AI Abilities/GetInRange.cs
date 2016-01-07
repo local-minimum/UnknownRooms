@@ -27,7 +27,8 @@ namespace ProcRoom.AI.Abilities
             pathTruncation = monster.trackingPlayer ? 1 : 0;
             if (monster.trackingPlayer && PathPosition(monster.player.position) == -1)
                 SetNewAim();
-            return base.Enact();
+            base.Enact();
+            return false;
         }
     }
 }

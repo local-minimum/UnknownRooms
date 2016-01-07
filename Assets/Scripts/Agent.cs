@@ -135,8 +135,7 @@ namespace ProcRoom
             }
 
             set
-            {
-                lastAction = Time.timeSinceLevelLoad;
+            {                
 
                 if ((value.x ^ value.y) == 0 || Mathf.Abs(value.x * value.y) > 1)
                 {
@@ -276,6 +275,7 @@ namespace ProcRoom
         {
             if (_stats.hasKey)
             {
+                actionTick();
                 _stats.hasKey = false;
                 if (OnAgentHasKeyChange != null)
                     OnAgentHasKeyChange(false);
@@ -292,8 +292,11 @@ namespace ProcRoom
 
         public virtual void Reload()
         {
+            if (!actionAllowed)
+                return;
             ammo = _stats.clipSize;
             actionPoints--;
+            actionTick();
         }
 
         virtual protected void OnEnable()
@@ -374,11 +377,12 @@ namespace ProcRoom
 
         protected void Attack()
         {
-            if (_stats.hasAmmo && weapon.Shoot(_stats.position, _stats.lookDirection))
+            if (actionAllowed && _stats.hasAmmo && weapon.Shoot(_stats.position, _stats.lookDirection))
             {
                 ammo--;
                 shots++;
                 actionPoints--;
+                actionTick();
             }
         }
 

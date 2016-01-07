@@ -85,7 +85,7 @@ namespace ProcRoom
         }
 
         void ActOnInput(PlayerActions action) { 
-            if (!myTurn || action == PlayerActions.None || !actionTick())            
+            if (!myTurn || action == PlayerActions.None || !actionAllowed)            
                 return;
 
 
@@ -140,8 +140,9 @@ namespace ProcRoom
         {
             var tileType = room.GetTileTypeAt(newPosition);
 
-            if (room.PassableTile(newPosition) || tileType == TileType.StairsUp) { 
-                
+            if (room.PassableTile(newPosition) || tileType == TileType.StairsUp) {
+
+                actionTick();
                 UpdatePosition(newPosition);
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);

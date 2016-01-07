@@ -188,7 +188,6 @@ namespace ProcRoom
             {
                 UpdatePosition(moveTarget);
                 actionPoints--;
-                actionTick();
                 queuedMove = false;
                 return;
             }
