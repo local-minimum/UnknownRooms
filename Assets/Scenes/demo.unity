@@ -406,19 +406,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08df4f4c47358f41a9c8b14e5a159e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 13
-  height: 9
+  width: 18
+  height: 10
   runOnRealTime: 1
   interWaveDelay: 1
   waveSpeed: 0.04
   tileSpacing: {x: 1, y: 1}
   tileModel: {fileID: 122460, guid: de48a3f811a7bb645a16292372686100, type: 2}
-  minWallIslands: 0
-  maxWallIslands: 10
-  minWallGrowthIterations: 2
+  minWallIslands: 10
+  maxWallIslands: 40
+  minWallGrowthIterations: 10
   maxWallGrowthIterations: 30
-  biasTowardsGrowingTheIslands: 0
-  minDistanceBetweenStairs: 12
+  biasTowardsGrowingTheIslands: 0.341
+  minDistanceBetweenStairs: 10
   spikeTrapClusters:
     min: 0
     max: 3
@@ -3181,8 +3181,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 275091284}
-        m_MethodName: EndTurn
+      - m_Target: {fileID: 0}
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21418,7 +21418,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 275091281}
+      - m_Target: {fileID: 0}
         m_MethodName: 
         m_Mode: 1
         m_Arguments:
@@ -21818,6 +21818,7 @@ MonoBehaviour:
   monsterRelativePlayerWorth:
     _min: 0.4
     _max: 1.3
+  nextActorDelay: 0.7
 --- !u!114 &1358969312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25207,8 +25208,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 275091284}
-        m_MethodName: Reload
+      - m_Target: {fileID: 0}
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26092,19 +26093,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a806ee2a4eac4c4681e75ebc42a46ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followMode: 1
+  followMode: 0
   easeCurve:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: 0
-      inSlope: 0.89479685
-      outSlope: 0.89479685
+      value: -0.0038655517
+      inSlope: 3.9699004
+      outSlope: 3.9699004
       tangentMode: 0
-    - time: 0.35591793
-      value: 0.017180026
-      inSlope: 0.9958379
-      outSlope: 3.4718215
+    - time: 0.5483823
+      value: 0.9526435
+      inSlope: 0.47876325
+      outSlope: 0.31960446
       tangentMode: 1
     - time: 1
       value: 1

@@ -39,6 +39,9 @@ namespace ProcRoom
         [SerializeField]
         FloatRange monsterRelativePlayerWorth;
 
+        [SerializeField, Range(0, 2)]
+        float nextActorDelay = 0.5f;
+
         Room room;
         Player player;
 
@@ -244,22 +247,30 @@ namespace ProcRoom
                 animateRoom();
             else
             {
-                //TODO: This is a bit dangerous and should prob test if anyone is still alive.
-                int i = 0;
-                do
-                {
-                    activeAgent++;
-                    i++;
-                    if (activeAgent >= agents.Count)
-                        activeAgent = 0;
-                    if (i > agents.Count)
-                        return;
-                } while (!agents[activeAgent].alive);
-                if (OnNewActiveAgent != null)
-                    OnNewActiveAgent(agents[activeAgent]);
-                agents[activeAgent].Enact();
-
+                StartCoroutine(delayAgentSwitch());
             }
+        }
+
+        IEnumerator<WaitForSeconds> delayAgentSwitch()
+        {
+            yield return new WaitForSeconds(nextActorDelay);
+
+            //TODO: This is a bit dangerous and should prob test if anyone is still alive.
+            int i = 0;
+            do
+            {
+                activeAgent++;
+                i++;
+                if (activeAgent >= agents.Count)
+                    activeAgent = 0;
+                if (i > agents.Count)
+                    yield return null;
+            } while (!agents[activeAgent].alive);
+            if (OnNewActiveAgent != null)
+                OnNewActiveAgent(agents[activeAgent]);
+            agents[activeAgent].Enact();
+
+
         }
 
         public static int Agents

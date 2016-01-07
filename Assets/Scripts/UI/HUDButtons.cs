@@ -8,6 +8,7 @@ namespace ProcRoom.UI
     {
 
         Button[] buttons;
+        bool interactable = true;
 
         void Awake()
         {
@@ -34,7 +35,7 @@ namespace ProcRoom.UI
         {
             for (int i = 0; i < buttons.Length; i++)
                 buttons[i].interactable = interactable;
-
+            this.interactable = interactable;
         }
 
         public void Reload()
@@ -49,6 +50,12 @@ namespace ProcRoom.UI
         public void UpgradeCharacter()
         {
             CharacterCreation.UpgradePlayer();
+        }
+
+        void Update()
+        {
+            if (interactable && !Tower.Player.myTurn)
+                SetButtonsInteractable(false);
         }
     }
 }

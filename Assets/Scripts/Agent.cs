@@ -233,7 +233,7 @@ namespace ProcRoom
             }
         }        
 
-        protected bool myTurn
+        public bool myTurn
         {
             get
             {
