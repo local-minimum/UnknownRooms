@@ -120,7 +120,7 @@ Transform:
   m_GameObject: {fileID: 103698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.644, y: 4.937, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 490414}
   - {fileID: 400626}
@@ -209,6 +209,7 @@ MonoBehaviour:
       x: 1
       y: 0
   weapon: {fileID: 11422494}
+  rotateAsDirection: 0
   actionSpeed: 0.3
   minSpawnDistanceToPlayer: 7
 --- !u!114 &11432636
@@ -455,11 +456,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.x
-      value: 0.7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalScale.y
-      value: 0.7
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
