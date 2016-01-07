@@ -373,7 +373,7 @@ namespace ProcRoom
                 var coord = Coordinate.FromPosition(candidates[i], width);
                 if (PermissableDoorPosition(coord))
                 {
-                    var path = RoomSearch.FindShortestPath(this, upStairs, downStairs);
+                    var path = RoomSearch.FindShortestPath(this, upStairs, downStairs, false, TileType.Walkable, TileType.SpikeTrap, TileType.StairsUp, TileType.StairsDown);
                     if (path.Length > 0 && !System.Array.Exists<Coordinate>(path, e => e == coord)) {
                         SetTileType(coord, TileType.Door);
                         Coordinate deadEnd;
