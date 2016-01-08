@@ -8,7 +8,7 @@ namespace ProcRoom
     {
         struct MouseAction
         {
-            public enum ActionType { Move, Shoot};
+            public enum ActionType { Move, Shoot, Reload};
 
             public ActionType type;
             public Coordinate destination;
@@ -139,7 +139,6 @@ namespace ProcRoom
                     var newPath = new Coordinate[path.Length - 1];
                     System.Array.Copy(path, 1, newPath, 0, newPath.Length);
                     path = newPath;
-                    //FindPath();
                 }
                 UpdateTrail(path);
             }
@@ -155,15 +154,24 @@ namespace ProcRoom
             if (type == MouseEvent.Exit)
             {
                 allowSubmitActions = false;
-            } else if (Tower.Player.myTurn && tile != lastTile && tile.position != Tower.Player.position)
+            } else if (Tower.Player.myTurn && tile != lastTile) 
             {
-                var room = Tower.ActiveRoom;
-                var tileType = room.GetTileTypeAt(tile.position);
-                if (tileType == TileType.None || tileType == TileType.Wall)
-                    return;
-                shootAim = room.HasAgent(tile.position);
-                lastTile = tile;
-                FindPath();
+                if (tile.position == Tower.Player.position)
+                {
+                    UpdateTrail(new Coordinate[0]);
+                    if (!Tower.Player.ammoIsFull)
+                        actions.Add(new MouseAction(MouseAction.ActionType.Reload, tile.position));
+                }
+                else
+                {
+                    var room = Tower.ActiveRoom;
+                    var tileType = room.GetTileTypeAt(tile.position);
+                    if (tileType == TileType.None || tileType == TileType.Wall)
+                        return;
+                    shootAim = room.HasAgent(tile.position);
+                    lastTile = tile;
+                    FindPath();
+                }
                 allowSubmitActions = true;
             }
         }
@@ -310,6 +318,7 @@ namespace ProcRoom
                     {
                         StartCoroutine(SubmitActions());
                     }
+
                 }
             }
                 
@@ -322,27 +331,37 @@ namespace ProcRoom
             int i = 0;
             while (processingActions)
             {
-                var aim = Tower.Player.lookDirection;
                 var action = actions[i];
 
-                var actionAim = (action.destination - Tower.Player.position).asDirection;
-
-                if (aim != actionAim)
+                if (action.type == MouseAction.ActionType.Reload)
                 {
-                    Tower.Player.lookDirection = actionAim;
+                    Tower.Player.Reload();
+                    break;
                 }
                 else
                 {
-                    if (action.type == MouseAction.ActionType.Move)
+
+                    var aim = Tower.Player.lookDirection;
+                    var actionAim = (action.destination - Tower.Player.position).asDirection;
+
+                    if (aim != actionAim)
                     {
-                        Tower.Player.MoveTo(action.destination);
-                    } else if (action.type == MouseAction.ActionType.Shoot)
-                    {
-                        Tower.Player.Attack();
+                        Tower.Player.lookDirection = actionAim;
                     }
-                    i++;
-                    if (i >= actions.Count)
-                        break;
+                    else
+                    {
+                        if (action.type == MouseAction.ActionType.Move)
+                        {
+                            Tower.Player.MoveTo(action.destination);
+                        }
+                        else if (action.type == MouseAction.ActionType.Shoot)
+                        {
+                            Tower.Player.Attack();
+                        }
+                        i++;
+                        if (i >= actions.Count)
+                            break;
+                    }
                 }
                 yield return new WaitForSeconds(actionDuration);
             }

@@ -210,6 +210,14 @@ namespace ProcRoom
             }
         }
 
+        public bool ammoIsFull
+        {
+            get
+            {
+                return _stats.ammo == _stats.clipSize;
+            }
+        }
+
         public int health
         {
             get
