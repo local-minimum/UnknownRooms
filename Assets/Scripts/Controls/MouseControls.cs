@@ -8,7 +8,7 @@ namespace ProcRoom
     {
         struct MouseAction
         {
-            public enum ActionType { Move, Shoot, Reload};
+            public enum ActionType { Move, Shoot, Reload, EndTurn};
 
             public ActionType type;
             public Coordinate destination;
@@ -52,7 +52,7 @@ namespace ProcRoom
 
         bool shootAim;
 
-        Coordinate[] path;
+        Coordinate[] path = new Coordinate[0];
 
         static MouseControls _instance;
 
@@ -153,6 +153,11 @@ namespace ProcRoom
 
             if (type == MouseEvent.Exit)
             {
+                if (lastTile != null && lastTile.position == Tower.Player.position)
+                {
+                    lastTile = null;
+                    actions.Clear();
+                }
                 allowSubmitActions = false;
             } else if (Tower.Player.myTurn && tile != lastTile) 
             {
@@ -160,8 +165,14 @@ namespace ProcRoom
                 {
                     lastTile = tile;
                     UpdateTrail(new Coordinate[0]);
-                    if (!Tower.Player.ammoIsFull)
+                    if (Tower.Player.ammoIsFull)
+                    {
+                        actions.Add(new MouseAction(MouseAction.ActionType.EndTurn, tile.position));
+                    }
+                    else
+                    {
                         actions.Add(new MouseAction(MouseAction.ActionType.Reload, tile.position));
+                    }
                 }
                 else
                 {
@@ -179,10 +190,30 @@ namespace ProcRoom
 
         void FindPath()
         {
-            //TODO: Compare new and old path and smart join if possible
-            path = RoomSearch.FindShortestPath(Tower.ActiveRoom, Tower.Player.position, lastTile.position, true, TileType.Door, TileType.Walkable, TileType.StairsUp, TileType.SpikeTrap);
+            
+            var newPath = RoomSearch.FindShortestPath(Tower.ActiveRoom, Tower.Player.position, lastTile.position, true, TileType.Door, TileType.Walkable, TileType.StairsUp, TileType.SpikeTrap);
+            SmartJoinPaths(newPath);
             GrowTrailWhileNeeded(path);
             UpdateTrail(path);
+        }
+
+        void SmartJoinPaths(Coordinate[] newPath)
+        {
+            if (newPath.Length == path.Length + 1 && path.Length > 0 && (newPath[path.Length] - path[path.Length - 1]).Distance  == 1)
+            {
+                System.Array.Copy(path, newPath, path.Length);
+            }
+
+            for (int i = Mathf.Min(newPath.Length, path.Length) - 1 ; i >= 0;  i--)
+            {
+                if (newPath[i] == path[i])
+                {
+                    System.Array.Copy(path, newPath, i + 1);
+                    break;                        
+                }
+            }
+
+            path = newPath;
         }
 
         private void Tower_OnNewLevel(int level)
@@ -232,7 +263,7 @@ namespace ProcRoom
                                 ap --;
                                 if (!processingActions)
                                 {
-                                    actions.Add(new MouseAction(MouseAction.ActionType.Shoot, path[path.Length - 1].asDirection));
+                                    actions.Add(new MouseAction(MouseAction.ActionType.Shoot, path[path.Length - 1]));
                                 }
                                 restIsShot = true;
                             }
@@ -249,9 +280,14 @@ namespace ProcRoom
                                     actions.Add(new MouseAction(MouseAction.ActionType.Shoot, path[path.Length - 1]));
                                 }
                                 restIsShot = true;
+                            } else
+                            {
+                                ap--;
+                                trail[i].sprite = pathScan;
+                                enabledSprite = i < path.Length - 1;
                             }
                             
-                        } else if (shootAim == true && !inRange && i == path.Length - 1)
+                        } else if (shootAim == true && i == path.Length - 1)
                         {
                             enabledSprite = false;
                         }
@@ -330,13 +366,23 @@ namespace ProcRoom
             processingActions = true;
             allowSubmitActions = false;
             int i = 0;
+            MouseAction action;
             while (processingActions)
             {
-                var action = actions[i];
+                try {
+                    action = actions[i];
+                } catch
+                {
+                    break;
+                }
 
                 if (action.type == MouseAction.ActionType.Reload)
                 {
                     Tower.Player.Reload();
+                    break;
+                } else if (action.type == MouseAction.ActionType.EndTurn)
+                {
+                    Tower.Player.actionPoints = 0;
                     break;
                 }
                 else
