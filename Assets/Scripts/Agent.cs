@@ -375,7 +375,7 @@ namespace ProcRoom
 
         abstract protected void Death();
 
-        protected void Attack()
+        public void Attack()
         {
             if (actionAllowed && _stats.hasAmmo && weapon.Shoot(_stats.position, _stats.lookDirection))
             {

@@ -30,10 +30,10 @@ namespace ProcRoom.AI.Abilities
             //Debug.Log(name + " enacting drunken walk");
             if (AttemptMove(monster.lookDirection)) {
                 if (Random.value < 0.5f) {
-                    if (AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated180())) ;
+                    if (AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated180())) { };
                 } else
                 {
-                    if (AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated180())) ;
+                    if (AttemptMove(monster.lookDirection.Rotated90CCW()) || AttemptMove(monster.lookDirection.Rotated90CW()) || AttemptMove(monster.lookDirection.Rotated180())) { };
                 }
             }
             base.Enact();

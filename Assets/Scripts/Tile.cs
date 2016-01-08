@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace ProcRoom
 {
     public enum TileType { None, Wall, Walkable, StairsUp, StairsDown, SpikeTrap, Door };
-
+    public enum MouseEvent { Enter, Exit};
     public delegate void TileAction(Tile tile, TileType typeOfTile, Coordinate position);
-    public delegate void TileHover(Tile tile);
+    public delegate void TileHover(Tile tile, MouseEvent type);
 
     [RequireComponent(typeof(SpriteRenderer)), RequireComponent(typeof(Animator))]
     public class Tile : MonoBehaviour
@@ -166,7 +166,13 @@ namespace ProcRoom
 
         void OnMouseEnter() {
             if (Tower.Alive && OnTileHover != null)
-                OnTileHover(this);
+                OnTileHover(this, MouseEvent.Enter);
+        }
+
+        void OnMouseExit()
+        {
+            if (OnTileHover != null)
+                OnTileHover(this, MouseEvent.Exit);
         }
 
     }

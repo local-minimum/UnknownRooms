@@ -3,8 +3,30 @@ using System.Collections.Generic;
 
 namespace ProcRoom
 {
+
     public class MouseControls : MonoBehaviour
     {
+        struct MouseAction
+        {
+            public enum ActionType { Move, Shoot};
+
+            public ActionType type;
+            public Coordinate destination;
+
+            public MouseAction(ActionType type, Coordinate destination)
+            {
+                this.type = type;
+                this.destination = destination;
+            }
+
+            public MouseAction(Coordinate destination)
+            {
+                type = ActionType.Move;
+                this.destination = destination;
+            }
+
+        }
+
 
         [SerializeField]
         Sprite pathScan;
@@ -34,6 +56,14 @@ namespace ProcRoom
 
         static MouseControls _instance;
 
+        bool allowSubmitActions = false;
+
+        List<MouseAction> actions = new List<MouseAction>();
+        bool processingActions = false;
+
+        [SerializeField, Range(0, 2)]
+        float actionDuration;
+
         public static MouseControls instance
         {
             get
@@ -53,6 +83,21 @@ namespace ProcRoom
             var GO = new GameObject("Mouse Trail");
             GO.transform.SetParent(Tower.Player.transform.parent);
             _instance = GO.AddComponent<MouseControls>();
+        }
+
+        //TODO: Make unified controls interface
+        public static bool controlEnabled
+        {
+            get
+            {
+                    return _instance != null && _instance.enabled;
+            }
+
+            set
+            {
+                    _instance.enabled = value;
+            }
+            
         }
 
         void Awake()
@@ -94,15 +139,23 @@ namespace ProcRoom
                     var newPath = new Coordinate[path.Length - 1];
                     System.Array.Copy(path, 1, newPath, 0, newPath.Length);
                     path = newPath;
-                    FindPath();
+                    //FindPath();
                 }
                 UpdateTrail(path);
             }
         }
 
-        private void Tile_OnTileHover(Tile tile)
+        private void Tile_OnTileHover(Tile tile, MouseEvent type)
         {
-            if (Tower.Player.myTurn && tile != lastTile && tile.position != Tower.Player.position)
+            if (processingActions)
+            {
+                return;
+            }
+
+            if (type == MouseEvent.Exit)
+            {
+                allowSubmitActions = false;
+            } else if (Tower.Player.myTurn && tile != lastTile && tile.position != Tower.Player.position)
             {
                 var room = Tower.ActiveRoom;
                 var tileType = room.GetTileTypeAt(tile.position);
@@ -111,11 +164,13 @@ namespace ProcRoom
                 shootAim = room.HasAgent(tile.position);
                 lastTile = tile;
                 FindPath();
+                allowSubmitActions = true;
             }
         }
 
         void FindPath()
         {
+            //TODO: Compare new and old path and smart join if possible
             path = RoomSearch.FindShortestPath(Tower.ActiveRoom, Tower.Player.position, lastTile.position, true, TileType.Door, TileType.Walkable, TileType.StairsUp, TileType.SpikeTrap);
             GrowTrailWhileNeeded(path);
             UpdateTrail(path);
@@ -142,8 +197,10 @@ namespace ProcRoom
 
         void UpdateTrail(Coordinate[] path)
         {
+            if (!processingActions)
+                actions.Clear();
             var room = Tower.ActiveRoom;
-            int weaponsRange = Tower.Player.Weapon.range;
+            int weaponsRange = Tower.Player.ammo > 0 ? Tower.Player.Weapon.range : -1;
             bool restIsShot = false;
             int ap = Tower.Player.actionPoints;
             for (int i=0, l=trail.Count; i< l; i++)
@@ -155,28 +212,47 @@ namespace ProcRoom
                     trail[i].transform.position = room.GetTileCentre(path[i]);
                     if (truncateAtActionpoints)
                     {
-                        bool inRange = path.Length <= weaponsRange + i + 1;
+                        bool inRange = weaponsRange > 0 && path.Length <= weaponsRange + i + 1;
 
-                        if (shootAim && (restIsShot || inRange && ClearLineOfSight(i) && ap > 1))
+                        if (shootAim && (restIsShot || inRange && ClearLineOfSight(i) && ap > 0))
                         {
                             if (i == 0 && DirectShot() && weaponsRange >= path.Length)
                             {
+                                
                                 trail[i].sprite = shootScan;
-                                ap -= 2;
+                                ap --;
+                                if (!processingActions)
+                                {
+                                    actions.Add(new MouseAction(MouseAction.ActionType.Shoot, path[path.Length - 1].asDirection));
+                                }
+                                restIsShot = true;
                             }
                             else if (restIsShot)
                             {
                                 trail[i].sprite = shootScan;
-                            } else
+                            } else if (ap > 1)
                             {
                                 trail[i].sprite = pathScan;
-                                ap --;
+                                ap -=2;
+                                if (!processingActions)
+                                {
+                                    actions.Add(new MouseAction(path[i]));
+                                    actions.Add(new MouseAction(MouseAction.ActionType.Shoot, path[path.Length - 1]));
+                                }
+                                restIsShot = true;
                             }
-                            restIsShot = true;
+                            
+                        } else if (shootAim == true && !inRange && i == path.Length - 1)
+                        {
+                            enabledSprite = false;
                         }
                         else
                         {
                             trail[i].sprite = pathScan;
+                            if (!processingActions && ap > 0)
+                            {
+                                actions.Add(new MouseAction(path[i]));
+                            }
                             ap--;
                         }
                         trail[i].color = ap >= 0 ? (Color32)Color.white : truncationColor;
@@ -218,12 +294,60 @@ namespace ProcRoom
 
         void Update()
         {
-            if (lastTile != null &&  !Tower.Player.myTurn)
+            if (lastTile != null)
             {
-                lastTile = null;
-                UpdateTrail(new Coordinate[0]);
+                if (!Tower.Player.myTurn)
+                {
+                    lastTile = null;
+                    UpdateTrail(new Coordinate[0]);
+                } else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                {
+                    if (processingActions)
+                    {
+                        processingActions = false;
+                    }
+                    else if (allowSubmitActions)
+                    {
+                        StartCoroutine(SubmitActions());
+                    }
+                }
             }
                 
+        }
+
+        IEnumerator<WaitForSeconds> SubmitActions()
+        {
+            processingActions = true;
+            allowSubmitActions = false;
+            int i = 0;
+            while (processingActions)
+            {
+                var aim = Tower.Player.lookDirection;
+                var action = actions[i];
+
+                var actionAim = (action.destination - Tower.Player.position).asDirection;
+
+                if (aim != actionAim)
+                {
+                    Tower.Player.lookDirection = actionAim;
+                }
+                else
+                {
+                    if (action.type == MouseAction.ActionType.Move)
+                    {
+                        Tower.Player.MoveTo(action.destination);
+                    } else if (action.type == MouseAction.ActionType.Shoot)
+                    {
+                        Tower.Player.Attack();
+                    }
+                    i++;
+                    if (i >= actions.Count)
+                        break;
+                }
+                yield return new WaitForSeconds(actionDuration);
+            }
+            actions.Clear();
+            processingActions = false;
         }
 
     }

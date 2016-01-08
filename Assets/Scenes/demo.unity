@@ -2743,6 +2743,7 @@ MonoBehaviour:
   truncationColor:
     serializedVersion: 2
     rgba: 1577058303
+  actionDuration: 0.35
 --- !u!1 &104516227
 GameObject:
   m_ObjectHideFlags: 0

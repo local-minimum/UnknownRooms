@@ -25,6 +25,19 @@ namespace ProcRoom
         bool tapping = false;
 
         static TouchControls _instance;
+        
+        public static bool controlEnabled
+        {
+            get
+            {
+                return _instance != null && _instance.enabled;
+            }
+
+            set
+            {
+                _instance.enabled = value;
+            }
+        }
 
         void Awake()
         {

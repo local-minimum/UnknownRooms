@@ -136,6 +136,11 @@ namespace ProcRoom
                 Attack();
         }
 
+        public void MoveTo(Coordinate newPosition) {
+            if (actionPoints > 0  && (newPosition - position).Distance == 1)
+                AttemptMoveTo(newPosition);
+        }
+
         void AttemptMoveTo(Coordinate newPosition)
         {
             var tileType = room.GetTileTypeAt(newPosition);
@@ -143,18 +148,18 @@ namespace ProcRoom
             if (room.PassableTile(newPosition) || tileType == TileType.StairsUp) {
 
                 actionTick();
-                UpdatePosition(newPosition);
-                if (OnPlayerEnterNewPosition != null)
-                    OnPlayerEnterNewPosition(this, newPosition, tileType);
                 if (tileType == TileType.StairsUp)
                     actionPoints = 0;
                 else
                     actionPoints--;
+                UpdatePosition(newPosition);
+                if (OnPlayerEnterNewPosition != null)
+                    OnPlayerEnterNewPosition(this, newPosition, tileType);
+
                 steps++;
             } else if (_stats.hasKey && room.PassableTile(newPosition, false, TileType.Door) && room.GetTile(newPosition).Unlock())
             {
                 ConsumeKey();
-
             }
 
         }

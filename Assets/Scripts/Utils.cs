@@ -113,6 +113,11 @@ namespace ProcRoom
             this.y = Mathf.RoundToInt(y);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public Coordinate asDirection
         {
             get
@@ -121,6 +126,22 @@ namespace ProcRoom
                     return new Coordinate(Mathf.Sign(x), 0);
                 else
                     return new Coordinate(0, Mathf.Sign(y));
+            }
+        }
+
+        public Coordinate asEightDirection
+        {
+            get
+            {
+                return new Coordinate(Mathf.Sign(x), Mathf.Sign(y));
+            }
+        }
+
+        public int Distance
+        {
+            get
+            {
+                return Mathf.Abs(x) + Mathf.Abs(y);
             }
         }
 
