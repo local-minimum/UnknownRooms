@@ -80,7 +80,7 @@ namespace ProcRoom
 
         private void Agent_OnAgentMove(Agent agent)
         {
-            if (agent != Tower.Player || lastTile == null)
+            if (agent != Tower.Player || lastTile == null || path.Length == 0)
                 return;
             
             if (path[0] == agent.position)
@@ -143,23 +143,77 @@ namespace ProcRoom
         void UpdateTrail(Coordinate[] path)
         {
             var room = Tower.ActiveRoom;
+            int weaponsRange = Tower.Player.Weapon.range;
+            bool restIsShot = false;
+            int ap = Tower.Player.actionPoints;
             for (int i=0, l=trail.Count; i< l; i++)
             {
                 bool enabledSprite = i < path.Length;
                 if (enabledSprite)
                 {
-                    trail[i].sprite = shootAim ? shootScan : pathScan;
+
                     trail[i].transform.position = room.GetTileCentre(path[i]);
                     if (truncateAtActionpoints)
                     {
-                        trail[i].color = (shootAim ? true : i < Tower.Player.actionPoints) ? (Color32) Color.white : truncationColor;
+                        bool inRange = path.Length <= weaponsRange + i + 1;
+
+                        if (shootAim && (restIsShot || inRange && ClearLineOfSight(i) && ap > 1))
+                        {
+                            if (i == 0 && DirectShot() && weaponsRange >= path.Length)
+                            {
+                                trail[i].sprite = shootScan;
+                                ap -= 2;
+                            }
+                            else if (restIsShot)
+                            {
+                                trail[i].sprite = shootScan;
+                            } else
+                            {
+                                trail[i].sprite = pathScan;
+                                ap --;
+                            }
+                            restIsShot = true;
+                        }
+                        else
+                        {
+                            trail[i].sprite = pathScan;
+                            ap--;
+                        }
+                        trail[i].color = ap >= 0 ? (Color32)Color.white : truncationColor;
                     }
                     else
+                    {
+                        trail[i].sprite = shootAim ? shootScan : pathScan;
                         trail[i].color = Color.white;
+                    }
 
                 }
                 trail[i].enabled = enabledSprite;
             }
+        }
+
+        bool DirectShot()
+        {
+            if (path.Length == 1)
+                return true;
+            var aim = path[1] - path[0];
+            return aim.asDirection.Rotated180() + path[0] == Tower.Player.position;
+        }
+
+        bool ClearLineOfSight(int index)
+        {
+            var room = Tower.ActiveRoom;
+            var aim = (path[path.Length - 1] - path[index]).asDirection;
+            var pos = path[index];
+            for (int i=index+1; i<path.Length; i++)
+            {
+                pos += aim;
+                if ((path[i] != pos) || !room.PassableTile(path[i], false, TileType.Walkable, TileType.SpikeTrap))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         void Update()

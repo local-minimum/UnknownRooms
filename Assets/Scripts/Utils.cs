@@ -156,7 +156,7 @@ namespace ProcRoom
 
         public static bool operator !=(Coordinate A, Coordinate B)
         {
-            return !object.ReferenceEquals(A, B) || !A.Equals(B);
+            return !object.ReferenceEquals(A, B) && !A.Equals(B);
         }
 
         public override bool Equals(object obj)
@@ -222,7 +222,7 @@ namespace ProcRoom
 
         public static Coordinate Rotated180(this Coordinate coord)
         {
-            return new Coordinate(-coord.y, -coord.x);
+            return new Coordinate(-coord.x, -coord.y);
         }
 
         public static Coordinate LeftSide(this Coordinate coord)
