@@ -16,7 +16,8 @@ namespace ProcRoom.AI.Abilities
         public override bool Enact()
         {
             monster.Reload();
-            return base.Enact();
+            base.Enact();
+            return false;
         }
     }
 }

@@ -50,6 +50,9 @@ namespace ProcRoom.UI
         [SerializeField]
         float height = 48f;
 
+        [SerializeField]
+        bool warnOnEmpty = false;
+
         Image labelImage;
 
         Image capImage;
@@ -84,20 +87,31 @@ namespace ProcRoom.UI
                     HUDbars[i].On = i < value;
                 }
 
+                if (warnOnEmpty && value == 0)
+                    WarningFlasher.GetByName("Ammo").Warn();
             }
         }
 
         void OnEnable()
         {
             OnNewBarShape += HUDStats_OnNewBarShape;
-
+            
             if (alignTo)
                 HUDStats_OnNewBarShape(alignTo);
+
+            Game.OnScreenSizeChange += Game_OnScreenSizeChange;
         }
 
         void OnDisable()
         {
             OnNewBarShape -= HUDStats_OnNewBarShape;
+            Game.OnScreenSizeChange -= Game_OnScreenSizeChange;
+        }
+
+        private void Game_OnScreenSizeChange(int from, int to)
+        {
+            Debug.Log(from + " -> " + to);
+            SetUpComponents();
         }
 
         private void HUDStats_OnNewBarShape(HUDStats bar)
@@ -121,8 +135,16 @@ namespace ProcRoom.UI
         void SetUpComponents()
         {
 
-            if (labelImage == null)
-                SetupLabel();
+            SetupLabel();
+
+            for (int i = 0, l = HUDbars.Count; i < l; i++)
+            {
+                HUDbars[i].height = height;
+                if (i == 0)
+                    HUDbars[i].AlignAfter(labelImage);
+                else
+                    HUDbars[i].AlignAfter(HUDbars[i - 1]);
+            }
 
             while (HUDbars.Count < _maxValue)
                 AddBar();
@@ -137,8 +159,11 @@ namespace ProcRoom.UI
 
         void SetupLabel()
         {
-            labelImage = gameObject.AddComponent<Image>();
-            labelImage.sprite = labelSprite;
+            if (labelImage == null)
+            {
+                labelImage = gameObject.AddComponent<Image>();
+                labelImage.sprite = labelSprite;
+            }
             var t = labelImage.rectTransform;        
             t.localScale = new Vector3(1, 1, 1);
 
@@ -179,30 +204,27 @@ namespace ProcRoom.UI
 
         void SetupCap()
         {
-            RectTransform t;
-
             if (capImage == null)
             {
                 var GO = new GameObject(name + " cap");
                 GO.transform.SetParent(transform);
                 capImage = GO.AddComponent<Image>();
                 capImage.sprite = endCapSprite;
-                t = capImage.rectTransform;
-                t.localScale = Vector3.one;
-                if (height < 0f)
-                {
-                    SetAutoScale(t, capImage);
-                }
-                else
-                {
-                    t.anchorMax = new Vector2(0, 0.5f);
-                    t.anchorMin = t.anchorMax;
-                    t.pivot = t.anchorMax;
-                    t.sizeDelta = new Vector2(endCapSprite.bounds.extents.x * height / endCapSprite.bounds.extents.y, height);
-                }
-                
-            } else
-                t = capImage.rectTransform;
+            }
+
+            var t = capImage.rectTransform;
+            t.localScale = Vector3.one;
+            if (height < 0f)
+            {
+                SetAutoScale(t, capImage);
+            }
+            else
+            {
+                t.anchorMax = new Vector2(0, 0.5f);
+                t.anchorMin = t.anchorMax;
+                t.pivot = t.anchorMax;
+                t.sizeDelta = new Vector2(endCapSprite.bounds.extents.x * height / endCapSprite.bounds.extents.y, height);
+            }
 
             if (HUDbars.Count > 0)
                 t.position = HUDbars[HUDbars.Count - 1].RightEdge;

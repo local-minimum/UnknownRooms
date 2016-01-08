@@ -54,8 +54,9 @@ namespace ProcRoom.UI
 
         void Update()
         {
-            if (interactable && !Tower.Player.myTurn)
-                SetButtonsInteractable(false);
+            if (Tower.Alive && interactable != Tower.Player.myTurn)
+                SetButtonsInteractable(Tower.Player.myTurn);
+            
         }
     }
 }

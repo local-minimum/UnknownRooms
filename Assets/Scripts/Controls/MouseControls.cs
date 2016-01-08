@@ -168,10 +168,12 @@ namespace ProcRoom
                     if (Tower.Player.ammoIsFull)
                     {
                         actions.Add(new MouseAction(MouseAction.ActionType.EndTurn, tile.position));
+                        WarningFlasher.GetByName("EndTurn").Warn();
                     }
                     else
                     {
                         actions.Add(new MouseAction(MouseAction.ActionType.Reload, tile.position));
+                        WarningFlasher.GetByName("Reload").Warn();
                     }
                 }
                 else
