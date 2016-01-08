@@ -158,6 +158,7 @@ namespace ProcRoom
             {
                 if (tile.position == Tower.Player.position)
                 {
+                    lastTile = tile;
                     UpdateTrail(new Coordinate[0]);
                     if (!Tower.Player.ammoIsFull)
                         actions.Add(new MouseAction(MouseAction.ActionType.Reload, tile.position));
