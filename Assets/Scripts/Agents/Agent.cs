@@ -23,6 +23,7 @@ namespace ProcRoom
         public int xp = 0;
 
         public int defence = 10;
+        public bool boosted = false;
 
         public int keys = 0;
 
@@ -343,6 +344,7 @@ namespace ProcRoom
 
         virtual public void Enact() {
             actionPoints = _stats.actionPointsPerTurn;
+            _stats.boosted = false;
         }
 
         protected virtual void HandleTileAction(Tile tile, TileType typeOfTile, Coordinate position)
@@ -397,6 +399,16 @@ namespace ProcRoom
             {
                 ammo--;
                 shots++;
+                actionPoints--;
+                actionTick();
+            }
+        }
+
+        public void Boost() {
+            if (actionAllowed && !_stats.boosted && _stats.defence > 0)
+            {
+                _stats.boosted = true;
+                _stats.defence--;
                 actionPoints--;
                 actionTick();
             }
