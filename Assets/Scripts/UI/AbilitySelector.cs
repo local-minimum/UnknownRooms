@@ -134,7 +134,7 @@ namespace ProcRoom.UI
             {
                 if (selectors == null)
                     return;
-                bool doSelect = true;
+                bool doSelect = value > 0;
                 for (int i=0; i<visibleSelectors; i++)
                 {
                     if (doSelect)
@@ -192,7 +192,7 @@ namespace ProcRoom.UI
 
             set
             {
-                bool isAllowed = true;
+                bool isAllowed = value > 0;
                 for (int i=minIndex; i<visibleSelectors; i++)
                 {                    
                     selectors[i].allowed = isAllowed;

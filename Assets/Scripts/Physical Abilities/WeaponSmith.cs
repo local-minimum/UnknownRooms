@@ -44,7 +44,7 @@ namespace ProcRoom.Physical
                 var abilityState = new Dictionary<Ability, int>();
                 abilityState[WeaponsPrecision] = 0;
                 abilityState[WeaponsClipSize] = 0;
-                abilityState[WeaponsCritChance] = 0;
+                abilityState[WeaponsCritChance] = -1;
                 return abilityState;
 
             }
@@ -77,9 +77,9 @@ namespace ProcRoom.Physical
 
         public static WeaponStats Smith(int points, bool isMelee)
         {
-            Debug.Log("Smitting a weapon with " + points + " points");
+            Debug.Log("Smitting a " + (isMelee ? "melee" : "ranged") + " weapon with " + points + " points");
 
-            var abilityStates = isMelee ? instance.blankRangeState : instance.blankRangeState;
+            var abilityStates = isMelee ? instance.blankMeleeState : instance.blankRangeState;
             Ability fancy = null;
 
             if (Random.value < instance.likelihoodToBias)
@@ -97,7 +97,7 @@ namespace ProcRoom.Physical
             foreach (KeyValuePair<Ability, int> kvp in state)
             {
                 var cost = kvp.Key.Length > kvp.Value + 1 ? kvp.Key[kvp.Value + 1].cost : -1;
-                if (cost >= 0 && cost <= points)
+                if (cost > 0 && cost <= points)
                 {
                     //Debug.Log(string.Format("Possible upgrade on {0} to lvl {1} at cost {2} ({3})", kvp.Key.name, kvp.Value + 1, cost, points));
                     availables[totalAvailable] = kvp.Key;
@@ -115,7 +115,8 @@ namespace ProcRoom.Physical
 
             var upgradeAbility = availables[Random.Range(0, totalAvailable)];
             state[upgradeAbility]++;
-            //Debug.Log(string.Format("Upgrading {0} of {1} available", upgradeAbility.name, totalAvailable));
+            Debug.Log(string.Format("Upgrading {0} ({1} available) to lvl {3} (cost {2})", 
+                upgradeAbility.name, totalAvailable, upgradeAbility[state[upgradeAbility]].cost, state[upgradeAbility]));
             points -= upgradeAbility[state[upgradeAbility]].cost;
             return true;
         }
@@ -123,7 +124,9 @@ namespace ProcRoom.Physical
         WeaponStats createWeapon(Dictionary<Ability, int> state, bool isMelee)
         {
             if (isMelee)
-                return new WeaponStats(WeaponsPrecision[state[WeaponsPrecision]].value, WeaponsClipSize[state[WeaponsClipSize]].value, WeaponsCritChance[state[WeaponsCritChance]].value);
+                return new WeaponStats(WeaponsPrecision.GetValue(state[WeaponsPrecision]),
+                    WeaponsCritChance.GetValue(state[WeaponsCritChance]),
+                    WeaponsClipSize.GetValue(state[WeaponsClipSize]));
             else
                 return new WeaponStats(WeaponsPrecision[state[WeaponsPrecision]].value,
                     WeaponsRange[state[WeaponsRange]].value,

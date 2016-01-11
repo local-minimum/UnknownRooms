@@ -40,7 +40,6 @@ namespace ProcRoom
     }
 
     public delegate void AgentActions(int actionPoints);
-    public delegate void AgentAmmo(int remainingAmmo);
     public delegate void AgentHealth(int health);
     public delegate void AgentUpgrade(AgentStats stats);
     public delegate void AgentDeath(Agent agent);
@@ -58,7 +57,6 @@ namespace ProcRoom
         public static event AgentMove OnAgentMove;
 
         public event AgentActions OnAgentActionChange;
-        public event AgentAmmo OnAgentAmmoChange;
         public event AgentHealth OnAgentHealthChange;
         public event AgentUpgrade OnAgentUpgrade;
         public event AgentKeyChange OnAgentHasKeyChange;
@@ -206,6 +204,7 @@ namespace ProcRoom
                 if (_stats.health != health)
                 {
                     _stats.health = health;
+                    
                     if (OnAgentHealthChange != null)
                         OnAgentHealthChange(_stats.health);
 
@@ -341,7 +340,6 @@ namespace ProcRoom
                 {
                     if (power > _stats.defence && alive)
                     {
-                        UI.Hurt.Place(_stats.position);
                         Hurt();
                     }
                     power -= 80 + Random.Range(0, 100);
@@ -352,7 +350,9 @@ namespace ProcRoom
         public void Hurt()
         {
             health--;
-             
+            
+            UI.Hurt.Place(position);
+
             if (_stats.health < 1)
             {
                 if (myTurn)

@@ -61,16 +61,27 @@ namespace ProcRoom.UI
         void OnEnable() {
             Tower.OnNewGame += HandleNewGame;
             Tower.OnNewLevel += HandleNewLevel;
+            Weapon.OnAmmoChange += Weapon_OnAmmoChange;
             if (player)
                 ConnectPlayerEvents(player);
         }
 
         void OnDisable()
         {
+            Weapon.OnAmmoChange -= Weapon_OnAmmoChange;
             Tower.OnNewGame -= HandleNewGame;
             Tower.OnNewLevel -= HandleNewLevel;
             if (player)
                 DisconnectPlayerEvents();
+        }
+
+        private void Weapon_OnAmmoChange(Weapon weapon)
+        {
+            if (weapon == Tower.Player.Weapon)
+            {
+                Ammo.currentValue = weapon.ammo;
+                Ammo.maxValue = weapon.Stats.clipSize;
+            }
         }
 
         void ConnectPlayerEvents(Player player)
@@ -79,7 +90,6 @@ namespace ProcRoom.UI
                 DisconnectPlayerEvents();
             this.player = player;
             player.OnAgentActionChange += HandlePlayerActionPoints;
-            player.OnAgentAmmoChange += HandlePlayerAmmo;
             player.OnAgentHealthChange += HandlePlayerHealth;
             player.OnAgentHasKeyChange += HandleKeyChange;
             player.OnAgentXPChange += HandleXPChange;
@@ -105,7 +115,6 @@ namespace ProcRoom.UI
         void DisconnectPlayerEvents() {
             player.OnAgentActionChange -= HandlePlayerActionPoints;
             player.OnAgentHealthChange -= HandlePlayerHealth;
-            player.OnAgentAmmoChange -= HandlePlayerAmmo;
             player.OnAgentHasKeyChange -= HandleKeyChange;
             player.OnAgentXPChange -= HandleXPChange;
             player.OnAgentUpgrade -= HandleNewStats;

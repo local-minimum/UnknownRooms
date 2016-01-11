@@ -22,7 +22,7 @@ namespace ProcRoom.UI
         AbilitySelector defence;
 
         [SerializeField]
-        AbilitySelector clipSize;
+        AbilitySelector agility;
 
         [SerializeField]
         PlayerNamer namer;

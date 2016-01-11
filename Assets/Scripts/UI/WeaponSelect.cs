@@ -10,13 +10,13 @@ namespace ProcRoom.UI
         OptionButtonFrame group;
 
         [SerializeField]
-        AbilitySelector weaponsRange;
+        AbilitySelector weaponsClipSize;
 
         [SerializeField]
         AbilitySelector weaponsPrecision;
 
         [SerializeField]
-        AbilitySelector weaponsPower;
+        AbilitySelector weaponsCritChance;
 
         WeaponStats currentWeapon;
         WeaponStats optionalWeapon;
@@ -81,14 +81,15 @@ namespace ProcRoom.UI
             else
                 selectedWeapon = optionalWeapon;
 
-            weaponsRange.Value = selectedWeapon.maxRange;
-            weaponsRange.MaxValue = selectedWeapon.maxRange;
+            weaponsClipSize.Value = selectedWeapon.clipSize;
+            weaponsClipSize.MaxValue = selectedWeapon.clipSize;
 
-            weaponsPrecision.Value = selectedWeapon.precisionLossPerTile;
-            weaponsPrecision.MaxValue = selectedWeapon.precisionLossPerTile;
+            weaponsPrecision.Value = selectedWeapon.precision;
+            weaponsPrecision.MaxValue = selectedWeapon.precision;
 
-            weaponsPower.Value = selectedWeapon.precision;
-            weaponsPower.MaxValue = selectedWeapon.precision;
+            Debug.Log("Crit " + selectedWeapon.critChance + " Precision " + selectedWeapon.precision + " Clip " + selectedWeapon.clipSize);
+            weaponsCritChance.Value = selectedWeapon.critChance;
+            weaponsCritChance.MaxValue = selectedWeapon.critChance;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ProcRoom
             critChance = 0;
         }
 
-        public WeaponStats(int precision, int clipSize, int critChance)
+        public WeaponStats(int precision, int critChance, int clipSize)
         {
             this.precision = precision;
             this.critChance = critChance;
@@ -69,10 +69,20 @@ namespace ProcRoom
         {
             return base.GetHashCode();
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
     }
+
+
+    public delegate void WeaponAmmoChange(Weapon weapon);
 
     public class Weapon : MonoBehaviour
     {
+
+        public static event WeaponAmmoChange OnAmmoChange;
 
         [SerializeField]
         WeaponStats _stats = WeaponStats.DefaultWeapon;
@@ -129,6 +139,8 @@ namespace ProcRoom
                 if (_stats.ammo != ammo)
                 {
                     _stats.ammo = ammo;
+                    if (OnAmmoChange != null)
+                        OnAmmoChange(this);
                 }
             }
         }
@@ -162,7 +174,7 @@ namespace ProcRoom
         {
             if (!_isShooting && hasAmmo && _bullet.Shoot(position, lookDirection, _stats.precision, _stats.maxRange, _stats.precisionLossPerTile))
             {
-                _stats.ammo--;
+                ammo--;
                 _isShooting = true;
                 return true;
             }
@@ -188,6 +200,8 @@ namespace ProcRoom
         public void SetStats(WeaponStats stats)
         {
             _stats = stats;
+            if (OnAmmoChange == null)
+                OnAmmoChange(this);
         }
 
         public void Reload()

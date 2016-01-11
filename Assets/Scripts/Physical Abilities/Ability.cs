@@ -23,7 +23,13 @@ namespace ProcRoom.Physical
         {
             get
             {
-                return stages[index];
+                if (index < stages.Length && index >= 0)
+                    return stages[index];
+                else
+                {
+                    Debug.LogError("Attempting to retrieve " + name + " stage " + index + " when length is " + Length);
+                    return null;
+                }
             }
         }
 
@@ -32,8 +38,7 @@ namespace ProcRoom.Physical
             int cost = 0;
             for (int i=0, l=Length; i< l; i++)
             {
-                if (i > 0)
-                    cost += this[i].cost;
+                cost += this[i].cost;
 
                 if (this[i].value == value)
                     break;
@@ -66,6 +71,19 @@ namespace ProcRoom.Physical
 
         void Awake() {
             CollectStages();
+        }
+
+        public int GetValue(int index)
+        {
+
+            if (index < 0)
+            {
+                Debug.LogWarning("Returning zero value for " + name);
+                return 0;
+            }
+            Debug.Log(name + " index " + index + " is " + this[index].name + ": " + this[index].value);
+            return this[index].value;
+
         }
 
     }

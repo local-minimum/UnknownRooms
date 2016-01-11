@@ -67,6 +67,12 @@ namespace ProcRoom {
             var defenderStats = defender.stats;
             var weaponStats = attacker.Weapon.Stats;
 
+            if (weaponStats.ammo == 0)
+            {
+                Debug.Log("Out of ammo");
+                return false;
+            }
+
             var attack = ((1 - instance.precisionToAgility) * attackerStats.agility + 
                 instance.precisionToAgility * weaponStats.precision) * attackerStats.health / attackerStats.maxHealth *
                 Stat.SumOfUniformRange(instance.attackRndN, instance.attackRndRange.min, instance.attackRndRange.max);
@@ -86,6 +92,7 @@ namespace ProcRoom {
             }
 
             bool hit = attack > defence + boost;
+            Debug.Log(string.Format("Attack success: {0} ({1} > {2} + {3})", hit, attack, defence, boost));
 
             if (hit)
             {
@@ -93,14 +100,15 @@ namespace ProcRoom {
                     Stat.SumOfUniformRange(instance.critDefenceRndN, instance.critDefenceRange.min, instance.critDefenceRange.max);
 
                 bool criticalHit = weaponStats.critChance > critDefence;
-
+                Debug.Log(string.Format("Critical hit success: {0} ({1} > {2})", criticalHit, weaponStats.critChance, critDefence));
                 if (criticalHit)
                     defender.CriticalHurt();
                 else
                     defender.Hurt();
             }
 
-            return hit;
+
+            return true;
         }
     }
 }
