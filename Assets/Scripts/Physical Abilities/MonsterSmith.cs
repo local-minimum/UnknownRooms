@@ -65,7 +65,6 @@ namespace ProcRoom.Physical
             var stats = agent.stats;
             worth += instance.Health.Cost(stats.maxHealth);
             worth += instance.ActionPoints.Cost(stats.actionPointsPerTurn);
-            worth += instance.ClipSize.Cost(stats.clipSize);
             worth += instance.Defence.Cost(stats.defence);
             Debug.Log(string.Format("{0} has worth {1} (weapon not included)", agent.name, worth));
             if (includeWeapon)
@@ -206,7 +205,6 @@ namespace ProcRoom.Physical
             stats.maxHealth = Health[state[Health]].value;
             stats.actionPointsPerTurn = ActionPoints[state[ActionPoints]].value;
             stats.defence = Defence[state[Defence]].value;
-            stats.clipSize = ClipSize[state[ClipSize]].value;
             return stats;
         }
 

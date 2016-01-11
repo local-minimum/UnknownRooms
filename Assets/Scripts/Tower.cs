@@ -78,6 +78,14 @@ namespace ProcRoom
             }
         }
 
+        public static Transform T
+        {
+            get
+            {
+                return _instance.transform;
+            }
+        }
+
         public static float InialMonsterDelay
         {
             get
@@ -310,6 +318,11 @@ namespace ProcRoom
                 return agent.position;
             else
                 return Coordinate.InvalidPlacement;
+        }
+
+        public static Agent GetAgent(int agentIndex)
+        {
+            return _instance.agents[agentIndex];
         }
 
         public static Player Player

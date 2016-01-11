@@ -458,7 +458,7 @@ namespace ProcRoom
             while (fillingIndex < filling.Count)
             {
                 var neighbourUndecided = RoomSearch.GetNeighbourIndices(tileTypeMap, width, filling[fillingIndex], selectors);
-                for (int i=0, l=neighbourUndecided.Count; i< l; i++)
+                for (int i = 0, l = neighbourUndecided.Count; i < l; i++)
                 {
                     if (!filling.Contains(neighbourUndecided[i]))
                         filling.AddRange(neighbourUndecided);
@@ -480,7 +480,7 @@ namespace ProcRoom
             if (x > 0)
             {
                 var neighbourIndex = Coordinate.CalculateIndexValue(x - 1, y, width);
-                if (System.Array.Exists(neighbourTypes, t => (int) t == tileTypeMap[neighbourIndex]))
+                if (System.Array.Exists(neighbourTypes, t => (int)t == tileTypeMap[neighbourIndex]))
                     neighbours.Add(neighbourIndex);
             }
             if (x < width - 1)
@@ -564,13 +564,13 @@ namespace ProcRoom
             var path = new Coordinate[map[pathPosition.x, pathPosition.y]];
             //Debug.Log("Valid path at " + path.Length);
             var neighbours = new List<Coordinate>();
-            for (int index=path.Length - 1; index >=0; index--)
+            for (int index = path.Length - 1; index >= 0; index--)
             {
                 path[index] = pathPosition;
 
                 foreach (Coordinate neighbour in pathPosition.Neighbours())
                 {
-                    if (neighbour.Inside(map) && map[neighbour.x, neighbour.y] == map[pathPosition.x, pathPosition.y] -1 )
+                    if (neighbour.Inside(map) && map[neighbour.x, neighbour.y] == map[pathPosition.x, pathPosition.y] - 1)
                         neighbours.Add(neighbour);
                     /*else
                         Debug.Log(string.Format("{0},{1} has value {2} should be {3}", 
@@ -606,7 +606,7 @@ namespace ProcRoom
 
             var queue = new Queue<Coordinate>();
             queue.Enqueue(source);
-            
+
             while (queue.Count > 0)
             {
                 var current = queue.Dequeue();
@@ -614,7 +614,7 @@ namespace ProcRoom
 
                 foreach (Coordinate neighbour in current.Neighbours())
                 {
-                    
+
                     if (room.PassableTile(neighbour, regardAgents, passables) && distances[neighbour.x, neighbour.y] > nextDist)
                     {
                         distances[neighbour.x, neighbour.y] = nextDist;
@@ -642,9 +642,9 @@ namespace ProcRoom
             foreach (Coordinate neighbour in target.Neighbours())
             {
                 if (neighbour.Inside(distances))
-                    distances[target.x, target.y] = Mathf.Min(distances[neighbour.x, neighbour.y] + 1, distances[target.x, target.y]);                    
+                    distances[target.x, target.y] = Mathf.Min(distances[neighbour.x, neighbour.y] + 1, distances[target.x, target.y]);
             }
-            
+
             return PathFromDistanceMap(distances, target);
         }
 
@@ -661,32 +661,31 @@ namespace ProcRoom
                     return false;
                 else if (!room.PassableTile(source))
                     return false;
-                
+
             }
-            
-            
+
+
+        }
+    }
+    public static class Stat
+    {
+        public static float SumOfUniform(int N)
+        {
+            float v = 0;
+            for (int i = 0; i < N; i++)
+                v += Random.value;
+            return v;
         }
 
-        public static class Stat
+        public static float SumOfUniformRange(int N, float min, float max)
         {
-            public static float SumOfUniform(int N)
-            {
-                float v = 0;
-                for (int i = 0; i < N; i++)
-                    v += Random.value;
-                return v;
-            }
+            float val = SumOfUniform01(N);
+            return val * (max - min) + min;
+        }
 
-            public static float SumOfUniformRange(int N, float min, float max)
-            {
-                float val = SumOfUniform01(N);
-                return val * (max - min) + min;
-            }
-
-            public static float SumOfUniform01(int N)
-            {
-                return SumOfUniform(N) / N;
-            }
+        public static float SumOfUniform01(int N)
+        {
+            return SumOfUniform(N) / N;
         }
     }
 }

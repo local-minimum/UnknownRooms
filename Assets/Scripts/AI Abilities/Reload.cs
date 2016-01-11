@@ -9,7 +9,7 @@ namespace ProcRoom.AI.Abilities
         {
             get
             {
-                return base.Allowed && monster.ammo == 0;
+                return base.Allowed && monster.Weapon.ammo == 0;
             }
         }
 

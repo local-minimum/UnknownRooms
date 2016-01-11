@@ -22111,6 +22111,7 @@ GameObject:
   - 114: {fileID: 1358969311}
   - 114: {fileID: 1358969312}
   - 114: {fileID: 1358969313}
+  - 114: {fileID: 1358969314}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -22185,6 +22186,35 @@ MonoBehaviour:
   minSqSwipeFractionMagnitude: 0.003
   dimensionDifferenceMin: 0.5
   doubleTapTime: 0.4
+--- !u!114 &1358969314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1358969309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db1e6cf429fe1840992439041395704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  precisionToAgility: 0.75
+  defenceToAgility: 0.75
+  attackRndN: 3
+  attackRndRange:
+    _min: 0
+    _max: 0
+  defenceRndN: 3
+  defenceRndRange:
+    _min: 0
+    _max: 0
+  boostRndN: 2
+  boostRndRange:
+    _min: 0
+    _max: 0
+  critDefenceRndN: 4
+  critDefenceRange:
+    _min: 0
+    _max: 0
 --- !u!1 &1361997629
 GameObject:
   m_ObjectHideFlags: 0

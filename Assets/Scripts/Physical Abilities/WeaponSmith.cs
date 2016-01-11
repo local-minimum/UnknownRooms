@@ -35,8 +35,8 @@ namespace ProcRoom.Physical
         {
             int worth = 0;
             var stats = weapon.Stats;
-            worth += instance.WeaponsPower.Cost(stats.attack);
-            worth += instance.WeaponsPrecision.Cost(stats.accuracyLossPerTile);
+            worth += instance.WeaponsPower.Cost(stats.precision);
+            worth += instance.WeaponsPrecision.Cost(stats.precisionLossPerTile);
             worth += instance.WeaponsRange.Cost(stats.maxRange);
             Debug.Log(string.Format("{0} weapon has worth {1}", weapon.name, worth));
             return worth;
@@ -102,8 +102,8 @@ namespace ProcRoom.Physical
         {
             var stats = new WeaponStats();
             stats.maxRange = WeaponsRange[state[WeaponsRange]].value;
-            stats.accuracyLossPerTile = WeaponsPrecision[state[WeaponsPrecision]].value;
-            stats.attack = WeaponsPower[state[WeaponsPower]].value;
+            stats.precisionLossPerTile = WeaponsPrecision[state[WeaponsPrecision]].value;
+            stats.precision = WeaponsPower[state[WeaponsPower]].value;
             return stats;
         }
 

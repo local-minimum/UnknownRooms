@@ -146,9 +146,6 @@ namespace ProcRoom.UI
             Defence.maxValue = defenceLevel;
             Defence.currentValue = defenceLevel;
 
-            Ammo.maxValue = stats.clipSize;
-            Ammo.currentValue = stats.ammo;
-
             Keys.maxValue = 3;
             Keys.currentValue = stats.keys;
 

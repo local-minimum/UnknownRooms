@@ -75,7 +75,6 @@ namespace ProcRoom.UI
             instance.upgrading = true;
             instance.health.MinValue = stats.maxHealth;
             instance.actionPoints.MinValue = stats.actionPointsPerTurn;
-            instance.clipSize.MinValue = stats.clipSize;
             instance.defence.MinValue = stats.defence;            
             instance.points = stats.xp;
 
@@ -104,8 +103,7 @@ namespace ProcRoom.UI
         {
             var stats = new AgentStats();
             stats.actionPointsPerTurn = actionPoints.Value;
-            stats.maxHealth = health.Value;
-            stats.clipSize = clipSize.Value;
+            stats.maxHealth = health.Value;            
             stats.defence = defence.Value;
             if (!upgrading)
             {
@@ -134,7 +132,6 @@ namespace ProcRoom.UI
                 stats.name = playerStats.name;
                 stats.xp = Mathf.Max(0, instance.points);
                 stats.health = playerStats.health;
-                stats.ammo = playerStats.ammo;
                 stats.actionPoints = playerStats.actionPoints;
                 stats.keys = playerStats.keys;
                 stats.position = playerStats.position;

@@ -84,11 +84,11 @@ namespace ProcRoom.UI
             weaponsRange.Value = selectedWeapon.maxRange;
             weaponsRange.MaxValue = selectedWeapon.maxRange;
 
-            weaponsPrecision.Value = selectedWeapon.accuracyLossPerTile;
-            weaponsPrecision.MaxValue = selectedWeapon.accuracyLossPerTile;
+            weaponsPrecision.Value = selectedWeapon.precisionLossPerTile;
+            weaponsPrecision.MaxValue = selectedWeapon.precisionLossPerTile;
 
-            weaponsPower.Value = selectedWeapon.attack;
-            weaponsPower.MaxValue = selectedWeapon.attack;
+            weaponsPower.Value = selectedWeapon.precision;
+            weaponsPower.MaxValue = selectedWeapon.precision;
         }
     }
 }

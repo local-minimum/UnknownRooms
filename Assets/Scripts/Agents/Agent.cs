@@ -17,8 +17,7 @@ namespace ProcRoom
         public int maxHealth = 7;
         public int health;
 
-        public int clipSize = 11;
-        public int ammo = 0;
+        public int agility = 1;
 
         public int xp = 0;
 
@@ -38,13 +37,6 @@ namespace ProcRoom
         public Coordinate position;
         public Coordinate lookDirection = Coordinate.Right;
 
-        public bool hasAmmo
-        {
-            get
-            {
-                return ammo > 0;
-            }
-        }
     }
 
     public delegate void AgentActions(int actionPoints);
@@ -201,32 +193,6 @@ namespace ProcRoom
             }
         }
 
-        public int ammo
-        {
-            get
-            {
-                return _stats.ammo;
-            }
-
-            protected set
-            {
-                var ammo = Mathf.Clamp(value, 0, _stats.clipSize);
-                if (_stats.ammo != ammo) {
-                    _stats.ammo = ammo;
-                    if (OnAgentAmmoChange != null)
-                        OnAgentAmmoChange(_stats.ammo);
-                }
-            }
-        }
-
-        public bool ammoIsFull
-        {
-            get
-            {
-                return _stats.ammo == _stats.clipSize;
-            }
-        }
-
         public int health
         {
             get
@@ -269,7 +235,11 @@ namespace ProcRoom
             {
                 
                 health = value ? _stats.maxHealth : 0;
-                ammo = value ? _stats.clipSize : 0;
+
+                if (value)
+                    weapon.Reload();
+                else
+                    weapon.ammo = 0;             
                 
                 if (anim)
                 {
@@ -311,7 +281,7 @@ namespace ProcRoom
         {
             if (!actionAllowed)
                 return;
-            ammo = _stats.clipSize;
+            weapon.Reload();
             actionPoints--;
             actionTick();
         }
@@ -337,7 +307,7 @@ namespace ProcRoom
             roomWidth = data.width;
             roomHeight = data.height;
             if (this == Tower.Player)
-                ammo = _stats.clipSize;
+                weapon.Reload();
             this.room = room;
         
         }
@@ -391,16 +361,36 @@ namespace ProcRoom
             }
         }
 
+        public void CriticalHurt()
+        {
+            Hurt();
+            if (alive)
+                Hurt();
+        }
+
         abstract protected void Death();
 
         public void Attack()
         {
-            if (actionAllowed && _stats.hasAmmo && weapon.Shoot(_stats.position, _stats.lookDirection))
+            if (actionAllowed)
             {
-                ammo--;
-                shots++;
-                actionPoints--;
-                actionTick();
+                bool executedAttack = false;
+
+                if (weapon.melee) {
+                    var defenderCoordinate = this.position + this.lookDirection;
+                    if (room.HasAgent(defenderCoordinate))
+                        executedAttack = MeleeSystem.Execute(this, room.GetAgent(defenderCoordinate));
+                }
+                else if (weapon.Shoot(_stats.position, _stats.lookDirection)) {
+                    executedAttack = true;
+                }
+
+                if (executedAttack)
+                {
+                    shots++;
+                    actionPoints--;
+                    actionTick();
+                }
             }
         }
 
@@ -448,7 +438,7 @@ namespace ProcRoom
         {
             if (Selection.activeObject == gameObject || gameObject.transform.parent == Selection.activeObject)
             {
-                GUI.TextArea(new Rect(110, 2, 140, 70), string.Format("Health:\t{0}\nAmmo:\t{1}\nAP:\t{2}\nLookDir\t{3}", _stats.health, _stats.ammo, actionPoints, LookDirectionText));
+                GUI.TextArea(new Rect(110, 2, 140, 70), string.Format("Health:\t{0}\nAmmo:\t{1}\nAP:\t{2}\nLookDir\t{3}", _stats.health, weapon.ammo, actionPoints, LookDirectionText));
                 if (alive && GUI.Button(new Rect(2, 33, 80, 30), "Hurt")) {
                     Hurt();
                 }

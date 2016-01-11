@@ -577,6 +577,16 @@ namespace ProcRoom
 
         }
 
+        public Agent GetAgent(Coordinate position)
+        {
+            for (int i = 0, l = Tower.Agents; i < l; i++)
+            {
+                if (Tower.GetAgentPosition(i) == position)
+                    return Tower.GetAgent(i);
+            }
+            return null;
+        }
+
         public Coordinate GetRandomFreeTileCoordinate(Coordinate referencePosition, int minDistance)
         {
             var distances = RoomSearch.GetDistanceMap(this, referencePosition);

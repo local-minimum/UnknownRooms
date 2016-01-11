@@ -7,15 +7,35 @@ namespace ProcRoom
     [System.Serializable]
     public struct WeaponStats
     {
-        public int attack;
+        public int precision;
         public int maxRange;
-        public int accuracyLossPerTile;
+        public int precisionLossPerTile;
+        public int clipSize;
+        public int ammo;
+        public bool melee;
+        public int critChance;
 
-        public WeaponStats(int attack, int maxRange, int accuracyLossPerTile)
+        public WeaponStats(int precision, int maxRange, int precisionLossPerTile, int clipSize)
         {
-            this.attack = attack;
+            this.precision = precision;
             this.maxRange = maxRange;
-            this.accuracyLossPerTile = accuracyLossPerTile;
+            this.precisionLossPerTile = precisionLossPerTile;
+            this.clipSize = clipSize;
+            ammo = clipSize;
+            melee = false;
+            critChance = 0;
+        }
+
+        public WeaponStats(int precision, int clipSize, int critChance)
+        {
+            this.precision = precision;
+            this.critChance = critChance;
+            maxRange = 1;
+            precisionLossPerTile = 0;
+            this.clipSize = clipSize;
+            ammo = clipSize;
+            melee = true;
+            
         }
 
         public static WeaponStats DefaultWeapon
@@ -23,26 +43,31 @@ namespace ProcRoom
             get
             {
                 var stats = new WeaponStats();
-                stats.attack = 80;
+                stats.precision = 80;
                 stats.maxRange = 1;
-                stats.accuracyLossPerTile = 70;
+                stats.precisionLossPerTile = 70;
                 return stats;
             }
         }
 
         public WeaponStats copy()
         {
-            return new WeaponStats(attack, maxRange, accuracyLossPerTile);
+            return new WeaponStats(precision, maxRange, precisionLossPerTile);
         }
 
         public static bool operator ==(WeaponStats A, WeaponStats B)
         {
-            return Object.ReferenceEquals(A, B) || A.attack == B.attack && A.accuracyLossPerTile == B.accuracyLossPerTile && A.maxRange == B.maxRange;
+            return Object.ReferenceEquals(A, B) || A.precision == B.precision && A.precisionLossPerTile == B.precisionLossPerTile && A.maxRange == B.maxRange;
         }
 
         public static bool operator !=(WeaponStats A, WeaponStats B)
         {
-            return A.attack != B.attack || A.accuracyLossPerTile != B.accuracyLossPerTile || A.maxRange != B.maxRange;
+            return A.precision != B.precision || A.precisionLossPerTile != B.precisionLossPerTile || A.maxRange != B.maxRange;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
@@ -65,6 +90,16 @@ namespace ProcRoom
             }
         }
 
+        public bool melee
+        {
+            get
+            {
+                return _stats.melee;
+
+            }
+        }
+
+
         public bool isShooting
         {
             get
@@ -81,6 +116,40 @@ namespace ProcRoom
 
         }
 
+        public int ammo
+        {
+            get
+            {
+                return _stats.ammo;
+            }
+
+            set
+            {
+                var ammo = Mathf.Clamp(value, 0, _stats.clipSize);
+                if (_stats.ammo != ammo)
+                {
+                    _stats.ammo = ammo;
+                }
+            }
+        }
+
+        public bool ammoIsFull
+        {
+            get
+            {
+                return _stats.ammo == _stats.clipSize;
+            }
+        }
+
+        public bool hasAmmo
+        {
+            get
+            {
+                return _stats.ammo > 0;
+            }
+        }
+
+        
         public Projectile bullet
         {
             get
@@ -91,8 +160,9 @@ namespace ProcRoom
 
         public bool Shoot(Coordinate position, Coordinate lookDirection)
         {
-            if (!_isShooting && _bullet.Shoot(position, lookDirection, _stats.attack, _stats.maxRange, _stats.accuracyLossPerTile))
+            if (!_isShooting && hasAmmo && _bullet.Shoot(position, lookDirection, _stats.precision, _stats.maxRange, _stats.precisionLossPerTile))
             {
+                _stats.ammo--;
                 _isShooting = true;
                 return true;
             }
@@ -120,5 +190,9 @@ namespace ProcRoom
             _stats = stats;
         }
 
+        public void Reload()
+        {
+            _stats.ammo = _stats.clipSize;
+        }
     }
 }

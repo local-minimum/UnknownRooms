@@ -169,7 +169,7 @@ namespace ProcRoom
             health = _stats.maxHealth;
             steps = 0;
             shots = 0;
-            ammo = _stats.clipSize;
+            
             alive = true;
             Debug.Log("Ready for tower");
             Tower.Spawn();
@@ -215,7 +215,7 @@ namespace ProcRoom
             else if (action == TouchAction.Tap)
             {
                 //TODO: Add if tapping end turn button
-                ActOnInput(_stats.hasAmmo ? PlayerActions.Shoot : PlayerActions.Reload);
+                ActOnInput(weapon.hasAmmo ? PlayerActions.Shoot : PlayerActions.Reload);
             }
                 
 

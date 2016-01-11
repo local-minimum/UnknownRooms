@@ -165,7 +165,7 @@ namespace ProcRoom
                 {
                     lastTile = tile;
                     UpdateTrail(new Coordinate[0]);
-                    if (Tower.Player.ammoIsFull)
+                    if (Tower.Player.Weapon.ammoIsFull)
                     {
                         actions.Add(new MouseAction(MouseAction.ActionType.EndTurn, tile.position));
                         WarningFlasher.GetByName("EndTurn").Warn();
@@ -242,7 +242,7 @@ namespace ProcRoom
             if (!processingActions)
                 actions.Clear();
             var room = Tower.ActiveRoom;
-            int weaponsRange = Tower.Player.ammo > 0 ? Tower.Player.Weapon.range : -1;
+            int weaponsRange = Tower.Player.Weapon.hasAmmo ? Tower.Player.Weapon.range : -1;
             bool restIsShot = false;
             int ap = Tower.Player.actionPoints;
             for (int i=0, l=trail.Count; i< l; i++)
