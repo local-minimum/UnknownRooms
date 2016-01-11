@@ -110,14 +110,14 @@ namespace ProcRoom.UI
                 stats.name = namer.Name;
                 Tower.Player.SetStats(stats);
                 Tower.Player.NewGame();
-                var weapon1 = Physical.WeaponSmith.Smith(points);
+                var weapon1 = Physical.WeaponSmith.Smith(points, true);
                 Tower.Player.Weapon.SetStats(weapon1);
                 if (points > 0)
                 {
                     WeaponStats weapon2 = WeaponStats.DefaultWeapon;
                     for (int i = 0; i < 5; i++)
                     {
-                        weapon2 = Physical.WeaponSmith.Smith(points);
+                        weapon2 = Physical.WeaponSmith.Smith(points, true);
                         if (weapon1 != weapon2)
                             break;
 

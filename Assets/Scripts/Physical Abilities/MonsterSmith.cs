@@ -84,7 +84,7 @@ namespace ProcRoom.Physical
             Debug.Log(string.Format("Smitting monster worth maximum {0} plus minimum {1} weapon points.", points, weaponPoints));
             while (Upgrade(ref abilityState, ref points, fancy)) ;
             monster.SetStats(instance.createMonster(abilityState));
-            monster.Weapon.SetStats(WeaponSmith.Smith(weaponPoints + points));
+            monster.Weapon.SetStats(WeaponSmith.Smith(weaponPoints + points, true));
 
             return monster;
         }

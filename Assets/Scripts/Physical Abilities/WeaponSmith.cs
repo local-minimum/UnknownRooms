@@ -9,25 +9,44 @@ namespace ProcRoom.Physical
         Ability WeaponsRange;
 
         [SerializeField]
+        Ability WeaponsPrecisionLoss;
+
+        [SerializeField]
         Ability WeaponsPrecision;
 
         [SerializeField]
-        Ability WeaponsPower;
+        Ability WeaponsClipSize;
+
+        [SerializeField]
+        Ability WeaponsCritChance;
 
         [SerializeField, Range(0, 1)]
         float likelihoodToBias = 0.7f;
 
-        Dictionary<Ability, int> blankState
+        Dictionary<Ability, int> blankRangeState
         {
             get
             {
                 var abilityState = new Dictionary<Ability, int>();
 
-                abilityState[WeaponsPower] = 0;
                 abilityState[WeaponsPrecision] = 0;
+                abilityState[WeaponsPrecisionLoss] = 0;
                 abilityState[WeaponsRange] = 0;
-
+                abilityState[WeaponsClipSize] = 0;
                 return abilityState;
+            }
+        }
+
+        Dictionary<Ability, int> blankMeleeState
+        {
+            get
+            {
+                var abilityState = new Dictionary<Ability, int>();
+                abilityState[WeaponsPrecision] = 0;
+                abilityState[WeaponsClipSize] = 0;
+                abilityState[WeaponsCritChance] = 0;
+                return abilityState;
+
             }
         }
 
@@ -35,8 +54,8 @@ namespace ProcRoom.Physical
         {
             int worth = 0;
             var stats = weapon.Stats;
-            worth += instance.WeaponsPower.Cost(stats.precision);
-            worth += instance.WeaponsPrecision.Cost(stats.precisionLossPerTile);
+            worth += instance.WeaponsPrecision.Cost(stats.precision);
+            worth += instance.WeaponsPrecisionLoss.Cost(stats.precisionLossPerTile);
             worth += instance.WeaponsRange.Cost(stats.maxRange);
             Debug.Log(string.Format("{0} weapon has worth {1}", weapon.name, worth));
             return worth;
@@ -56,16 +75,19 @@ namespace ProcRoom.Physical
             }
         }
 
-        public static WeaponStats Smith(int points)
+        public static WeaponStats Smith(int points, bool isMelee)
         {
             Debug.Log("Smitting a weapon with " + points + " points");
-            var abilityStates = instance.blankState;
-            var fancy =  new List<Ability>(abilityStates.Keys)[Random.Range(0, abilityStates.Count)];
-            if (Random.value > instance.likelihoodToBias)
-                fancy = null;
-            //Debug.Log("Fancy: " + fancy);
+
+            var abilityStates = isMelee ? instance.blankRangeState : instance.blankRangeState;
+            Ability fancy = null;
+
+            if (Random.value < instance.likelihoodToBias)
+                fancy = new List<Ability>(abilityStates.Keys)[Random.Range(0, abilityStates.Count)];
+
+
             while (Upgrade(ref abilityStates, ref points, fancy)) ;
-            return instance.createWeapon(abilityStates);
+            return instance.createWeapon(abilityStates, isMelee);
         }
 
         static bool Upgrade(ref Dictionary<Ability, int> state, ref int points, Ability fancy)
@@ -98,13 +120,16 @@ namespace ProcRoom.Physical
             return true;
         }
 
-        WeaponStats createWeapon(Dictionary<Ability, int> state)
+        WeaponStats createWeapon(Dictionary<Ability, int> state, bool isMelee)
         {
-            var stats = new WeaponStats();
-            stats.maxRange = WeaponsRange[state[WeaponsRange]].value;
-            stats.precisionLossPerTile = WeaponsPrecision[state[WeaponsPrecision]].value;
-            stats.precision = WeaponsPower[state[WeaponsPower]].value;
-            return stats;
+            if (isMelee)
+                return new WeaponStats(WeaponsPrecision[state[WeaponsPrecision]].value, WeaponsClipSize[state[WeaponsClipSize]].value, WeaponsCritChance[state[WeaponsCritChance]].value);
+            else
+                return new WeaponStats(WeaponsPrecision[state[WeaponsPrecision]].value,
+                    WeaponsRange[state[WeaponsRange]].value,
+                    WeaponsPrecisionLoss[state[WeaponsPrecisionLoss]].value,
+                    WeaponsClipSize[state[WeaponsClipSize]].value);
+
         }
 
         void Awake()

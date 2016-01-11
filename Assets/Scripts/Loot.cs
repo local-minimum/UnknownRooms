@@ -89,7 +89,7 @@ namespace ProcRoom
                 else if (activeLoot.effect == LootType.Key)
                     player.AwardKey();
                 else if (activeLoot.effect == LootType.Weapon)
-                    UI.WeaponSelect.Show(Physical.WeaponSmith.Smith(weaponBaseWorh + level * weaponWorthPerLevel));
+                    UI.WeaponSelect.Show(Physical.WeaponSmith.Smith(weaponBaseWorh + level * weaponWorthPerLevel, true));
                 activeLoot = null;
                 lootObject.enabled = false;
             }
