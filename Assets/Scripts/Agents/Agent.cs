@@ -24,7 +24,15 @@ namespace ProcRoom
 
         public int defence = 10;
 
-        public bool hasKey = false;
+        public int keys = 0;
+
+        public bool hasKey
+        {
+            get
+            {
+                return keys > 0;
+            }
+        }
 
         public Coordinate position;
         public Coordinate lookDirection = Coordinate.Right;
@@ -274,7 +282,7 @@ namespace ProcRoom
 
         public void AwardKey()
         {
-            _stats.hasKey = true;
+            _stats.keys += 1;
             if (OnAgentHasKeyChange != null)
                 OnAgentHasKeyChange(true);
         }
@@ -284,7 +292,7 @@ namespace ProcRoom
             if (_stats.hasKey)
             {
                 actionTick();
-                _stats.hasKey = false;
+                _stats.keys--;
                 if (OnAgentHasKeyChange != null)
                     OnAgentHasKeyChange(false);
                 return true;

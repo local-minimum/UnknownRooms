@@ -666,5 +666,27 @@ namespace ProcRoom
             
             
         }
+
+        public static class Stat
+        {
+            public static float SumOfUniform(int N)
+            {
+                float v = 0;
+                for (int i = 0; i < N; i++)
+                    v += Random.value;
+                return v;
+            }
+
+            public static float SumOfUniformRange(int N, float min, float max)
+            {
+                float val = SumOfUniform01(N);
+                return val * (max - min) + min;
+            }
+
+            public static float SumOfUniform01(int N)
+            {
+                return SumOfUniform(N) / N;
+            }
+        }
     }
 }

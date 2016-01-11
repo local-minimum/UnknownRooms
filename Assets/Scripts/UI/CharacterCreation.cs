@@ -136,7 +136,7 @@ namespace ProcRoom.UI
                 stats.health = playerStats.health;
                 stats.ammo = playerStats.ammo;
                 stats.actionPoints = playerStats.actionPoints;
-                stats.hasKey = playerStats.hasKey;
+                stats.keys = playerStats.keys;
                 stats.position = playerStats.position;
                 
                 Tower.Player.SetStats(stats);

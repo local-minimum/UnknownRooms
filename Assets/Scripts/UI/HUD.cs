@@ -149,8 +149,8 @@ namespace ProcRoom.UI
             Ammo.maxValue = stats.clipSize;
             Ammo.currentValue = stats.ammo;
 
-            Keys.maxValue = 1;
-            Keys.currentValue = stats.hasKey ? 1 : 0;
+            Keys.maxValue = 3;
+            Keys.currentValue = stats.keys;
 
             PlayerName.text = stats.name;
             HandleXPChange(stats.xp);
