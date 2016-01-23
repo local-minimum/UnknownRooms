@@ -151,7 +151,8 @@ namespace ProcRoom.UI
             Health.maxValue = stats.maxHealth;
             Health.currentValue = stats.health;
 
-            var defenceLevel = DefenceAbility.GetLevel(stats.defence) + 1;            
+            //TODO: Defence doesn't seem to be assigned
+            var defenceLevel = stats.defence + 1;
             Defence.maxValue = defenceLevel;
             Defence.currentValue = defenceLevel;
 
