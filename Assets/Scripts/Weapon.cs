@@ -219,13 +219,13 @@ namespace ProcRoom
         public void SetStats(WeaponStats stats)
         {
             _stats = stats;
-            if (OnAmmoChange == null)
+            if (OnAmmoChange != null)
                 OnAmmoChange(this);
         }
 
         public void Reload()
         {
-            _stats.ammo = _stats.clipSize;
+            ammo = _stats.clipSize;
         }
     }
 }
