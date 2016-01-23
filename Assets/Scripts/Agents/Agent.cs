@@ -26,6 +26,9 @@ namespace ProcRoom
 
         public int keys = 0;
 
+        public int kills = 0;
+        public int maxLevel = 0;
+
         public bool hasKey
         {
             get

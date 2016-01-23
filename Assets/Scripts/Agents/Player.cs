@@ -178,7 +178,7 @@ namespace ProcRoom
 
         protected override void Death()
         {
-            Tower.Reset();
+            Game.ReportScore(_stats);
         }
 
         protected override void OnEnable()
