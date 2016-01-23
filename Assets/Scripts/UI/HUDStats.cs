@@ -163,6 +163,7 @@ namespace ProcRoom.UI
             {
                 labelImage = gameObject.AddComponent<Image>();
                 labelImage.sprite = labelSprite;
+                labelImage.color = activeColor;
             }
             var t = labelImage.rectTransform;        
             t.localScale = new Vector3(1, 1, 1);
@@ -210,6 +211,7 @@ namespace ProcRoom.UI
                 GO.transform.SetParent(transform);
                 capImage = GO.AddComponent<Image>();
                 capImage.sprite = endCapSprite;
+                capImage.color = activeColor;
             }
 
             var t = capImage.rectTransform;

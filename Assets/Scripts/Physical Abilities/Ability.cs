@@ -81,7 +81,7 @@ namespace ProcRoom.Physical
                 Debug.LogWarning("Returning zero value for " + name);
                 return 0;
             }
-            Debug.Log(name + " index " + index + " is " + this[index].name + ": " + this[index].value);
+            //Debug.Log(name + " index " + index + " is " + this[index].name + ": " + this[index].value);
             return this[index].value;
 
         }

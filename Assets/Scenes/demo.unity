@@ -8470,7 +8470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4294967111
   inactiveColor:
     serializedVersion: 2
     rgba: 1366652277
@@ -10696,7 +10696,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4294967111
   inactiveColor:
     serializedVersion: 2
     rgba: 1366652277

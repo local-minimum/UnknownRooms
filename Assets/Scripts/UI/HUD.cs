@@ -80,7 +80,8 @@ namespace ProcRoom.UI
             if (weapon == Tower.Player.Weapon)
             {
                 Ammo.currentValue = weapon.ammo;
-                Ammo.maxValue = weapon.Stats.clipSize;
+                Ammo.maxValue = weapon.clipSize;
+                Debug.Log("New ammo status: " + weapon.ammo + "/" + weapon.clipSize);
             }
         }
 
@@ -140,6 +141,7 @@ namespace ProcRoom.UI
             ConnectPlayerEvents(player);
             var stats = player.stats;
             HandleNewStats(stats);
+            Weapon_OnAmmoChange(player.Weapon);
         }
 
         void HandleNewStats(AgentStats stats) {

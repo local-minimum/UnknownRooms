@@ -51,10 +51,8 @@ namespace ProcRoom.UI
 
         public void Equip()
         {
-            if (!keepCurrent)
-            {
-                Tower.Player.Weapon.SetStats(optionalWeapon);
-            }
+
+            Tower.Player.Weapon.SetStats(keepCurrent ? currentWeapon : optionalWeapon);
             transform.GetChild(0).gameObject.SetActive(false);
             Time.timeScale = 1;
         }
@@ -87,7 +85,7 @@ namespace ProcRoom.UI
             weaponsPrecision.Value = selectedWeapon.precision;
             weaponsPrecision.MaxValue = selectedWeapon.precision;
 
-            Debug.Log("Crit " + selectedWeapon.critChance + " Precision " + selectedWeapon.precision + " Clip " + selectedWeapon.clipSize);
+            //Debug.Log("Crit " + selectedWeapon.critChance + " Precision " + selectedWeapon.precision + " Clip " + selectedWeapon.clipSize);
             weaponsCritChance.Value = selectedWeapon.critChance;
             weaponsCritChance.MaxValue = selectedWeapon.critChance;
         }

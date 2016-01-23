@@ -115,8 +115,8 @@ namespace ProcRoom.Physical
 
             var upgradeAbility = availables[Random.Range(0, totalAvailable)];
             state[upgradeAbility]++;
-            Debug.Log(string.Format("Upgrading {0} ({1} available) to lvl {3} (cost {2})", 
-                upgradeAbility.name, totalAvailable, upgradeAbility[state[upgradeAbility]].cost, state[upgradeAbility]));
+            //Debug.Log(string.Format("Upgrading {0} ({1} available) to lvl {3} (cost {2})", 
+            //    upgradeAbility.name, totalAvailable, upgradeAbility[state[upgradeAbility]].cost, state[upgradeAbility]));
             points -= upgradeAbility[state[upgradeAbility]].cost;
             return true;
         }
