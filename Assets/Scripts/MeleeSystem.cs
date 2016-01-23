@@ -73,6 +73,8 @@ namespace ProcRoom {
                 return false;
             }
 
+            attacker.Weapon.ammo--;
+
             var attack = ((1 - instance.precisionToAgility) * attackerStats.agility + 
                 instance.precisionToAgility * weaponStats.precision) * attackerStats.health / attackerStats.maxHealth *
                 Stat.SumOfUniformRange(instance.attackRndN, instance.attackRndRange.min, instance.attackRndRange.max);
