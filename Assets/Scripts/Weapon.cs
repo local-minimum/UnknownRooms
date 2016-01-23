@@ -28,6 +28,7 @@ namespace ProcRoom
 
         public WeaponStats(int precision, int critChance, int clipSize)
         {
+           
             this.precision = precision;
             this.critChance = critChance;
             maxRange = 1;
@@ -48,11 +49,6 @@ namespace ProcRoom
                 stats.precisionLossPerTile = 70;
                 return stats;
             }
-        }
-
-        public WeaponStats copy()
-        {
-            return new WeaponStats(precision, maxRange, precisionLossPerTile);
         }
 
         public static bool operator ==(WeaponStats A, WeaponStats B)
@@ -76,6 +72,21 @@ namespace ProcRoom
         }
     }
 
+    public static class WeaponStatsHelpers
+    {
+        public static WeaponStats copy(this WeaponStats stats)
+        {
+            var ws = new WeaponStats();
+            ws.critChance = stats.critChance;
+            ws.ammo = stats.ammo;
+            ws.clipSize = stats.clipSize;
+            ws.maxRange = stats.maxRange;
+            ws.melee = stats.melee;
+            ws.precision = stats.precision;
+            ws.precisionLossPerTile = stats.precisionLossPerTile;
+            return ws;
+        }
+    }
 
     public delegate void WeaponAmmoChange(Weapon weapon);
 
