@@ -169,6 +169,7 @@ namespace ProcRoom
 
         protected override void OnEnable()
         {
+            Tower.OnNewLevel += SetDeepestLevel;
             base.OnEnable();
             if (Input.touchSupported)
                 TouchControls.OnTouchEvent += HandleTouch;
@@ -176,9 +177,15 @@ namespace ProcRoom
 
         protected override void OnDisable()
         {
+            Tower.OnNewLevel -= SetDeepestLevel;
             base.OnDisable();
             if (Input.touchSupported)
                 TouchControls.OnTouchEvent -= HandleTouch;
+        }
+
+        private void SetDeepestLevel(int level)
+        {
+            _stats.maxLevel = Mathf.Max(level, _stats.maxLevel);
         }
 
         private void HandleTouch(TouchAction action, Vector2 position)

@@ -131,6 +131,7 @@ namespace ProcRoom
         {
             var score = GetScore(player);
             _instance.resentDeathWasFamous = Famous(player, score);
+            Debug.Log("Got score: " + score + " (famous=" + _instance.resentDeathWasFamous + ")");
             SceneManager.LoadScene("death", LoadSceneMode.Single);
 
         }
