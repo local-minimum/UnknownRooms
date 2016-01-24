@@ -76,7 +76,9 @@ namespace ProcRoom
 
             if (Tower.Alive && Tower.Player.myTurn)
             {
-                int delta = Mathf.Min(Mathf.Abs(tile.position.y - Tower.Player.position.y), deltaCap);
+                int delta = Mathf.Max(
+                    Mathf.Min(Mathf.Abs(tile.position.y - Tower.Player.position.y), deltaCap),
+                    Mathf.Min(Mathf.Abs(tile.position.x - Tower.Player.position.x), deltaCap));
                 if (delta == lastDelta && !resting)
                     return;
                 lastDelta = delta;
