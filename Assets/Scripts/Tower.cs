@@ -115,7 +115,10 @@ namespace ProcRoom
                 _instance = this;
 
             if (_instance == this)
+            {
                 SetupAgents();
+                Reset();
+            }
             else
             {
                 Destroy(gameObject);
@@ -339,16 +342,21 @@ namespace ProcRoom
                 OnLevelEnd();
             _instance.betweenRooms = true;
             _instance.roomHistory.Clear();
-            _instance.activeLevel = 0;
+            _instance.activeLevel = -1;
             _instance.points = 0;
-            _instance.SmithMonstersForRoom();
-            ActiveRoom.Generate();
             _instance.betweenRooms = false;
             if (OnNewGame != null)
                 OnNewGame(_instance.player);
 
+        }
+
+        public static void MakeLevel()
+        {
+            _instance.SmithMonstersForRoom();
+            ActiveRoom.Generate();
             if (OnNewLevel != null)
                 OnNewLevel(ActiveLevel);
+
         }
 
         public void animateRoom()
@@ -359,7 +367,7 @@ namespace ProcRoom
         void Update()
         {
             if (activeLevel < 0 && AllAgentsReady && Time.timeSinceLevelLoad > 1f)
-                Reset();
+                MakeLevel();
             
         }
 

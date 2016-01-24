@@ -17,9 +17,14 @@ namespace ProcRoom
 
         static Dictionary<string, WarningFlasher> _instances = new Dictionary<string, WarningFlasher>();
 
-        void Awake()
+        void OnEnable()
         {
             _instances.Add(name, this);
+        }
+
+        void OnDisable()
+        {
+            _instances.Remove(name);
         }
 
         public static WarningFlasher GetByName(string name)

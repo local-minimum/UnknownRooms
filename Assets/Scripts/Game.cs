@@ -135,7 +135,7 @@ namespace ProcRoom
 
         }
 
-        public void NewGame()
+        public static void NewGame()
         {
             PlayerPrefs.SetInt(_instance._gameAction, (int) GameAction.NewGame);
             SceneManager.LoadScene("play", LoadSceneMode.Single);
