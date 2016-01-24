@@ -9,7 +9,7 @@ namespace ProcRoom.UI
 
         Text text;
 
-        void Start()
+        void Awake()
         {
             text = GetComponent<Text>();
         }
@@ -28,12 +28,8 @@ namespace ProcRoom.UI
 
         void HandleNewPoints(int points)
         {
-            text.text = "Credit: " + points;
-        }
-
-        void Update()
-        {
-
+            if (text)
+                text.text = "Credit: " + points;
         }
     }
 }

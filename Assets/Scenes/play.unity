@@ -22497,11 +22497,10 @@ GameObject:
   m_Component:
   - 4: {fileID: 1358969310}
   - 114: {fileID: 1358969311}
-  - 114: {fileID: 1358969312}
   - 114: {fileID: 1358969313}
   - 114: {fileID: 1358969314}
   m_Layer: 0
-  m_Name: Game
+  m_Name: Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22548,18 +22547,6 @@ MonoBehaviour:
     _max: 1.3
   nextActorDelay: 0.7
   initialMonsterDelay: 0.7
---- !u!114 &1358969312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1358969309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08d511ec97baf5447a4c6d7d90c7ae4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sizeCheckFrequency: 0.5
 --- !u!114 &1358969313
 MonoBehaviour:
   m_ObjectHideFlags: 0

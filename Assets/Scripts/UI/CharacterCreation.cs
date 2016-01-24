@@ -146,6 +146,8 @@ namespace ProcRoom.UI
         void OnEnable()
         {            
             OptionButtonFrame.OnSelectAction += HandleNewSpriteSelect;
+            if (PlayerPrefs.GetInt(Game.gameAction, 0) == (int) GameAction.NewGame)
+                CreatNewPlayer();
         }
 
         void OnDisable()

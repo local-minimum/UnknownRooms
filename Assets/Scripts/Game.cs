@@ -1,24 +1,48 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace ProcRoom
 {
     public delegate void ScreenSizeChange(int from, int to);
+
+    public enum GameAction { NewGame, ResumeGame};
 
     public class Game : MonoBehaviour
     {
         public static event ScreenSizeChange OnScreenSizeChange;
 
         static Game _instance = null;
+        
+        static Game instance
+        {
+            get
+            {
+                if (_instance == null)
+                    Spawn();
+                return _instance;
+            }
+        }
 
         [SerializeField, Range(0, 1)]
-        float sizeCheckFrequency;
+        float sizeCheckFrequency = 0.5f;
 
         [SerializeField]
         string playerScores = "fame.player.score.";
 
         [SerializeField]
         string playerName = "fame.player.name.";
+
+        [SerializeField]
+        string _gameAction = "game.action";
+
+        public static string gameAction
+        {
+            get
+            {
+                return instance._gameAction;
+            }
+        }
 
         [SerializeField, Range(0, 10)]
         float killScoreFactor = 3f;
@@ -28,6 +52,14 @@ namespace ProcRoom
 
         [SerializeField, Range(0, 5)]
         int famePositions = 3;
+
+        bool resentDeathWasFamous = false;
+
+        static void Spawn()
+        {
+            var GO = new GameObject("Game");
+            _instance = GO.AddComponent<Game>();
+        }
 
         void Awake()
         {
@@ -40,10 +72,6 @@ namespace ProcRoom
         void Start()
         {
             DontDestroyOnLoad(gameObject);
-
-            if (PlayerPrefs.GetInt("Game.NewGame", 1) == 1)
-                UI.CharacterCreation.CreatNewPlayer();
-
             StartCoroutine(SizeChecker());
         }
 
@@ -75,12 +103,16 @@ namespace ProcRoom
 
         static bool Famous(AgentStats player, float score)
         {
+            //TODO: This should use some proper serialization that allows saving player avatar too
+            //Should save: Name, Icon, Score, Day, MaxLevel
+
             for (int i=0; i<_instance.famePositions; i++)
             {
                 if (score > PlayerPrefs.GetFloat(_instance.playerScores + i, 0f))
                 {
                     for (int j = _instance.famePositions - 1; j > i; j--)
                     {
+
                         PlayerPrefs.SetFloat(_instance.playerScores + j, PlayerPrefs.GetFloat(_instance.playerScores + (j - 1), 0f));
                         PlayerPrefs.SetString(_instance.playerName + j, PlayerPrefs.GetString(_instance.playerName + (j - 1), ""));
                     }
@@ -98,13 +130,15 @@ namespace ProcRoom
         public static void ReportScore(AgentStats player)
         {
             var score = GetScore(player);
-            if (Famous(player, score))
-            {
+            _instance.resentDeathWasFamous = Famous(player, score);
+            SceneManager.LoadScene("death", LoadSceneMode.Single);
 
-            } else
-            {
+        }
 
-            }
+        public void NewGame()
+        {
+            PlayerPrefs.SetInt(_instance._gameAction, (int) GameAction.NewGame);
+            SceneManager.LoadScene("play", LoadSceneMode.Single);
 
         }
 
