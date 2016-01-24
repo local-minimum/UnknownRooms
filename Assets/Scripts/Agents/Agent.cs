@@ -28,6 +28,8 @@ namespace ProcRoom
 
         public int kills = 0;
         public int maxLevel = 0;
+        public int steps = 0;
+        public int shots = 0;
 
         public bool hasKey
         {
@@ -70,8 +72,6 @@ namespace ProcRoom
 
         protected int roomWidth;
         protected int roomHeight;
-
-        protected int shots = 0;
 
         protected Room room;
 
@@ -364,6 +364,11 @@ namespace ProcRoom
             }
         }
 
+        public void GainKill()
+        {
+            _stats.kills++;
+        }
+
         public void CriticalHurt()
         {
             Hurt();
@@ -390,7 +395,7 @@ namespace ProcRoom
 
                 if (executedAttack)
                 {
-                    shots++;
+                    _stats.shots++;
                     actionPoints--;
                     actionTick();
                 }

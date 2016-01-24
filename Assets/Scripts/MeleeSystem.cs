@@ -107,6 +107,9 @@ namespace ProcRoom {
                     defender.CriticalHurt();
                 else
                     defender.Hurt();
+
+                if (!defender.alive)
+                    attacker.GainKill();
             }
 
 

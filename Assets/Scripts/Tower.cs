@@ -345,18 +345,15 @@ namespace ProcRoom
             _instance.activeLevel = -1;
             _instance.points = 0;
             _instance.betweenRooms = false;
-            if (OnNewGame != null)
-                OnNewGame(_instance.player);
+
 
         }
 
         public static void MakeLevel()
         {
-            _instance.SmithMonstersForRoom();
-            ActiveRoom.Generate();
-            if (OnNewLevel != null)
-                OnNewLevel(ActiveLevel);
-
+            if (OnNewGame != null)
+                OnNewGame(_instance.player);
+            _instance.EndLevel();
         }
 
         public void animateRoom()

@@ -103,15 +103,18 @@ namespace ProcRoom.UI
         {
             var stats = new AgentStats();
             stats.actionPointsPerTurn = actionPoints.Value;
-            stats.maxHealth = health.Value;            
+            stats.maxHealth = health.Value;                        
             stats.defence = defence.Value;
             if (!upgrading)
             {
+                stats.health = stats.maxHealth;
+                stats.actionPoints = stats.actionPointsPerTurn;
                 stats.name = namer.Name;
                 Tower.Player.SetStats(stats);
-                Tower.Player.NewGame();
                 var weapon1 = Physical.WeaponSmith.Smith(points, true);
                 Tower.Player.Weapon.SetStats(weapon1);
+                Tower.Player.alive = true;
+                Tower.Spawn();
                 if (points > 0)
                 {
                     WeaponStats weapon2 = WeaponStats.DefaultWeapon;

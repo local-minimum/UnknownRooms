@@ -13,8 +13,6 @@ namespace ProcRoom
 
         public static event PlayerEnterPosition OnPlayerEnterNewPosition;
 
-        int steps = 0;
-
         [SerializeField]
         int minDistanceSpawnInFirstLevel = 8;
 
@@ -156,24 +154,12 @@ namespace ProcRoom
                 if (OnPlayerEnterNewPosition != null)
                     OnPlayerEnterNewPosition(this, newPosition, tileType);
 
-                steps++;
+                _stats.steps++;
             } else if (_stats.hasKey && room.PassableTile(newPosition, false, TileType.Door) && room.GetTile(newPosition).Unlock())
             {
                 ConsumeKey();
             }
 
-        }
-
-        public void NewGame()
-        {
-            health = _stats.maxHealth;
-            steps = 0;
-            shots = 0;
-            
-            alive = true;
-            Debug.Log("Ready for tower");
-            Tower.Spawn();
-            
         }
 
         protected override void Death()
